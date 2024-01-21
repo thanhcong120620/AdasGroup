@@ -1,0 +1,35 @@
+@Override
+	public LotteryDTO save(LotteryDTO lotteryDTO) {
+		List<LotteryBoardEntity> lotteryBoardEntityList = new ArrayList<>();
+		if(lotteryDTO.getId() != null) {
+//			List<LotteryBoardEntity> oldEntityList = lotteryBoardRepository.findAllByCode(lotteryDTO.getId()).get();
+			//query record by region code
+			List<LotteryBoardEntity> oldListHaveDate = lotteryBoardRepository.findByRegionCode(lotteryDTO.getRegionCode());
+			// create date to find oldEntityList without region code and date
+			String oldDate = lotteryDTO.getDay()+"-"+lotteryDTO.getMonth()+"-"+lotteryDTO.getYear();
+			
+			//Create oldEntityList
+			List<LotteryBoardEntity> oldEntityList = new ArrayList<>();
+			for(LotteryBoardEntity listHaveDate : oldListHaveDate) {
+				listHaveDate.toString();
+				//check by Date
+				if(listHaveDate.getDate().equals(oldDate)) {
+					oldEntityList.add(listHaveDate);
+				}
+			}
+			
+			lotteryBoardEntityList = lotteryBoardConverter.toEntity(lotteryDTO, oldEntityList);
+			
+		} else {
+			lotteryBoardEntityList = lotteryBoardConverter.toEntity(lotteryDTO);
+		}
+		
+		RegionEntity regionEntity = regionRepository.findOneByRegionCode(lotteryDTO.getRegionCode());
+		
+		for(LotteryBoardEntity list : lotteryBoardEntityList) {
+			list.setRegion(regionEntity);
+			list = lotteryBoardRepository.save(list);
+		}
+		
+		return lotteryBoardConverter.toDTO(lotteryBoardEntityList);
+	}

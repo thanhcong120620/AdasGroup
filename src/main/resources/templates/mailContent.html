@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Mail Content</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+ 
+    <script src='main.js'></script>
+
+<style>
+@media print {
+  .noPrint{
+    display:none;
+  }
+}
+
+</style>
+
+</head>
+<body>
+
+  
+<p style="color: red; font-weight: bold" th:text="'Dear Mr/Mrs.' + ${name} + ','"></p>
+<p th:text="'We are Lottery Admin. Your new password is <' + ${passwordUser} + '>. '"></p>
+<p>Please, change the new password in Password Support system.</p>
+<hr>
+<p>Contact to support:</p>
+<p>--> Gmail: nguyenthanhcong120620@gmail.com</p>
+<p>--> Phone: 0368 279 613</p>
+<a href="@{/admin}">Thanks!</a>
+<img src="cid:${logo}" width="210" height="110" />
+
+</body>
+</html>

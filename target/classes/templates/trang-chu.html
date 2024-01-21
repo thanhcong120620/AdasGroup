@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="#" th:href="@{/css/toolMail.css}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<script src='main.js'></script>
+
+
+	<title>My Gmail pannel</title>
+
+</head>
+
+<body>
+
+	<!--<p><span>[[${msg}]]</span></p>-->
+
+	<div class="jumbotron text-center">
+		<div class="logo">
+			<img src="image/logo.png" width="210" height="110" />
+		</div>
+		<div class="title">
+			<h1>Data Pannel</h1>
+			<p>Nguyễn Thành Công - Chuyên viên Kinh doanh</p>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-7">
+				<div class="data">
+					<h3>Data table</h3>
+
+					<table style="width:100%">
+						<tr>
+							<th>Id</th>
+							<th>Tên</th>
+							<th>Gmail</th>
+							<th>Kết quả</th>
+						</tr>
+						<tr th:each="dto : ${userResponse}">
+							<td th:text="${dto.id}"></td>
+							<td th:text="${dto.fullName}"></td>
+							<td th:text="${dto.gmail}"></td>
+							<td th:text="${dto.status}"></td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+			<!---->
+			<div class="col-sm-5">
+				<h3>Setting mail</h3>
+
+				<!--Gửi đính kèm file:
+					<form class="sendData" action="#" th:action="@{/sends}" enctype="multipart/form-data" method="post">-->
+				<form action="#" th:action="@{/send-all}" method="post" class="sendData">
+					<div class="subject">
+						<span>
+							<p><b>Tiêu đề</b></p>
+						</span> <input th:name="subjectA" type="text" placeholder="Nhập tiêu đề trước khi gửi"
+							style="height:30px; width:100%" />
+
+					</div>
+					<div><button type="submit">Gửi hàng loạt</button></div>
+
+
+				</form>
+				</hr>
+				<br><br>
+				<!---->
+				<form class="sendData" action="#" th:action="@{/send-draft}" method="post">
+					<p><b>Gửi bản nháp</b></p>
+					<div class="subject">
+						<span>
+						</span> <input th:name="subjectD" type="text" placeholder="Nhập tiêu đề trước khi gửi"
+							style="height:30px; width:100%" />
+
+					</div>
+					<div class="display">
+						<input th:name="mailCheck" type="text" placeholder="Vd: abc@gmail.com;abcd@gmail.com;..."
+							style="height:30px; width:100%" />
+					</div>
+					<button type="submit">Gửi nháp</button>
+				</form>
+
+
+
+			</div>
+		</div>
+	</div>
+
+
+
+</body>
+
+</html>

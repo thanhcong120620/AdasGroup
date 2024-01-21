@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: DELL
+Build-Jdk: 17.0.8
+Implementation-Title: QCDigital
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: QCDigital
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/QCDigital
+Created-By: Maven Integration for Eclipse
+
