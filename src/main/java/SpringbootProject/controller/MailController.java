@@ -16,13 +16,17 @@ import SpringbootProject.algorithms.NameProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.SunCosmo.SunCosmoCampT12M1;
+import SpringbootProject.service.implement.SunCosmo.SuncosmoSuccess250923;
+import SpringbootProject.service.implement.form.FormDevelop;
 
 @Controller
 public class MailController {
 
 	
 	 @Autowired 
-	 SunCosmoCampT12M1 suncosmo;
+//	 SunCosmoCampT12M1 suncosmo;
+//	 SuncosmoSuccess250923 suncosmo;
+	 FormDevelop suncosmo;
 
 
 	@Autowired
@@ -47,13 +51,16 @@ public class MailController {
 	public String sendDraft(Model model, @RequestParam(value = "subjectD", required = false) String subject,
 			@RequestParam(value = "mailCheck", required = false) String mailCheck) {
 
+		
+		String img1 = "D:\\Desktop\\Diary\\1.1.jpg";
+		String htmlPath= "D:\\Desktop\\My data\\1.My working\\2.ICV\\4.QC-Digital\\1.Develop\\0.QC-Develop\\AdminSystem\\src\\main\\resources\\templates\\errorPage.html";
 		System.out.println("Subject: " + subject);
 		System.out.println("Mail: " + mailCheck);
 		GmailProcess processedMail = new GmailProcess();
 		String[] mailArray = processedMail.splitMail(mailCheck);
 		for (int i = 0; i < mailArray.length; i++) {
 			String mail = mailArray[i];
-			suncosmo.sendMail(subject, mail, "Ms. Quỳnh", "chị Quỳnh", "Chị Quỳnh", "chị", 1L);
+			suncosmo.sendMail(subject, mail, "Ms. Quỳnh", "chị Quỳnh", "Chị Quỳnh", "chị", 1L, htmlPath,img1);
 		}
 
 		return "redirect:/mail-home";
@@ -67,6 +74,8 @@ public class MailController {
 		System.out.println("Subject: " + subject);
 		final long start = System.currentTimeMillis();
 		List<UserEntity> userList = userService.findAllUser();
+		String htmlPath= "D:\\Desktop\\My data\\1.My working\\2.ICV\\4.QC-Digital\\1.Develop\\0.QC-Develop\\AdminSystem\\src\\main\\resources\\templates\\errorPage.html";
+		String img1 = "D:\\Desktop\\Diary\\1.1.jpg";
 		
 		int n = userList.size();
 		
@@ -82,7 +91,7 @@ public class MailController {
 			if (userList.get(i).getFullName().isEmpty() || userList.get(i).getFullName().equals("")) {
 //				System.out.println("2");
 				// Send mail
-				suncosmo.sendMail(subject, mail, "Quý khách hàng", "anh/chị", "Anh/Chị", "fm", id);
+				suncosmo.sendMail(subject, mail, "Quý khách hàng", "anh/chị", "Anh/Chị", "fm", id,htmlPath,img1);
 
 			} else {
 //				System.out.println("3");
@@ -94,7 +103,7 @@ public class MailController {
 
 //				System.out.println("4");
 				// Send mail
-				suncosmo.sendMail(subject, mail, headerName, normalName, caplockName, gender, id);
+				suncosmo.sendMail(subject, mail, headerName, normalName, caplockName, gender, id , htmlPath,img1);
 			}
 			final long endTime = System.currentTimeMillis();	
 			System.out.println(">>> Đã gửi đến user có id: "+ user.getId()+" ---- Total time: " + ((endTime - startTime)/1000)+"(s)");			 

@@ -1,3 +1,14 @@
+
+Để chào theo tên user trên database, lấy tên crud lên parameter trên thymlead, lấy ngược thyleaf đấy xuống lại sendmail.
+
+
+
+
+================================================================================================================================
+
+
+
+
 @Override
 	public LotteryDTO save(LotteryDTO lotteryDTO) {
 		List<LotteryBoardEntity> lotteryBoardEntityList = new ArrayList<>();
