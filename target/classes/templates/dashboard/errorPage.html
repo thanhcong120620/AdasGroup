@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="#" th:href="@{/css/toolMail.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="main.js"></script>
+
+    <title>My Gmail pannel</title>
+  </head>
+
+  <body>
+    <!--<p><span>[[${msg}]]</span></p>-->
+    <h1>LỖI RỒI BẠN</h1>
+    <p>Hello HTML, ${dynamicValue}!</p>
+    <img src="cid:image1.1" style="width: 100%; height: auto" />
+    <h5>Kết thúc - Chương trình thành Công</h5>
+    
+    <!--String template = "<p>Hello, ${dynamicValue}!</p>";-->
+    
+    
+    <!--Context context = new Context();
+    context.setVariable("dynamicValue", "World");
+
+    String processedTemplate = templateEngine.process(template, context);
+    System.out.println(processedTemplate);-->
+        
+  </body>
+</html>
