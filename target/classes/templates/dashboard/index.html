@@ -52,19 +52,19 @@
     <div class="wrapper">
 
 		<!-- nav-left  -->
-		<div th:include ="~{/dashboard/nav-left :: nav-left}"></div>
+		<div class="iq-sidebar sidebar-default" th:include ="~{/dashboard/nav-left :: nav-left}"></div>
 	
 		<!-- nav-top  -->
-		<div th:include ="~{/dashboard/nav-top :: nav-top}"></div>
+		<div class="iq-top-navbar" th:include ="~{/dashboard/nav-top :: nav-top}"></div>
 
 		<!-- social-nav-right  -->
-		<div th:include ="~{/dashboard/social-nav-right :: social-nav-right}"></div>      
+		<div class="right-sidebar-mini right-sidebar" th:include ="~{/dashboard/social-nav-right :: social-nav-right}"></div>      
 
 		<!-- social-content  -->
-		<div th:include ="~{/dashboard/social-content :: social-content}"></div> 
+		<div class="content-page" th:include ="~{/dashboard/social-content :: social-content}"></div> 
 		
 		<!-- nav-bottom  -->
-		<div th:include ="~{/dashboard/nav-bottom :: nav-bottom}"></div> 		
+		<div class="iq-footer bg-white" th:include ="~{/dashboard/nav-bottom :: nav-bottom}"></div> 		
       
     </div>
     <!-- Wrapper End-->

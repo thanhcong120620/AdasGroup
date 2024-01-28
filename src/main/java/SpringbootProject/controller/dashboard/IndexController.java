@@ -13,7 +13,7 @@ public class IndexController {
 	@GetMapping("/trang-chu")
 	public String HomePage() {
 
-//		return "test";
+//		return "index-total";
 //		return "dashboard/test-dashboard";
 		return "dashboard/index";
 	}
