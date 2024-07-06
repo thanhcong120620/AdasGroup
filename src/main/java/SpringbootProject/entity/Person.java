@@ -8,6 +8,8 @@ public class Person {
     private String note;
     
     
+    public Person() {}
+    
 	public Person(String fullName, String gender, String phone, String gmail, String note) {
 		super();
 		this.fullName = fullName;

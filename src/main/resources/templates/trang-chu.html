@@ -24,14 +24,51 @@
 
 	<div class="jumbotron text-center">
 		<div class="logo">
-			<img src="image/logo.png" width="210" height="110" />
+			<img th:src="@{../image/newstarland-logo.png}" width="35%" height="auto" />
 		</div>
 		<div class="title">
-			<h1>Data Pannel</h1>
-			<p>Nguyễn Thành Công - Chuyên viên Kinh doanh</p>
+			<p>C402 - Nguyễn Thành Công - Chuyên viên Kinh doanh</p>
 		</div>
 	</div>
 
+<!-- ////////////////////////////////////// Upload file //////////////////////////////////////////////// -->
+	<div>
+		<h1>Upload CSV File</h1>
+    	<form method="POST" enctype="multipart/form-data" th:action="@{/upload}">
+        	<input type="file" name="file" accept=".xlsx, .xls, .csv"/>
+        	<button type="submit">Upload</button>
+    	</form>
+	</div>
+	
+	<!--Upload file UI-->
+	
+<!--	<h1>Uploaded Users</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Gender</th>
+                <th>Gmail</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.getFullName}"></td>
+                <td th:text="${user.getGender}"></td>
+                <td th:text="${user.getPhone}"></td>
+                <td th:text="${user.getGmail}"></td>
+                <td th:text="${user.getNote}"></td>
+            </tr>
+        </tbody>
+    </table>
+	-->
+	
+<!-- ///////////////////////////////// End upload File //////////////////////////////////////////// -->	
+   
+
+<!--Data-->
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-7">

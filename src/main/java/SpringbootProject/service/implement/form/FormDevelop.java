@@ -1,5 +1,9 @@
 package SpringbootProject.service.implement.form;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -17,6 +21,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,7 +52,7 @@ public class FormDevelop {
 	private IUser userService;
 
 	public void sendMail(String subjectMail, String mailUser, String headerName, String normalName, String caplockName,
-			String gender, Long id,String htmlPath, String img1) {
+			String gender, Long id,String htmlPath, List<String> imgList) throws IOException {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
 		props.put("mail.smtp.starttls.enable", "true");
@@ -62,80 +67,71 @@ public class FormDevelop {
 		});
 		Message message = new MimeMessage(session);
 		try {
-			//
-			MimeMultipart multipart = new MimeMultipart("related");
-			BodyPart textPart = new MimeBodyPart();
-			String htmlText = hfts.convertHTMLtoString(htmlPath);
+			//---------------------------------- Cũ
+//			MimeMultipart multipart = new MimeMultipart("related");
+//			BodyPart textPart = new MimeBodyPart();
+//			String htmlText = hfts.convertHTMLtoString(htmlPath, headerName, normalName, caplockName, gender);
+//
+//			textPart.setContent(htmlText, "text/html;charset=\"utf-8\"");
+//			multipart.addBodyPart(textPart);
+			//------------------------------
+			
+			// Đọc file HTML và thay thế các placeholder
+            Map<String, String> variables = new HashMap<>();
+            variables.put("HeaderName", normalName);
+            variables.put("Gender", gender);
+//            variables.put("imageUrl", "cid:image1.1");
 
-			textPart.setContent(htmlText, "text/html;charset=\"utf-8\"");
-			multipart.addBodyPart(textPart);
+            String htmlText = hfts.convertHTMLtoString(htmlPath, variables);
+
+            // Tạo MimeMultipart
+            MimeMultipart multipart = new MimeMultipart("related");
+            BodyPart textPart = new MimeBodyPart();
+            textPart.setContent(htmlText, CONTENT_TYPE_TEXT_HTML);
+            multipart.addBodyPart(textPart);
+
+			
+			BodyPart imagePart10 = new MimeBodyPart();
+			DataSource fds10 = new FileDataSource(imgList.get(0));
+			imagePart10.setDataHandler(new DataHandler(fds10));
+			imagePart10.setHeader("Content-ID", "<image1.0>");
+			imagePart10.setDisposition(MimeBodyPart.INLINE);
+			multipart.addBodyPart(imagePart10);
 			
 			BodyPart imagePart11 = new MimeBodyPart();
-			DataSource fds11 = new FileDataSource(img1);
+			DataSource fds11 = new FileDataSource(imgList.get(1));
 			imagePart11.setDataHandler(new DataHandler(fds11));
 			imagePart11.setHeader("Content-ID", "<image1.1>");
 			imagePart11.setDisposition(MimeBodyPart.INLINE);
 			multipart.addBodyPart(imagePart11);
-//			
-//			BodyPart imagePart21 = new MimeBodyPart();
-//			DataSource fds21 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\2.1.jpg");
-//			imagePart21.setDataHandler(new DataHandler(fds21));
-//			imagePart21.setHeader("Content-ID", "<image2.1>");
-//			imagePart21.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart21);
-//			
-//			BodyPart imagePart22 = new MimeBodyPart();
-//			DataSource fds22 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\2.2.png");
-//			imagePart22.setDataHandler(new DataHandler(fds22));
-//			imagePart22.setHeader("Content-ID", "<image2.2>");
-//			imagePart22.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart22);
-//			
-//			BodyPart imagePart23 = new MimeBodyPart();
-//			DataSource fds23 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\2.3.jpg");
-//			imagePart23.setDataHandler(new DataHandler(fds23));
-//			imagePart23.setHeader("Content-ID", "<image2.3>");
-//			imagePart23.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart23);
-//			
-//			BodyPart imagePart24 = new MimeBodyPart();
-//			DataSource fds24 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\2.4.jpg");
-//			imagePart24.setDataHandler(new DataHandler(fds24));
-//			imagePart24.setHeader("Content-ID", "<image2.4>");
-//			imagePart24.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart24);
-//			
-//			BodyPart imagePart25 = new MimeBodyPart();
-//			DataSource fds25 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\2.5.jpg");
-//			imagePart25.setDataHandler(new DataHandler(fds25));
-//			imagePart25.setHeader("Content-ID", "<image2.5>");
-//			imagePart25.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart25);
-//			
-//			BodyPart imagePart31 = new MimeBodyPart();
-//			DataSource fds31 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\3.1.png");
-//			imagePart31.setDataHandler(new DataHandler(fds31));
-//			imagePart31.setHeader("Content-ID", "<image3.1>");
-//			imagePart31.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart31);
-//			
-//			BodyPart imagePart32 = new MimeBodyPart();
-//			DataSource fds32 = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\3.2.jpg");
-//			imagePart32.setDataHandler(new DataHandler(fds32));
-//			imagePart32.setHeader("Content-ID", "<image3.2>");
-//			imagePart32.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePart32);
-//			
-//			
-//			
-//			BodyPart imagePartsign = new MimeBodyPart();
-//			DataSource fdssign = new FileDataSource("D:\\Desktop\\My data\\1.My working\\2.Retizy\\2.Markeing\\3.Gmail channel\\1.Panoma240923\\img\\sign.png");
-//			imagePartsign.setDataHandler(new DataHandler(fdssign));
-//			imagePartsign.setHeader("Content-ID", "<imagesign>");
-//			imagePartsign.setDisposition(MimeBodyPart.INLINE);
-//			multipart.addBodyPart(imagePartsign);
 			
+			BodyPart imagePart12 = new MimeBodyPart();
+			DataSource fds12 = new FileDataSource(imgList.get(2));
+			imagePart12.setDataHandler(new DataHandler(fds12));
+			imagePart12.setHeader("Content-ID", "<image1.2>");
+			imagePart12.setDisposition(MimeBodyPart.INLINE);
+			multipart.addBodyPart(imagePart12);
 			
+			BodyPart imagePart13 = new MimeBodyPart();
+			DataSource fds13 = new FileDataSource(imgList.get(3));
+			imagePart13.setDataHandler(new DataHandler(fds13));
+			imagePart13.setHeader("Content-ID", "<image1.3>");
+			imagePart13.setDisposition(MimeBodyPart.INLINE);
+			multipart.addBodyPart(imagePart13);
+			
+			BodyPart imagePart14 = new MimeBodyPart();
+			DataSource fds14 = new FileDataSource(imgList.get(4));
+			imagePart14.setDataHandler(new DataHandler(fds14));
+			imagePart14.setHeader("Content-ID", "<image1.4>");
+			imagePart14.setDisposition(MimeBodyPart.INLINE);
+			multipart.addBodyPart(imagePart14);
+			
+			BodyPart imagePart15 = new MimeBodyPart();
+			DataSource fds15 = new FileDataSource(imgList.get(5));
+			imagePart15.setDataHandler(new DataHandler(fds15));
+			imagePart15.setHeader("Content-ID", "<image1.5>");
+			imagePart15.setDisposition(MimeBodyPart.INLINE);
+			multipart.addBodyPart(imagePart15);
 			
 			
 			message.setContent(multipart);
