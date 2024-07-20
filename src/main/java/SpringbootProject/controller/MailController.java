@@ -40,6 +40,9 @@ public class MailController {
 	public String home(Model model) {
 
 		List<UserEntity> userResponse = userService.findAllUser();
+		for(int i=0;i<userResponse.size();i++) {
+			userResponse.get(i).toString();
+		}
 		model.addAttribute("userResponse", userResponse);
 
 		return "trang-chu";
@@ -80,7 +83,7 @@ public class MailController {
 		final long start = System.currentTimeMillis();
 		List<UserEntity> userList = userService.findAllUser();
 		String htmlPath= "D:\\Desktop\\My data\\1.My working\\1.IVC\\2.ICV-Digital\\1.Develop\\1.IVCDevelop\\2.BackEnd\\2.IVCBackEnd\\AdminSystem\\src\\main\\resources\\templates\\mail-Symphony.html";
-		
+
 		int n = userList.size();
 		
 		for (int i = 0; i < n ; i++) {
@@ -154,6 +157,7 @@ public class MailController {
 		List<UserEntity> userList = userService.findAllUser();
 		for (int i = 0; i < userList.size(); i++) {
 			UserEntity user = userList.get(i);
+			userList.get(i).toString();
 			// Xử lý user name
 			if (userList.get(i).getFullName().isEmpty() || userList.get(i).getFullName().equals("")) {
 				// Send mail

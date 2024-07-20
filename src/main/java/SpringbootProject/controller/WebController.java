@@ -15,7 +15,7 @@ public class WebController {
 	@GetMapping("/")
 	public String test(Model model) {
 
-		return "index-total";
+		return "trang-chu";
 	}
 	
 	
