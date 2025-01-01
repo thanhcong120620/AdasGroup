@@ -48,76 +48,13 @@
               </tbody>
             </table>
           </div>
-         
-         
-   <!-- __________________________Mail sending__________________________-->        
-          <div class="col-lg-4">  
-			  			  
-		  <!--Form send mail--> 
-          <h3>Send Email</h3>
-          <form id="emailForm" action="#" th:action="@{/send-all}" method="post" class="sendData" enctype="multipart/form-data">
-            <div class="form-group">	
-				  		  
-				<!--Upload Image--> 	
-				<input type="file" name="images" multiple="multiple" />
 
-				<!--Subject setup--> 
-            	<label for="emailSubject">Tiêu đề mail</label>
-            	<input
-               		class="form-control"
-               		id="emailSubject"
-               		required
-               		th:name="subjectA" type="text" placeholder="Nhập tiêu đề trước khi gửi"
-            	/>
-			</div>            
-			
-			<!--Subject Hint--> 
-			<h5>Thay đổi từ ngữ trong đoạn văn: </h5>
-			<p> Sử dụng cả cụm có chứa "Mr. hoặc Ms.", ví dụ: Mr. Công: --> Thay thế bằng <b>{{headerName}}</b></p>
-			<p> Sử dụng cả cụm xưng viết hoa, ví dụ: Anh Công: --> Thay thế bằng <b>{{caplockName}}</b></p>
-			<p> Sử dụng cả cụm xưng, ví dụ: anh Công: --> Thay thế bằng <b>{{normalName}}</b></p>
-			<p> Sử dụng giới tính khi xưng, ví dụ: anh ... hoặc chị ...: --> Thay thế bằng <b>{{gender}}</b></p>
-			<hr/>
-				  
-            <!--Content 1 setup--> 
-            <div class="form-group">
-                <label for="emailContent">Đoạn văn 1</label>
-                <textarea
-					class="form-control"
-					id="emailContent0"
-					rows="20"
-					placeholder="Nhập nội dung của đoạn văn 1"                 
-					required
-					th:name="paragraph0"
-               ></textarea>
-             </div>
-				  
-            <!--Content 2 setup--> 
-            <div class="form-group">
-                <label for="emailContent">Đoạn văn 2</label>
-                <textarea
-					class="form-control"
-					id="emailContent1"
-					rows="20"
-					placeholder="Nhập nội dung của đoạn văn 2"                 
-					required
-					th:name="paragraph1"
-               ></textarea>
-             </div>
-              
-             <!--Submit setup--> 
-             <button type="submit" class="btn btn-primary">
-               <i class="fas fa-paper-plane"></i> Send Email
-             </button>
-              
-            </form> <!--Form tổng-->
-            
-          </div>
         </div>
       </div>
       
       
-	<!--Display Form Sample-->      
+	<!--__________________________Display Form Sample __________________________-->      
+	
 
       
 

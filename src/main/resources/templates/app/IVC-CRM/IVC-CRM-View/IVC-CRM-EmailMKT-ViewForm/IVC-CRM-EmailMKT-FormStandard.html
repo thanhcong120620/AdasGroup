@@ -18,41 +18,20 @@
   </head>
 
   <body>
-   <div class="main-area col-lg-12">
-      <div class="container">
-        <h2 class="mb-4 text-center">IVC-Email Marketing</h2>
-        <div class="row">
-          <div class="col-lg-8">
-            <h3>Customer List</h3>
-            <button class="btn btn-success mb-3 " id="addCustomerBtn">
-              <i class="fas fa-plus"></i> Add Customer
-            </button>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-				  <th>Id</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Gender</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="customerTableBody">
-                <!-- Customer rows will be added here dynamically -->
-                <tr th:each="dto : ${userResponse}">
-							<td th:text="${dto.id}"></td>
-							<td th:text="${dto.fullName}"></td>
-							<td th:text="${dto.gmail}"></td>
-							<td th:text="${dto.genderUser}"></td>
-				</tr>
-              </tbody>
-            </table>
-          </div>
-         
-         
-   <!-- __________________________Mail sending__________________________-->        
-          <div class="col-lg-4">  
-			  			  
+   <div class="main-area col-lg-12"> 
+    <div class="">
+    <h2 class="mb-4 text-center">IVC-Email Marketing</h2>  
+    
+    <div class="">
+		
+	<div class="col-lg-12">
+		<!-- __________________________Display Result__________________________--> 
+   		<div class="col-lg-5" style="float: left">
+			<div th:replace="~{app/IVC-Digital-Gmail/Form-Gmail/Form-Gmail-Standard.html}"></div>			   
+		</div>
+		
+		   	<!-- __________________________Mail sending__________________________-->        
+        <div class="col-lg-6"  style="float: right">  			  			  
 		  <!--Form send mail--> 
           <h3>Send Email</h3>
           <form id="emailForm" action="#" th:action="@{/send-all-gmailformstandard}" method="post" class="sendData" enctype="multipart/form-data">
@@ -60,6 +39,7 @@
 				  		  
 				<!--Upload Image--> 	
 				<input type="file" name="images" multiple="multiple" />
+				<hr>
 
 				<!--Subject setup--> 
             	<label for="emailSubject">Tiêu đề mail</label>
@@ -97,7 +77,7 @@
                 <textarea
 					class="form-control"
 					id="emailContent1"
-					rows="20"
+					rows="10"
 					placeholder="Nhập nội dung của đoạn văn 1"                 
 					required
 					th:name="paragraph1"
@@ -110,10 +90,36 @@
                 <textarea
 					class="form-control"
 					id="emailContent2"
-					rows="20"
+					rows="10"
 					placeholder="Nhập nội dung của đoạn văn 2"                 
 					required
 					th:name="paragraph2"
+               ></textarea>
+             </div>
+				  
+            <!--Content 3 setup--> 
+            <div class="form-group">
+                <label for="emailContent">Đoạn văn 3</label>
+                <textarea
+					class="form-control"
+					id="emailContent3"
+					rows="10"
+					placeholder="Nhập nội dung của đoạn văn 3"                 
+					required
+					th:name="paragraph3"
+               ></textarea>
+             </div>
+				  
+            <!--Content 4 setup--> 
+            <div class="form-group">
+                <label for="emailContent">Đoạn văn 4</label>
+                <textarea
+					class="form-control"
+					id="emailContent4"
+					rows="10"
+					placeholder="Nhập nội dung của đoạn văn 4"                 
+					required
+					th:name="paragraph4"
                ></textarea>
              </div>
               
@@ -125,10 +131,13 @@
             </form> <!--Form tổng-->
             
           </div>
-        </div>
-      </div>
+		
+	</div>
+		
 
-    </div>
+     </div>
+   </div>
+ </div>
     
     <!-- JavaScript -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

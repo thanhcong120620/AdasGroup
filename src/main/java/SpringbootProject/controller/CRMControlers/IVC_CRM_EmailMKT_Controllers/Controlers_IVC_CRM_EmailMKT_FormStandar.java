@@ -59,7 +59,9 @@ public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 			@RequestParam(value = "subjectA", required = false) String subject,
 			@RequestParam(value = "paragraph0", required = false) String paragraph0, 
 			@RequestParam(value = "paragraph1", required = false) String paragraph1, 
-			@RequestParam(value = "paragraph2", required = false) String paragraph2,  
+			@RequestParam(value = "paragraph2", required = false) String paragraph2, 
+			@RequestParam(value = "paragraph3", required = false) String paragraph3, 
+			@RequestParam(value = "paragraph4", required = false) String paragraph4,    
 			@RequestParam("images") MultipartFile[] files) 
 	throws IOException {
 		
@@ -74,6 +76,8 @@ public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 		paragraphList.add(paragraph0);
 		paragraphList.add(paragraph1);
 		paragraphList.add(paragraph2);
+		paragraphList.add(paragraph3);
+		paragraphList.add(paragraph4);
 		
 
 		int n = userList.size();
