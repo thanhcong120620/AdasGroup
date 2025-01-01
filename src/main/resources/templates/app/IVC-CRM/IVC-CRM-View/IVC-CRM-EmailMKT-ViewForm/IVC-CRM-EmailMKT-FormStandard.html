@@ -55,7 +55,7 @@
 			  			  
 		  <!--Form send mail--> 
           <h3>Send Email</h3>
-          <form id="emailForm" action="#" th:action="@{/send-all}" method="post" class="sendData" enctype="multipart/form-data">
+          <form id="emailForm" action="#" th:action="@{/send-all-gmailformstandard}" method="post" class="sendData" enctype="multipart/form-data">
             <div class="form-group">	
 				  		  
 				<!--Upload Image--> 	
@@ -78,17 +78,29 @@
 			<p> Sử dụng cả cụm xưng, ví dụ: anh Công: --> Thay thế bằng <b>{{normalName}}</b></p>
 			<p> Sử dụng giới tính khi xưng, ví dụ: anh ... hoặc chị ...: --> Thay thế bằng <b>{{gender}}</b></p>
 			<hr/>
+			
+			<!--Greeting setup--> 
+            <div class="form-group">
+                <label for="emailContent">Greeting</label>
+                <input
+					class="form-control"
+					id="emailContent0"
+					placeholder="Nhập câu chào, Ví dụ: Xin chào {{headerName}} ! "                 
+					required
+					th:name="paragraph0"
+               ></input>
+             </div>
 				  
             <!--Content 1 setup--> 
             <div class="form-group">
                 <label for="emailContent">Đoạn văn 1</label>
                 <textarea
 					class="form-control"
-					id="emailContent0"
+					id="emailContent1"
 					rows="20"
 					placeholder="Nhập nội dung của đoạn văn 1"                 
 					required
-					th:name="paragraph0"
+					th:name="paragraph1"
                ></textarea>
              </div>
 				  
@@ -97,11 +109,11 @@
                 <label for="emailContent">Đoạn văn 2</label>
                 <textarea
 					class="form-control"
-					id="emailContent1"
+					id="emailContent2"
 					rows="20"
 					placeholder="Nhập nội dung của đoạn văn 2"                 
 					required
-					th:name="paragraph1"
+					th:name="paragraph2"
                ></textarea>
              </div>
               
@@ -115,11 +127,6 @@
           </div>
         </div>
       </div>
-      
-      
-	<!--Display Form Sample-->      
-
-      
 
     </div>
     

@@ -87,7 +87,6 @@ public class NameProcess {
 	//--------------------------------------------------------------------------------------------------------------------
 	public List<String> nameInParagraphTrue (List<String> paragraphList, String headerName,String normalName,String caplockName,String gender){
 		List<String> nameInParagraph = new ArrayList<String>();
-		System.out.println("Input: "+headerName+normalName+caplockName+gender);
 		
 		for(int i=0;i<paragraphList.size();i++) {
 			String para_i = paragraphList.get(i);

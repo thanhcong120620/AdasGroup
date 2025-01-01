@@ -1,4 +1,4 @@
-package SpringbootProject.controller.CRMControlers;
+package SpringbootProject.controller.CRMControlers.IVC_CRM_EmailMKT_Controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import SpringbootProject.service.implement.form.FormDevelop;
 
 
 @Controller
-public class CRMControlers {
+public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 	
 	
 	/*------------------------------------------Input - Processing------------------------------------*/
@@ -39,7 +39,7 @@ public class CRMControlers {
 	
 	/*------------------------------------------CRM - -EMAIL - CONTROLLER------------------------------------*/	
 	
-	@GetMapping("/crm-email-pannel")
+	@GetMapping("/crm-email-formstandard-pannel")
 	public String crmEmailPannel(Model model) {
 
 		List<UserEntity> userResponse = userService.findAllUser();
@@ -48,23 +48,24 @@ public class CRMControlers {
 		}
 		model.addAttribute("userResponse", userResponse);
 
-		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT";
+		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT-ViewForm/IVC-CRM-EmailMKT-FormStandard";
 	}
 	
 	/*
 	 * Send All
 	 */
-	@PostMapping("/send-all")
+	@PostMapping("/send-all-gmailformstandard")
 	public String sendMailAll(Model model, 
 			@RequestParam(value = "subjectA", required = false) String subject,
 			@RequestParam(value = "paragraph0", required = false) String paragraph0, 
-			@RequestParam(value = "paragraph1", required = false) String paragraph1,  
+			@RequestParam(value = "paragraph1", required = false) String paragraph1, 
+			@RequestParam(value = "paragraph2", required = false) String paragraph2,  
 			@RequestParam("images") MultipartFile[] files) 
 	throws IOException {
 		
 		final long start = System.currentTimeMillis();
 		List<UserEntity> userList = userService.findAllUser();
-		String htmlPath= "D:\\Desktop\\My data\\1.My working\\1.IVC\\2.ICV-Digital\\1.Develop\\1.IVCDevelop\\2.BackEnd\\2.IVCBackEnd\\AdminSystem\\src\\main\\resources\\templates\\app\\IVC-Digital-Gmail\\mailMia.html";
+		String htmlPath= "D:\\Desktop\\My data\\1.My working\\1.IVC\\2.ICV-Digital\\1.Develop\\1.IVCDevelop\\2.BackEnd\\2.IVCBackEnd\\AdminSystem\\src\\main\\resources\\templates\\app\\IVC-Digital-Gmail\\Form-Gmail\\Form-Gmail-Standard.html";
 		
 		//Xử lý hình ảnh để đưa vào mail
 		List<String> imageList 	= gmailProcess.gmailImageListFromFile(files); 
@@ -72,6 +73,7 @@ public class CRMControlers {
 		List<String> paragraphList = new ArrayList<String>();
 		paragraphList.add(paragraph0);
 		paragraphList.add(paragraph1);
+		paragraphList.add(paragraph2);
 		
 
 		int n = userList.size();
@@ -121,7 +123,7 @@ public class CRMControlers {
 		}
 		final long end = System.currentTimeMillis();	
 		System.out.println(">>> ĐÃ GỬI HẾT, TỔNG THỜI GIAN: "+ ((end - start)/1000)+"(s)");			 
-		return "redirect:/crm-email-pannel";
+		return "redirect:/";
 	}
 	
 }
