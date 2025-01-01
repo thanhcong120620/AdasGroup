@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Built-By: DELL
-Build-Jdk: 17.0.8
+Built-By: nguye
+Build-Jdk: 17.0.13
 Implementation-Title: QCDigital
 Implementation-Version: 0.0.1-SNAPSHOT
 Implementation-Vendor-Id: QCDigital

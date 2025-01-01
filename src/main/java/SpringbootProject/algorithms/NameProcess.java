@@ -1,5 +1,8 @@
 package SpringbootProject.algorithms;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NameProcess {
 	public NameProcess() {
 	}
@@ -79,6 +82,42 @@ public class NameProcess {
 			genderUser = "anh/chị";
 		}
 		return genderUser;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------------------
+	public List<String> nameInParagraphTrue (List<String> paragraphList, String headerName,String normalName,String caplockName,String gender){
+		List<String> nameInParagraph = new ArrayList<String>();
+		System.out.println("Input: "+headerName+normalName+caplockName+gender);
+		
+		for(int i=0;i<paragraphList.size();i++) {
+			String para_i = paragraphList.get(i);
+			
+			para_i = para_i.replace("{{headerName}}",headerName);
+			para_i = para_i.replace("{{caplockName}}",caplockName);
+			para_i = para_i.replace("{{normalName}}",normalName);
+			para_i = para_i.replace("{{gender}}",gender);
+			
+			nameInParagraph.add(para_i);
+		}
+		
+		return nameInParagraph;
+	}
+	
+	public List<String> nameInParagraphFalse (List<String> paragraphList){
+		List<String> nameInParagraph = new ArrayList<String>();
+		
+		for(int i=0;i<paragraphList.size();i++) {
+			String para_i = paragraphList.get(i);
+			para_i = para_i.replace("{{headerName}}","Quý khách hàng");
+			para_i = para_i.replace("{{caplockName}}","Anh/Chị");
+			para_i = para_i.replace("{{normalName}}","anh/chị");
+			para_i = para_i.replace("{{gender}}","anh/chị");
+			
+			nameInParagraph.add(para_i);
+
+		}
+		
+		return nameInParagraph;
 	}
 
 }

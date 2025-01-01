@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+       <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="#" th:href="@{../IVC-CRM-CSS/CRM-Customer-Detail.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <title>My Gmail pannel</title>
+  </head>
+
+  <body>
+   <div class="main-area col-lg-12">
+      <div class="container">
+        <h2 class="mb-4 text-center">IVC-Email Marketing</h2>
+        <div class="row">
+          <div class="col-lg-8">
+            <h3>Customer List</h3>
+            <button class="btn btn-success mb-3 " id="addCustomerBtn">
+              <i class="fas fa-plus"></i> Add Customer
+            </button>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+				  <th>Id</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Gender</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody">
+                <!-- Customer rows will be added here dynamically -->
+                <tr th:each="dto : ${userResponse}">
+							<td th:text="${dto.id}"></td>
+							<td th:text="${dto.fullName}"></td>
+							<td th:text="${dto.gmail}"></td>
+							<td th:text="${dto.genderUser}"></td>
+				</tr>
+              </tbody>
+            </table>
+          </div>
+         
+         
+   <!-- __________________________Mail sending__________________________-->        
+          <div class="col-lg-4">  
+			  			  
+		  <!--Form send mail--> 
+          <h3>Send Email</h3>
+          <form id="emailForm" action="#" th:action="@{/send-all}" method="post" class="sendData" enctype="multipart/form-data">
+            <div class="form-group">	
+				  		  
+				<!--Upload Image--> 	
+				<input type="file" name="images" multiple="multiple" />
+
+				<!--Subject setup--> 
+            	<label for="emailSubject">Tiêu đề mail</label>
+            	<input
+               		class="form-control"
+               		id="emailSubject"
+               		required
+               		th:name="subjectA" type="text" placeholder="Nhập tiêu đề trước khi gửi"
+            	/>
+			</div>            
+			
+			<!--Subject Hint--> 
+			<h5>Thay đổi từ ngữ trong đoạn văn: </h5>
+			<p> Sử dụng cả cụm có chứa "Mr. hoặc Ms.", ví dụ: Mr. Công: --> Thay thế bằng <b>{{headerName}}</b></p>
+			<p> Sử dụng cả cụm xưng viết hoa, ví dụ: Anh Công: --> Thay thế bằng <b>{{caplockName}}</b></p>
+			<p> Sử dụng cả cụm xưng, ví dụ: anh Công: --> Thay thế bằng <b>{{normalName}}</b></p>
+			<p> Sử dụng giới tính khi xưng, ví dụ: anh ... hoặc chị ...: --> Thay thế bằng <b>{{gender}}</b></p>
+			<hr/>
+				  
+            <!--Content 1 setup--> 
+            <div class="form-group">
+                <label for="emailContent">Đoạn văn 1</label>
+                <textarea
+					class="form-control"
+					id="emailContent0"
+					rows="20"
+					placeholder="Nhập nội dung của đoạn văn 1"                 
+					required
+					th:name="paragraph0"
+               ></textarea>
+             </div>
+				  
+            <!--Content 2 setup--> 
+            <div class="form-group">
+                <label for="emailContent">Đoạn văn 2</label>
+                <textarea
+					class="form-control"
+					id="emailContent1"
+					rows="20"
+					placeholder="Nhập nội dung của đoạn văn 2"                 
+					required
+					th:name="paragraph1"
+               ></textarea>
+             </div>
+              
+             <!--Submit setup--> 
+             <button type="submit" class="btn btn-primary">
+               <i class="fas fa-paper-plane"></i> Send Email
+             </button>
+              
+            </form> <!--Form tổng-->
+            
+          </div>
+        </div>
+      </div>
+
+    </div>
+    
+    <!-- JavaScript -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+	<script src="#" th:src="@{../../../assets/js/IVC-CRM-JS/IVC-Email-MKT.js}"></script>
+  </body>
+</html>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import SpringbootProject.algorithms.GmailProcess;
 import SpringbootProject.algorithms.NameProcess;
@@ -53,7 +54,7 @@ public class MailController {
 	 */
 	@PostMapping("/send-draft")
 	public String sendDraft(Model model, @RequestParam(value = "subjectD", required = false) String subject,
-			@RequestParam(value = "mailCheck", required = false) String mailCheck) {
+			@RequestParam(value = "mailCheck", required = false) String mailCheck, @RequestParam("images") MultipartFile[] files) {
 
 		String htmlPath= "D:\\Desktop\\My data\\1.My working\\2.ICV\\4.QC-Digital\\1.Develop\\0.QC-Develop\\AdminSystem\\src\\main\\resources\\templates\\errorPage.html";
 		
@@ -64,7 +65,7 @@ public class MailController {
 		for (int i = 0; i < mailArray.length; i++) {
 			String mail = mailArray[i];
 			try {
-				suncosmo.sendMail(subject, mail, "Ms. A", "chị A", "Chị A", "chị", 1L, htmlPath,imageList);
+				suncosmo.sendMail(subject, mail, "Ms. A", "chị A", "Chị A", "chị", 1L, htmlPath,imageList,imageList);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -77,12 +78,13 @@ public class MailController {
 	/*
 	 * Send All
 	 */
-	@PostMapping("/send-all")
+	@PostMapping("/send-all-develop")
+//	@PostMapping("/send-all")
 	public String sendAll(Model model, @RequestParam(value = "subjectA", required = false) String subject) {
 		System.out.println("Subject: " + subject);
 		final long start = System.currentTimeMillis();
 		List<UserEntity> userList = userService.findAllUser();
-		String htmlPath= "D:\\Desktop\\My data\\1.My working\\1.IVC\\2.ICV-Digital\\1.Develop\\1.IVCDevelop\\2.BackEnd\\2.IVCBackEnd\\AdminSystem\\src\\main\\resources\\templates\\mail-Symphony.html";
+		String htmlPath= "D:\\Desktop\\My data\\1.My working\\1.IVC\\2.ICV-Digital\\1.Develop\\1.IVCDevelop\\2.BackEnd\\2.IVCBackEnd\\AdminSystem\\src\\main\\resources\\templates\\mailNamOAds.html";
 
 		int n = userList.size();
 		
@@ -99,7 +101,7 @@ public class MailController {
 //				System.out.println("2");
 				// Send mail
 				try {
-					suncosmo.sendMail(subject, mail, "Quý khách hàng", "anh/chị", "Anh/Chị", "fm", id,htmlPath,imageList);
+					suncosmo.sendMail(subject, mail, "Quý khách hàng", "anh/chị", "Anh/Chị", "fm", id,htmlPath,imageList,imageList);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -116,7 +118,7 @@ public class MailController {
 //				System.out.println("4");
 				// Send mail
 				try {
-					suncosmo.sendMail(subject, mail, headerName, normalName, caplockName, gender, id , htmlPath,imageList);
+					suncosmo.sendMail(subject, mail, headerName, normalName, caplockName, gender, id , htmlPath,imageList, imageList);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        background: linear-gradient(135deg, #e0e0e0, #ffffff);
+      }
+      .email-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 0;
+        border: 2px solid #d4af37; /*Màu vàng kim loại */
+        border-radius: 10px; /* Bo tròn các góc */
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+        /* background-color: #ffffff; */
+        background: radial-gradient(
+            circle,
+            rgba(255, 215, 0, 0.2) 1%,
+            transparent 1%
+          ),
+          radial-gradient(circle, rgba(255, 215, 0, 0.2) 2%, transparent 2%),
+          radial-gradient(circle, rgba(255, 215, 0, 0.2) 3%, transparent 3%),
+          radial-gradient(circle, rgba(255, 215, 0, 0.2) 4%, transparent 4%),
+          white;
+        background-size: 20px 20px, 40px 40px, 60px 60px, 80px 80px, 100% 100%;
+        background-blend-mode: multiply;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 40px;
+        color: #333;
+      }
+
+      .header {
+        text-align: center;
+        padding: 10px;
+        background-color: #030303;
+        color: #ffffff;
+      }
+      .header img {
+        max-width: 80%;
+        height: auto;
+      }
+      .content {
+        padding: 20px;
+      }
+      .section {
+        padding: 20px;
+        border-top: 1px solid #dddddd;
+      }
+      .section:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .section img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+      .section h2 {
+        margin: 20px 0 10px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #212529;
+      }
+      .section p {
+        margin: 10px 0;
+        color: #495057;
+        font-size: 16px;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #343a40;
+        color: #ffffff;
+      }
+      .footer p {
+        margin: 0;
+        font-size: 14px;
+      }
+      .golden-btn + .golden-btn {
+        margin-top: 1em;
+      }
+
+      .golden-btn {
+        display: block; /* Chuyển button thành block element */
+        width: fit-content; /* Đảm bảo button có kích thước phù hợp với nội dung */
+        margin: 20px auto;
+        /*  */
+        /* display: inline-block; */
+        outline: none;
+        font-family: inherit;
+        font-size: 1em;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 0.3em;
+        height: 2.75em;
+        line-height: 2.5em;
+        text-transform: uppercase;
+        padding: 0 1em;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16),
+          0 3px 6px rgba(110, 80, 20, 0.4),
+          inset 0 -2px 5px 1px rgba(139, 66, 8, 1),
+          inset 0 -1px 1px 3px rgba(250, 227, 133, 1);
+        background-image: linear-gradient(
+          160deg,
+          #a54e07,
+          #b47e11,
+          #fef1a2,
+          #bc881b,
+          #a54e07
+        );
+        border: 1px solid #a55d07;
+        color: rgb(120, 50, 5);
+        text-shadow: 0 2px 2px rgba(250, 227, 133, 1);
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      .golden-btn:focus,
+      .golden-btn:hover {
+        background-size: 150% 150%;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
+          0 6px 6px rgba(0, 0, 0, 0.23), inset 0 -2px 5px 1px #b17d10,
+          inset 0 -1px 1px 3px rgba(250, 227, 133, 1);
+        border: 1px solid rgba(165, 93, 7, 0.6);
+        color: rgba(120, 50, 5, 0.8);
+      }
+      .golden-btn:active {
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16),
+          0 3px 6px rgba(110, 80, 20, 0.4), inset 0 -2px 5px 1px #b17d10,
+          inset 0 -1px 1px 3px rgba(250, 227, 133, 1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <!-- <img src="cid:image1.0" alt="Sun Symphony Residence Logo" /> -->
+        <img
+          src="../static/image/symphony_logo.png"
+          alt="Project Overview Image"
+        />
+      </div>
+      <div class="content">
+        <h2>Kính gửi {{HeaderName}} !</h2>
+        <p>
+          Em xin phép gửi {{HeaderName}} một dự án có quy mô lớn nhất Đà Nẵng,
+          nằm ngay trực tiếp mặt sông Hàn, gần cửa biển và sát núi Sơn Trà. Đây
+          là một dự án hiếm có và quy mô lớn nhất chưa từng có đến nay
+        </p>
+
+        <div class="section glass">
+          <h2>Tổng quan dự án</h2>
+          <p>Mô tả tổng quan dự án.</p>
+          <img
+            src="../static/image/overview.jpg"
+            alt="Project Overview Image"
+          />
+          <!-- <img src="cid:image1.2" alt="Project Overview Image" /> -->
+        </div>
+        <div style="height: 20px"></div>
+        <div class="section glass">
+          <h2>Vị trí dự án</h2>
+          <p>Mô tả vị trí dự án.</p>
+          <img
+            src="../static/image/position.jpg"
+            alt="Project Overview Image"
+          />
+          <!-- <img
+            src="cid:image1.1"
+            alt="Project Location Image"
+          /> -->
+        </div>
+
+        <div style="height: 20px"></div>
+        <div class="section glass">
+          <h2>Các tiện ích dự án</h2>
+          <p>Mô tả tiện ích dự án.</p>
+          <img
+            src="../static/image/amentities1.jpg"
+            alt="Project Overview Image"
+          />
+          <!-- <img src="cid:image1.3" alt="Project Amenities Image" /> -->
+          <p>
+            Dự án sở hữu công viên Central park hơn 5000m2 và 3 bến thủy du
+            thuyền xa xỉ.
+          </p>
+          <img
+            src="../static/image/amentities1.jpg"
+            alt="Project Overview Image"
+          />
+          <!-- <img src="cid:image1.5" alt="Project Amenities Image" /> -->
+        </div>
+
+        <div style="height: 20px"></div>
+        <div class="section glass">
+          <h2>Chính sách bán hàng</h2>
+          <p>
+            Chúng tôi có các chính sách ưu đãi đặc biệt cho khách hàng đặt mua
+            sớm và nhiều phương thức thanh toán linh hoạt.
+          </p>
+          <img
+            src="../static/image/sale-policy.jpg"
+            alt="Project Overview Image"
+          />
+          <!-- <img src="cid:image1.4" alt="Sales Policy Image" /> -->
+        </div>
+
+        <p>
+          Quý khách có nhu cầu xem nhà hoặc cần thêm thông tin, vui lòng liên hệ
+          với chúng tôi qua email hoặc số điện thoại bên dưới.
+        </p>
+        <a
+          href="https://zalo.me/0795737384"
+          target="_blank"
+          class="golden-btn"
+          style="font-size: 1em; text-decoration: none"
+          >Liên hệ ngay</a
+        >
+      </div>
+      <div class="footer">
+        <p>
+          NGUYỄN THÀNH CÔNG | Bất động sản cao cấp Đà Nẵng | Điện thoại: 0795
+          737 384
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -15,7 +15,7 @@ public class WebController {
 	@GetMapping("/")
 	public String test(Model model) {
 
-		return "trang-chu";
+		return "redirect:/crm-email-pannel";
 	}
 	
 	
