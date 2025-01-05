@@ -48,7 +48,8 @@ public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 		}
 		model.addAttribute("userResponse", userResponse);
 
-		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT-ViewForm/IVC-CRM-EmailMKT-FormStandard";
+//		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT-ViewForm/IVC-CRM-EmailMKT-FormStandard";
+		return "/crm-email-formstandard-pannel";
 	}
 	
 	/*
