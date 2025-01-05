@@ -357,7 +357,7 @@ public class SuncosmoSuccess250923 {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Đã gửi");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 
 
 			//Send
@@ -367,7 +367,7 @@ public class SuncosmoSuccess250923 {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Error");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 			e.printStackTrace();
 		}
 	}

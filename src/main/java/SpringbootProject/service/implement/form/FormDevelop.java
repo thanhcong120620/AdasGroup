@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import SpringbootProject.algorithms.HTMLFileToString;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.HTMLFileToString;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.ThymeleafService;
@@ -111,7 +111,7 @@ public class FormDevelop {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Đã gửi");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 
 			//Send
 			Transport.send(message);
@@ -120,7 +120,7 @@ public class FormDevelop {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Error");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 			e.printStackTrace();
 		}
 	}

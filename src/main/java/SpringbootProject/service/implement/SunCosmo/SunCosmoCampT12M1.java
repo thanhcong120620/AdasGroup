@@ -1904,7 +1904,7 @@ public class SunCosmoCampT12M1 {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Đã gửi");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 
 
 			//Send
@@ -1914,7 +1914,7 @@ public class SunCosmoCampT12M1 {
 			//Set status
 			UserEntity user = userService.findById(id);
 			user.setStatus("Error");
-			userService.save(user);
+			userService.userCreateUpdate(user);
 			e.printStackTrace();
 		}
 	}

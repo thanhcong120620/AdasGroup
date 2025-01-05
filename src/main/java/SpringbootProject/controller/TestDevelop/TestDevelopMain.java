@@ -1,6 +1,6 @@
-package SpringbootProject.algorithms.TestDevelop;
+package SpringbootProject.controller.TestDevelop;
 
-import SpringbootProject.algorithms.GmailProcess;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.GmailProcess;
 
 public class TestDevelopMain {
 	GmailProcess gmailProcess = new GmailProcess();	

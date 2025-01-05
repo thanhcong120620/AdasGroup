@@ -1,4 +1,4 @@
-package SpringbootProject.algorithms.TestDevelop;
+package SpringbootProject.controller.TestDevelop;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

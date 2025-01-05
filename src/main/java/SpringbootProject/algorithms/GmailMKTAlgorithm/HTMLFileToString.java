@@ -1,4 +1,4 @@
-package SpringbootProject.algorithms;
+package SpringbootProject.algorithms.GmailMKTAlgorithm;
 
 import java.io.IOException;
 import java.nio.file.Files;

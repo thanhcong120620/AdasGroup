@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import SpringbootProject.algorithms.GmailProcess;
-import SpringbootProject.algorithms.NameProcess;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.GmailProcess;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.NameProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.form.FormDevelop;

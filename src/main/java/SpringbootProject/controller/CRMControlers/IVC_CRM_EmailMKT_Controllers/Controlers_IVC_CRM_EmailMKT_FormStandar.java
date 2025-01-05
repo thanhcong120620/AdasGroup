@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import SpringbootProject.algorithms.GmailProcess;
-import SpringbootProject.algorithms.NameProcess;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.GmailProcess;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.NameProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.form.FormDevelop;
@@ -39,7 +39,7 @@ public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 	
 	/*------------------------------------------CRM - -EMAIL - CONTROLLER------------------------------------*/	
 	
-	@GetMapping("/crm-email-formstandard-pannel")
+	@GetMapping("/crm-email-formstandard-pannel-thymleaf")
 	public String crmEmailPannel(Model model) {
 
 		List<UserEntity> userResponse = userService.findAllUser();
@@ -48,8 +48,8 @@ public class Controlers_IVC_CRM_EmailMKT_FormStandar {
 		}
 		model.addAttribute("userResponse", userResponse);
 
-//		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT-ViewForm/IVC-CRM-EmailMKT-FormStandard";
-		return "/crm-email-formstandard-pannel";
+		return "/app/IVC-CRM/IVC-CRM-View/IVC-CRM-EmailMKT-ViewForm/IVC-CRM-EmailMKT-FormStandard";
+//		return "/crm-email-formstandard-pannel";
 	}
 	
 	/*
