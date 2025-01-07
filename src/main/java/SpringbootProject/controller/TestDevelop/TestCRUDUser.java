@@ -5,18 +5,23 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 
-@Controller
+
+
+@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*") 
+@RequestMapping("/users")
+@RestController // Thay @Controller bằng @RestController
 public class TestCRUDUser {
 	@Autowired
 	private IUser userService;
@@ -52,10 +57,9 @@ public class TestCRUDUser {
 	 * Dùng khi bạn muốn trả về dữ liệu từ server, ví dụ như khi truy vấn dữ liệu từ cơ sở dữ liệu hoặc khi lấy thông tin.
 	 * */
 	@GetMapping("/test-crud-show-userList")
-	public ResponseEntity<String> showUserList() {
-		List<UserEntity> userResponse = userService.findAllUser();
-
-		return ResponseEntity.ok("User list: " + userResponse);
+	public ResponseEntity<List<UserEntity>> showUserList() {
+	    List<UserEntity> userResponse = userService.findAllUser();
+	    return ResponseEntity.ok(userResponse); // Trả về danh sách người dùng dưới dạng JSON
 	}
 	
 	
