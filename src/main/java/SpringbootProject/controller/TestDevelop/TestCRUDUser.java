@@ -19,9 +19,9 @@ import SpringbootProject.service.IUser;
 
 
 
-@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*") 
+//@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*") 
 @RequestMapping("/users")
-@RestController // Thay @Controller bằng @RestController
+@RestController 
 public class TestCRUDUser {
 	@Autowired
 	private IUser userService;
