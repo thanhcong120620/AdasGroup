@@ -58,5 +58,7 @@ public class UserEntity extends BaseEntity {
 		return "UserEntity [fullName=" + fullName + ", genderUser=" + genderUser + ", gmail=" + gmail + ", status="
 				+ status + "]";
 	}
+	
+	//Note: Nếu sử file entity, hãy sửa các file phụ thuộc dữ liệu bởi UserEntity trong package (IOAlgorithm; GmailMKTAlgorithm)
 
 }
