@@ -13,12 +13,16 @@ public class WebController {
 	/*------------------------------------------WEB CONTROLLER------------------------------------*/
 	
 	@GetMapping("/")
-	public String test(Model model) {
+	public String home(Model model) {
 
-		return "redirect:/crm-emailMKT-pannel";
+		return "redirect:/index";
 	}
 	
-	
+	@GetMapping("/index")
+	public String index(Model model) {
+
+		return "index-total";
+	}
 
 	
 }
