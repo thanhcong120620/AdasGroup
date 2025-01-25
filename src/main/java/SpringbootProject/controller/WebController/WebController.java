@@ -1,4 +1,4 @@
-package SpringbootProject.controller;
+package SpringbootProject.controller.WebController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +14,8 @@ public class WebController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-
-		return "redirect:/index";
+System.out.println("web controller");
+		return "redirect:/crm-emailMKT-pannel-thymleaf";
 	}
 	
 	@GetMapping("/index")

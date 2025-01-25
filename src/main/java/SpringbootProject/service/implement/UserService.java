@@ -53,7 +53,19 @@ public class UserService implements IUser {
 	@Override
 	public List<UserEntity> findAllUser() {
 		List<UserEntity> UserList = userRepository.findAll();
-		return UserList;
+		if(UserList.size() == 0) {
+			System.out.println("User data is null !");
+			UserEntity demoUser = new UserEntity();
+			demoUser.setFullName("- -");
+			demoUser.setGenderUser("-");
+			demoUser.setGmail("-");
+			demoUser.setStatus("-");
+			UserList.add(demoUser);
+			return UserList;
+		} else {
+			return UserList;
+		}
+		
 	}
 
 	@Override

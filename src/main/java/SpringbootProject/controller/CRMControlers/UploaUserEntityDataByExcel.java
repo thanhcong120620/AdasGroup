@@ -31,17 +31,17 @@ public class UploaUserEntityDataByExcel {
 	 * Chạy trên thymleaf
 	 * Upload danh sách UserEntity bằng file Excel từ client
 	 * */
-	@PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile[] files) throws IllegalStateException, IOException {
-		System.out.println("1");
-		
-        IOFunction ioFunction = new IOFunction();
-        List<UserEntity> users = ioFunction.userListFromExcelFile(files);
-        
-        for (UserEntity user : users) {
-            System.out.println("From controller: "+user.getFullName());
-        }
-		
-		return "/TestDevelop/dataFromExcel";
-	}
+//	@PostMapping("/upload")
+//    public String handleFileUpload(@RequestParam("file") MultipartFile[] files) throws IllegalStateException, IOException {
+//		System.out.println("1");
+//		
+//        IOFunction ioFunction = new IOFunction();
+//        List<UserEntity> users = ioFunction.userListFromExcelFile(files);
+//        
+//        for (UserEntity user : users) {
+//            System.out.println("From controller: "+user.getFullName());
+//        }
+//		
+//		return "/TestDevelop/dataFromExcel";
+//	}
 }
