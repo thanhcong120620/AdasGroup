@@ -104,19 +104,24 @@
 </dependency>
 
 
-<!-- Web Socket -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-websocket</artifactId>
-</dependency>
+<!-- Map Struct -->
+    <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct</artifactId>
+        <version>1.5.2.Final</version> <!-- Hoặc phiên bản mới nhất -->
+    </dependency>
+    <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct-processor</artifactId>
+        <version>1.5.2.Final</version> <!-- Phiên bản tương ứng -->
+        <scope>provided</scope>
+    </dependency>
 
 
 
+            
+</dependencies>
 
-
-        
-        
-    </dependencies>
      
     <build>
         <plugins>
@@ -124,6 +129,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            
         </plugins>
     </build>
   
