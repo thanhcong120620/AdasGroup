@@ -5,14 +5,16 @@ import java.util.Scanner;
 
 import SpringbootProject.algorithms.IOAlgorithm.AlgorithmReaderExcel;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
-import SpringbootProject.entity.UserEntity;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-		 algorithmTest();
+		algorithmReaderTest();
 //		printSentences();
+//		algorithmWritterTest();
+		
+		
 
 	}
 	
@@ -57,7 +59,7 @@ public class TestMain {
 	/*
 	 * 
 	 * */
-	public static void algorithmTest() {
+	public static void algorithmReaderTest() {
 		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
 		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
 		
@@ -70,5 +72,18 @@ public class TestMain {
         }
 	}
 	
+	
+	/*
+	 * 
+	 * */
+	public static void algorithmWritterTest() {
+		String filePathSaving = "D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx";
+		 // Giả sử bạn có một list các entity
+       List<ExcelObject> excelObjectList = List.of(
+           new ExcelObject("Value122", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20"),
+           new ExcelObject("Value1", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20")
+       );
+       IOFunction.algorithmWitter(filePathSaving, excelObjectList);
+	}
 
 }

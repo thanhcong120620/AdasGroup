@@ -5,7 +5,37 @@ package SpringbootProject.entity.notSaving;
 
 //@Entity
 public class ExcelObject   {
-	private String phoneColumn;
+
+	
+	
+public ExcelObject(String column1, String column2, String column3, String column4, String column5, String column6,
+			String column7, String column8, String column9, String column10, String column11, String column12,
+			String column13, String column14, String column15, String column16, String column17, String column18,
+			String column19, String column20) {
+		
+		this.column1 = column1;
+		this.column2 = column2;
+		this.column3 = column3;
+		this.column4 = column4;
+		this.column5 = column5;
+		this.column6 = column6;
+		this.column7 = column7;
+		this.column8 = column8;
+		this.column9 = column9;
+		this.column10 = column10;
+		this.column11 = column11;
+		this.column12 = column12;
+		this.column13 = column13;
+		this.column14 = column14;
+		this.column15 = column15;
+		this.column16 = column16;
+		this.column17 = column17;
+		this.column18 = column18;
+		this.column19 = column19;
+		this.column20 = column20;
+	}
+
+//	private String phoneColumn;
 
 	private String column1;
 
@@ -47,13 +77,13 @@ public class ExcelObject   {
 	
 	private String column20;
 
-	public String getPhoneColumn() {
-		return phoneColumn;
-	}
-
-	public void setPhoneColumn(String phoneColmn) {
-		this.phoneColumn = phoneColmn;
-	}
+//	public String getPhoneColumn() {
+//		return phoneColumn;
+//	}
+//
+//	public void setPhoneColumn(String phoneColmn) {
+//		this.phoneColumn = phoneColmn;
+//	}
 
 	public String getColumn1() {
 		return column1;
@@ -217,7 +247,7 @@ public class ExcelObject   {
 
 	@Override
 	public String toString() {
-		return "ExcelObject [phoneColumn=" + phoneColumn + ", column1=" + column1 + ", column2=" + column2 + ", column3="
+		return "ExcelObject [column1=" + column1 + ", column2=" + column2 + ", column3="
 				+ column3 + ", column4=" + column4 + ", column5=" + column5 + ", column6=" + column6 + ", column7="
 				+ column7 + ", column8=" + column8 + ", column9=" + column9 + ", column10=" + column10 + ", column11="
 				+ column11 + ", column12=" + column12 + ", column13=" + column13 + ", column14=" + column14

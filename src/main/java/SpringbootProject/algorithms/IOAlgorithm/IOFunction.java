@@ -18,10 +18,62 @@ public class IOFunction {
 	
 //-----------------------------------------FUNCTION----------------------------------------------------------	
 	
+	
+	/*
+	 * 
+	 * */
+	public static void algorithmWitter(String filePathSaving, List<ExcelObject> excelObjectList) {
+		
+        try {
+        	AlgorithmWritterExcel.writeToExcel(excelObjectList, filePathSaving);
+            System.out.println("File Excel đã được ghi thành công!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	
+	/*
+	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * */
+	public static void getDataFromExcel(File file) {
+		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
+//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+		
+		//use function from iofunction
+		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(file);
+		
+		//check result
+       for (ExcelObject excelObject : excelObjects) {
+           System.out.println(">>"+excelObject);
+       }
+	}
+	
+	
+	
+	
+	
+	/*
+	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * */
+	public static void getDataFromExcel(String filePath) {
+		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
+//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+		
+		//use function from iofunction
+		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(filePath);
+		
+		//check result
+       for (ExcelObject excelObject : excelObjects) {
+           System.out.println(">>"+excelObject);
+       }
+	}
+	
+	
 	/*
 	 * Đọc File được lấy trực tiếp từ client
 	 * */
-	public List<ExcelObject> dataFromExcelFile(MultipartFile[] files) throws IllegalStateException, IOException {
+	public List<ExcelObject> dataFromExcelFileAndSaveToProject(MultipartFile[] files) throws IllegalStateException, IOException {
 		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
     	List<ExcelObject> excelObjects = new ArrayList<ExcelObject>();
     	
@@ -48,27 +100,6 @@ public class IOFunction {
         
         return excelObjects;
     }
-	
-	
-	
-	/*
-	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
-	 * */
-	public static void getDataFromExcel(String filePath) {
-		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
-//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
-		
-		//use function from iofunction
-		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(filePath);
-		
-		//check result
-       for (ExcelObject excelObject : excelObjects) {
-           System.out.println(">>"+excelObject);
-       }
-	}
-	
-	
-	
 	
 	
 	//-----------------------------------------FUNCTION of Entity User---------------------------------------------------	

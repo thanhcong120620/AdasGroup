@@ -21,13 +21,16 @@ public class AlgorithmReaderExcel {
 	
 
 	
+	
 //	----------------------------------------Reading---------------------------------------------
-
-    // Hàm đọc file Excel và trả về danh sách người dùng
-    public List<ExcelObject> readExcelFile(String filePath) {
+	
+	
+    // Hàm đọc file Excel bằng file trực tiếp và trả về danh sách người dùng
+	public List<ExcelObject> readExcelFile(File file) {
         List<ExcelObject> excelObjects = new ArrayList<>();
 
-        try (FileInputStream fis = new FileInputStream(new File(filePath))) {
+//        try (FileInputStream fis = new FileInputStream(new File(filePath))) {
+          try (FileInputStream fis = new FileInputStream(file)) {
             Workbook workbook = WorkbookFactory.create(fis);
             Sheet sheet = workbook.getSheetAt(0);  // Lấy sheet đầu tiên
 
@@ -73,27 +76,73 @@ public class AlgorithmReaderExcel {
                 String column20 = getCellValueAsString(row.getCell(19));  
 
                 // Tạo đối tượng User và thêm vào danh sách
-                ExcelObject excelObject = new ExcelObject();
-                excelObject.setColumn1(column1);
-                excelObject.setColumn2(column2);
-                excelObject.setColumn3(column3);
-                excelObject.setColumn4(column4);
-                excelObject.setColumn5(column5);
-                excelObject.setColumn6(column6);
-                excelObject.setColumn7(column7);
-                excelObject.setColumn8(column8);
-                excelObject.setColumn9(column9);
-                excelObject.setColumn10(column10);
-                excelObject.setColumn11(column11);
-                excelObject.setColumn12(column12);
-                excelObject.setColumn13(column13);
-                excelObject.setColumn14(column14);
-                excelObject.setColumn15(column15);
-                excelObject.setColumn16(column16);
-                excelObject.setColumn17(column17);
-                excelObject.setColumn18(column18);
-                excelObject.setColumn19(column19);
-                excelObject.setColumn20(column20);
+                ExcelObject excelObject = new ExcelObject(column1,column2,column3,column4,column5,column6,column7,column8,
+                		column9,column10,column11,column12,column13,column14,column15,column16,column17,column18,column19,
+                		column20);
+                
+                excelObjects.add(excelObject);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Lỗi khi đọc tệp Excel: " + e.getMessage());
+        }
+
+        return excelObjects;
+    }
+
+    // Hàm đọc file Excel bằng path và trả về danh sách người dùng 
+    public List<ExcelObject> readExcelFile(String filePath) {
+        List<ExcelObject> excelObjects = new ArrayList<>();
+
+//        try (FileInputStream fis = new FileInputStream(new File(filePath))) {
+          try (FileInputStream fis = new FileInputStream(new File(filePath))) {
+            Workbook workbook = WorkbookFactory.create(fis);
+            Sheet sheet = workbook.getSheetAt(0);  // Lấy sheet đầu tiên
+
+            // Đọc dòng tiêu đề (header)
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null) {
+                throw new IllegalStateException("Tệp Excel không có dòng tiêu đề!");
+            }
+
+            // Lưu tên cột vào danh sách
+            List<String> headers = new ArrayList<>();
+            for (Cell cell : headerRow) {
+                headers.add(cell.getStringCellValue());
+            }
+
+            // Đọc dữ liệu từ các dòng tiếp theo, bắt đầu từ dòng thứ 1
+            for (int rowIndex = 0; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+                if (row == null || isRowEmpty(row)) {  // Kiểm tra nếu hàng trống
+                    continue;
+                }
+
+             // Trực tiếp tạo đối tượng ExcelObject mà không cần mảng
+                ExcelObject excelObject = new ExcelObject(
+                    getCellValueAsString(row.getCell(0)),
+                    getCellValueAsString(row.getCell(1)),
+                    getCellValueAsString(row.getCell(2)),
+                    getCellValueAsString(row.getCell(3)),
+                    getCellValueAsString(row.getCell(4)),
+                    getCellValueAsString(row.getCell(5)),
+                    getCellValueAsString(row.getCell(6)),
+                    getCellValueAsString(row.getCell(7)),
+                    getCellValueAsString(row.getCell(8)),
+                    getCellValueAsString(row.getCell(9)),
+                    getCellValueAsString(row.getCell(10)),
+                    getCellValueAsString(row.getCell(11)),
+                    getCellValueAsString(row.getCell(12)),
+                    getCellValueAsString(row.getCell(13)),
+                    getCellValueAsString(row.getCell(14)),
+                    getCellValueAsString(row.getCell(15)),
+                    getCellValueAsString(row.getCell(16)),
+                    getCellValueAsString(row.getCell(17)),
+                    getCellValueAsString(row.getCell(18)),
+                    getCellValueAsString(row.getCell(19))
+                );
+
+
                 
                 excelObjects.add(excelObject);
             }
