@@ -1,0 +1,100 @@
+package SpringbootProject.controller.CRMControlers.DataProcess;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import FileUtil.FileUtil;
+import SpringbootProject.algorithms.GmailMKTAlgorithm.PhoneProcess;
+import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
+import SpringbootProject.entity.notSaving.ExcelObject;
+
+
+@Controller
+//@RequestMapping("/download")
+public class DataDuplicate {
+	
+	private static MultipartFile excelFileResponse;
+	private static MultipartFile excelFileError;
+	
+	
+	@GetMapping("/data-process")
+	public String index(Model model) {
+
+		return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+	}
+
+	
+	@PostMapping("/uploadAndFilter")
+    public String handleFileUpload( @RequestParam("excelFile1") MultipartFile file1,
+            @RequestParam("excelFile2") MultipartFile file2,
+            RedirectAttributes redirectAttributes) throws IllegalStateException, IOException {
+
+		
+        IOFunction ioFunction = new IOFunction();
+        PhoneProcess phoneProcess = new PhoneProcess();
+        
+		File tempFileOrigin = FileUtil.convertMultipartFileToFile(file1);
+        File tempFileFilter = FileUtil.convertMultipartFileToFile(file2);
+        
+        
+        List<ExcelObject> excelObjectListOrigin = ioFunction.getDataFromExcel(tempFileOrigin);
+        List<ExcelObject> excelObjectListFilter = ioFunction.getDataFromExcel(tempFileFilter);
+        
+        List<ExcelObject> excelObjectListResponse = phoneProcess.deletePhoneDuplicateWithOtherData(excelObjectListOrigin, excelObjectListFilter);
+        List<ExcelObject> excelObjectListError = phoneProcess.getDeletedPhoneDuplicates();
+        
+        excelFileResponse = ioFunction.algorithmWitterMultipartFile(excelObjectListResponse);
+        excelFileError = ioFunction.algorithmWitterMultipartFile(excelObjectListError);
+        
+		return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+	}
+	
+
+	 // Phương thức tải xuống file Excel 1
+    @GetMapping("/excel-response")
+    public ResponseEntity<ByteArrayResource> downloadExcelFile1() throws IOException {
+    	ByteArrayResource resource = new ByteArrayResource(excelFileResponse.getBytes());
+
+        // Tạo headers cho file tải xuống
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excel_file-da-loc.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponse.getSize())
+                .body(resource);
+    }
+
+    // Phương thức tải xuống file Excel 2
+    @GetMapping("/excel-error")
+    public ResponseEntity<ByteArrayResource> downloadExcel2(Model model) throws IOException {
+        ByteArrayResource resource = new ByteArrayResource(excelFileError.getBytes());
+
+        // Tạo headers cho file tải xuống
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excelFileError.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileError.getSize())
+                .body(resource);
+    }
+
+}

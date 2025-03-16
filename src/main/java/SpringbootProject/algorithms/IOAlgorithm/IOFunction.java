@@ -20,7 +20,21 @@ public class IOFunction {
 	
 	
 	/*
-	 * 
+	 * MultipartFile method
+	 * return a MultipartFile excel
+	 * */
+	public MultipartFile algorithmWitterMultipartFile(List<ExcelObject> excelObjectList) throws IOException {
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcel(excelObjectList);
+        
+        return multipartFile;
+	}
+	
+	
+	
+	
+	/*
+	 * Void method
+	 * Save to local, need a path to save
 	 * */
 	public static void algorithmWitter(String filePathSaving, List<ExcelObject> excelObjectList) {
 		
@@ -36,7 +50,7 @@ public class IOFunction {
 	/*
 	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
 	 * */
-	public static void getDataFromExcel(File file) {
+	public List<ExcelObject> getDataFromExcel(File file) {
 		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
 //		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
 		
@@ -44,9 +58,11 @@ public class IOFunction {
 		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(file);
 		
 		//check result
-       for (ExcelObject excelObject : excelObjects) {
-           System.out.println(">>"+excelObject);
-       }
+//       for (ExcelObject excelObject : excelObjects) {
+//           System.out.println(">>"+excelObject);
+//       }
+		
+		return excelObjects;
 	}
 	
 	

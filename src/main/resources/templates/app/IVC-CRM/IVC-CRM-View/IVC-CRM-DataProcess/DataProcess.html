@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upload và Tải File Excel</title>
+    <!-- Thêm liên kết đến Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Chọn các file Excel để tải lên và lọc dữ liệu</h1>
+        
+        <!-- Form để tải lên 2 file Excel -->
+        <form action="#" th:action="@{/uploadAndFilter}" method="post" enctype="multipart/form-data" class="border p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label for="excelFile1" class="form-label">Tải lên file Excel gốc:</label>
+                <input type="file" id="excelFile1" name="excelFile1" accept=".xlsx,.xls" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label for="excelFile2" class="form-label">Tải lên file Excel cần lọc:</label>
+                <input type="file" id="excelFile2" name="excelFile2" accept=".xlsx,.xls" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Tải lên và Lọc</button>
+        </form>
+
+        <!-- Nếu file đã được lọc thành công, cung cấp nút tải xuống -->
+        <div th:if="${filteredFileUrl != null}" class="mt-4 text-center">
+            <h2>File đã được lọc, tải xuống ngay:</h2>
+            <a th:href="@{${filteredFileUrl}}" download="filteredFile.xlsx">
+                <button class="btn btn-success">Tải file Excel đã lọc xuống</button>
+            </a>
+        </div>
+    </div>
+    
+    
+    <!-- Download Excel Files -->
+        <div class="mt-4">
+            <h3>Download Result</h3>
+            <a href="/excel-response" class="btn btn-success">Tải file đã lọc</a>
+            <a href="/excel-error" class="btn btn-success">Tải file data trùng lặp</a>
+        </div>
+
+    <!-- Thêm Bootstrap JS và Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

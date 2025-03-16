@@ -52,33 +52,53 @@ public class AlgorithmReaderExcel {
                 if (row == null || isRowEmpty(row)) {  // Kiểm tra nếu hàng trống
                     continue;
                 }
+                
+                String numberStr = String.valueOf(getCellValueAsString(row.getCell(0)));
+                String cleanedPhone = numberStr.replace(",", "").replace(".", "").replace(" ", "");
 
                 // Lấy dữ liệu từ các ô và tạo đối tượng User
-                String column1 = getCellValueAsString(row.getCell(0));  
-                String column2 = getCellValueAsString(row.getCell(1));    
-                String column3 = getCellValueAsString(row.getCell(2));     
-                String column4 = getCellValueAsString(row.getCell(3));   
-                String column5 = getCellValueAsString(row.getCell(4));    
-                String column6 = getCellValueAsString(row.getCell(5));     
-                String column7 = getCellValueAsString(row.getCell(6));  
-                String column8 = getCellValueAsString(row.getCell(7));    
-                String column9 = getCellValueAsString(row.getCell(8));     
-                String column10 = getCellValueAsString(row.getCell(9));
-                String column11 = getCellValueAsString(row.getCell(10));  
-                String column12 = getCellValueAsString(row.getCell(11));    
-                String column13 = getCellValueAsString(row.getCell(12));     
-                String column14 = getCellValueAsString(row.getCell(13));   
-                String column15 = getCellValueAsString(row.getCell(14));    
-                String column16 = getCellValueAsString(row.getCell(15));     
-                String column17 = getCellValueAsString(row.getCell(16));  
-                String column18 = getCellValueAsString(row.getCell(17));    
-                String column19 = getCellValueAsString(row.getCell(18));     
-                String column20 = getCellValueAsString(row.getCell(19));  
+//                String column2 = getCellValueAsString(row.getCell(1));    
+//                String column3 = getCellValueAsString(row.getCell(2));     
+//                String column4 = getCellValueAsString(row.getCell(3));   
+//                String column5 = getCellValueAsString(row.getCell(4));    
+//                String column6 = getCellValueAsString(row.getCell(5));     
+//                String column7 = getCellValueAsString(row.getCell(6));  
+//                String column8 = getCellValueAsString(row.getCell(7));    
+//                String column9 = getCellValueAsString(row.getCell(8));     
+//                String column10 = getCellValueAsString(row.getCell(9));
+//                String column11 = getCellValueAsString(row.getCell(10));  
+//                String column12 = getCellValueAsString(row.getCell(11));    
+//                String column13 = getCellValueAsString(row.getCell(12));     
+//                String column14 = getCellValueAsString(row.getCell(13));   
+//                String column15 = getCellValueAsString(row.getCell(14));    
+//                String column16 = getCellValueAsString(row.getCell(15));     
+//                String column17 = getCellValueAsString(row.getCell(16));  
+//                String column18 = getCellValueAsString(row.getCell(17));    
+//                String column19 = getCellValueAsString(row.getCell(18));     
+//                String column20 = getCellValueAsString(row.getCell(19));  
 
                 // Tạo đối tượng User và thêm vào danh sách
-                ExcelObject excelObject = new ExcelObject(column1,column2,column3,column4,column5,column6,column7,column8,
-                		column9,column10,column11,column12,column13,column14,column15,column16,column17,column18,column19,
-                		column20);
+                ExcelObject excelObject = new ExcelObject(cleanedPhone,getCellValueAsString(row.getCell(1)),
+                        getCellValueAsString(row.getCell(2)),
+                        getCellValueAsString(row.getCell(3)),
+                        getCellValueAsString(row.getCell(4)),
+                        getCellValueAsString(row.getCell(5)),
+                        getCellValueAsString(row.getCell(6)),
+                        getCellValueAsString(row.getCell(7)),
+                        getCellValueAsString(row.getCell(8)),
+                        getCellValueAsString(row.getCell(9)),
+                        getCellValueAsString(row.getCell(10)),
+                        getCellValueAsString(row.getCell(11)),
+                        getCellValueAsString(row.getCell(12)),
+                        getCellValueAsString(row.getCell(13)),
+                        getCellValueAsString(row.getCell(14)),
+                        getCellValueAsString(row.getCell(15)),
+                        getCellValueAsString(row.getCell(16)),
+                        getCellValueAsString(row.getCell(17)),
+                        getCellValueAsString(row.getCell(18)),
+                        getCellValueAsString(row.getCell(19)));
+                
+                System.out.println(">> Check phone format" + excelObject.toString());
                 
                 excelObjects.add(excelObject);
             }
