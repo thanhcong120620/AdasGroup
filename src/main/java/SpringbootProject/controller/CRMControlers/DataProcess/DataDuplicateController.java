@@ -32,7 +32,7 @@ import SpringbootProject.entity.notSaving.ExcelObject;
 
 @Controller
 //@RequestMapping("/download")
-public class DataDuplicate {
+public class DataDuplicateController {
 	
 	private static MultipartFile excelFileResponse;
 	private static MultipartFile excelFileError;
@@ -48,7 +48,7 @@ public class DataDuplicate {
 	@PostMapping("/uploadAndFilter")
     public String handleFileUpload( @RequestParam("excelFile1") MultipartFile file1,
             @RequestParam("excelFile2") MultipartFile file2,
-            RedirectAttributes redirectAttributes) throws IllegalStateException, IOException {
+            RedirectAttributes redirectAttributes, Model model) throws IllegalStateException, IOException {
 
 		
         IOFunction ioFunction = new IOFunction();
@@ -66,6 +66,11 @@ public class DataDuplicate {
         
         excelFileResponse = ioFunction.algorithmWitterMultipartFile(excelObjectListResponse);
         excelFileError = ioFunction.algorithmWitterMultipartFile(excelObjectListError);
+        
+        String[] countStatus = phoneProcess.getCountStatus();
+        
+        model.addAttribute("statusMessage", countStatus[0]);
+        model.addAttribute("errorMessage", countStatus[1]);
         
 		return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
 	}
