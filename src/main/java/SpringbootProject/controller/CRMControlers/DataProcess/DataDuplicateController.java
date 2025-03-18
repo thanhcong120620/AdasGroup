@@ -4,25 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import FileUtil.FileUtil;
 import SpringbootProject.algorithms.GmailMKTAlgorithm.PhoneProcess;
@@ -60,6 +52,7 @@ public class DataDuplicateController {
         
         List<ExcelObject> excelObjectListOrigin = ioFunction.getDataFromExcel(tempFileOrigin);
         List<ExcelObject> excelObjectListFilter = ioFunction.getDataFromExcel(tempFileFilter);
+//        System.out.println(excelObjectListFilter.toString());
         
         List<ExcelObject> excelObjectListResponse = phoneProcess.deletePhoneDuplicateWithOtherData(excelObjectListOrigin, excelObjectListFilter);
         List<ExcelObject> excelObjectListError = phoneProcess.getDeletedPhoneDuplicates();

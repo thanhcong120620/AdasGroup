@@ -252,7 +252,7 @@ public ExcelObject(String column1, String column2, String column3, String column
 				+ column7 + ", column8=" + column8 + ", column9=" + column9 + ", column10=" + column10 + ", column11="
 				+ column11 + ", column12=" + column12 + ", column13=" + column13 + ", column14=" + column14
 				+ ", column15=" + column15 + ", column16=" + column16 + ", column17=" + column17 + ", column18="
-				+ column18 + ", column19=" + column19 + ", column20=" + column20 + "]";
+				+ column18 + ", column19=" + column19 + ", column20=" + column20 + "]" +"\n";
 	}
 
 	

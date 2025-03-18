@@ -53,7 +53,8 @@ public class IOFunction {
 	public List<ExcelObject> getDataFromExcel(File file) {
 		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
 //		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
-		
+
+//	    System.out.println("IOFunction");
 		//use function from iofunction
 		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(file);
 		

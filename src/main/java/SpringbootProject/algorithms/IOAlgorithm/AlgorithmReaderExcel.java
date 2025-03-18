@@ -31,6 +31,7 @@ public class AlgorithmReaderExcel {
         List<ExcelObject> excelObjects = new ArrayList<>();
         PhoneProcess phoneProcess = new PhoneProcess();
 
+//	    System.out.println("AlgorithmReaderExcel");
 //        try (FileInputStream fis = new FileInputStream(new File(filePath))) {
           try (FileInputStream fis = new FileInputStream(file)) {
             Workbook workbook = WorkbookFactory.create(fis);
