@@ -51,15 +51,20 @@
         <div th:if="${errorMessage}" class="alert alert-danger text-center">
             <strong th:text="${errorMessage}"></strong>
         </div>
+        
+        
+        <div th:if="${notValidMessage}" class="alert alert-danger text-center">
+            <strong th:text="${notValidMessage}"></strong>
+        </div>
 
         <!-- Form Upload -->
         <form th:action="@{/uploadAndFilter}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label class="form-label">Chọn file Excel gốc:</label>
+                <label class="form-label">Chọn file Excel gốc (file này giữ nguyên không thể sửa đổi):</label>
                 <input type="file" name="excelFile1" accept=".xlsx,.xls" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">Chọn file Excel cần lọc:</label>
+                <label class="form-label">Chọn file Excel cần lọc (file này sẽ bị sửa đổi):</label>
                 <input type="file" name="excelFile2" accept=".xlsx,.xls" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Tải lên và Lọc</button>

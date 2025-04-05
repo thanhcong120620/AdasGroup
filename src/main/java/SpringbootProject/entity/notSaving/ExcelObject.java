@@ -6,6 +6,7 @@ package SpringbootProject.entity.notSaving;
 //@Entity
 public class ExcelObject   {
 
+	public ExcelObject() {}
 	
 	
 public ExcelObject(String column1, String column2, String column3, String column4, String column5, String column6,
