@@ -19,27 +19,31 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import FileUtil.FileUtil; // Đảm bảo class này tồn tại và đúng vị trí
-import SpringbootProject.algorithms.GmailMKTAlgorithm.PhoneProcess;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction; // Đảm bảo class này tồn tại và đúng vị trí
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.notSaving.ExcelObject; // Đảm bảo class này tồn tại và đúng vị trí
 
 
 @Controller
 //@RequestMapping("/download") // Có thể bỏ comment nếu cần prefix chung
-public class DataDuplicateController {
+public class DataExcelProcessController {
 
     // Logger để ghi lại thông tin và lỗi
-    private static final Logger logger = LoggerFactory.getLogger(DataDuplicateController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
 
     // --- CẢNH BÁO: Sử dụng biến static cho state giữa các request là KHÔNG THREAD-SAFE ---
     // Trong môi trường sản xuất với nhiều người dùng đồng thời, các biến này sẽ bị ghi đè
     // dẫn đến người dùng có thể download nhầm file của người khác hoặc gặp lỗi.
     // Cần xem xét các giải pháp khác như lưu vào session, database, hoặc thư mục tạm với tên duy nhất.
-    private static MultipartFile excelFileResponse;
-    private static MultipartFile excelFileError;
+    private static MultipartFile excelFileResponseFilter;
+    private static MultipartFile excelFileErrorFilter;
+    private static MultipartFile excelFileResponseMerge;
     // --- KẾT THÚC CẢNH BÁO ---
 
 
+    /*
+     * TRUY CẬP VÀO THYMLEAF
+     * */
     @GetMapping("/data-process")
     public String index(Model model) {
         // Có thể thêm logic xóa file cũ hoặc reset trạng thái ở đây nếu cần
@@ -48,8 +52,39 @@ public class DataDuplicateController {
     }
 
 
+//===================================================================================================================   
+
+    /*
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ FILE EXCEL MERGE
+     * */
+    @PostMapping("/uploadAndMerger")
+    public String handleFileUploadAndMerge(@RequestParam("excelfilemerger") MultipartFile file, RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+
+        // --- Khởi tạo các đối tượng cần thiết ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+        List<ExcelObject> excelObject = ioFunction.getDataFromExcelMergeFunction(file);
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	excelFileResponseMerge = ioFunction.algorithmWitterMultipartFile(excelObject);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
+        
+        // Luôn trả về view xử lý, hiển thị kết quả hoặc thông báo lỗi qua Model
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+    }
+    
+//===================================================================================================================   
+    
+    
+    /*
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ EXCEL FILTER
+     * */
     @PostMapping("/uploadAndFilter")
-    public String handleFileUpload(@RequestParam("excelFile1") MultipartFile file1,
+    public String handleFileUploadAndFilter(@RequestParam("excelFile1") MultipartFile file1,
                                    @RequestParam("excelFile2") MultipartFile file2,
                                    RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
 
@@ -72,8 +107,8 @@ public class DataDuplicateController {
             tempFileFilter = FileUtil.convertMultipartFileToFile(file2);
 
             // --- Đọc dữ liệu từ file Excel ---
-            excelObjectListOrigin = ioFunction.getDataFromExcel(tempFileOrigin);
-            excelObjectListFilter = ioFunction.getDataFromExcel(tempFileFilter);
+            excelObjectListOrigin = ioFunction.getDataFromExcelFilterFunction(tempFileOrigin);
+            excelObjectListFilter = ioFunction.getDataFromExcelFilterFunction(tempFileFilter);
 //            for(ExcelObject excelObject : excelObjectListOrigin) {
 //            	System.out.println(excelObject.getColumn1());
 //            }
@@ -88,8 +123,8 @@ public class DataDuplicateController {
             countStatus = result.getStatusMessages();
 
             // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
-            excelFileResponse = ioFunction.algorithmWitterMultipartFile(filteredList);
-            excelFileError = ioFunction.algorithmWitterMultipartFile(errorList);
+            excelFileResponseFilter = ioFunction.algorithmWitterMultipartFile(filteredList);
+            excelFileErrorFilter = ioFunction.algorithmWitterMultipartFile(errorList);
 
             // --- Thêm thông báo vào Model để hiển thị trên view ---
             if (countStatus != null && countStatus.length == 3) {
@@ -137,41 +172,75 @@ public class DataDuplicateController {
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
     }
 
-
-    // Phương thức tải xuống file Excel 1
-    @GetMapping("/excel-response")
-    public ResponseEntity<ByteArrayResource> downloadExcelFile1() throws IOException {
+//=================================================================================================================== 
+    
+    
+    /*
+     * MERGE		
+     * Phương thức tải xuống file Excel 
+     * */
+    @GetMapping("/excel-merge-response")
+    public ResponseEntity<ByteArrayResource> downloadExcelFileMerge() throws IOException {
         // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
-        if (excelFileResponse == null) {
+        if (excelFileResponseMerge == null) {
              logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
              // Có thể trả về lỗi 404 hoặc thông báo khác
              return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
         }
 
-        ByteArrayResource resource = new ByteArrayResource(excelFileResponse.getBytes());
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseMerge.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excel_file-da-merge.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponseMerge.getSize())
+                .body(resource);
+    }
+    
+    
+    /*
+     * FILTER
+     * Phương thức tải xuống file Excel 1
+     * */
+    @GetMapping("/excel-filter-response")
+    public ResponseEntity<ByteArrayResource> downloadExcelFile1Filter() throws IOException {
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (excelFileResponseFilter == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseFilter.getBytes());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excel_file-da-loc.xlsx")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .contentLength(excelFileResponse.getSize())
+                .contentLength(excelFileResponseFilter.getSize())
                 .body(resource);
     }
 
-    // Phương thức tải xuống file Excel 2
-    @GetMapping("/excel-error")
-    public ResponseEntity<ByteArrayResource> downloadExcel2(Model model) throws IOException {
+
+    /*
+     * FILTER
+     * Phương thức tải xuống file Excel 2
+     * */
+    @GetMapping("/excel-filter-error")
+    public ResponseEntity<ByteArrayResource> downloadExcel2Filter(Model model) throws IOException {
          // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileError ---
-         if (excelFileError == null) {
+    	System.out.println("1");
+         if (excelFileErrorFilter == null) {
              logger.warn("Yêu cầu tải file error nhưng excelFileError là null.");
+         	System.out.println("2");
              return ResponseEntity.notFound().build();
          }
 
-        ByteArrayResource resource = new ByteArrayResource(excelFileError.getBytes());
+        ByteArrayResource resource = new ByteArrayResource(excelFileErrorFilter.getBytes());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excelFileError.xlsx") // Đổi tên file nếu muốn
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .contentLength(excelFileError.getSize())
+                .contentLength(excelFileErrorFilter.getSize())
                 .body(resource);
     }
 }

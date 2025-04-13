@@ -18,8 +18,33 @@ public class IOFunction {
 	
 //-----------------------------------------FUNCTION----------------------------------------------------------	
 	
+	/*
+	 * READ EXCEL - MERGE FUNCTION
+	 * Đọc file xử lý số điện thoại
+	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * */
+	public List<ExcelObject> getDataFromExcelMergeFunction(MultipartFile file) {
+		AlgorithmReadDataFromExcelMerge algorithmReaderExcel = new AlgorithmReadDataFromExcelMerge();
+
+		List<ExcelObject> excelObjects = null;
+		try {
+			excelObjects = algorithmReaderExcel.processExcelFile(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//check result
+//       for (ExcelObject excelObject : excelObjects) {
+//           System.out.println(">>"+excelObject);
+//       }
+		
+		return excelObjects;
+	}
+	
 	
 	/*
+	 * WRITTER
 	 * MultipartFile method
 	 * return a MultipartFile excel
 	 * */
@@ -48,10 +73,12 @@ public class IOFunction {
 	
 	
 	/*
+	 * READ EXCEL - FILTER FUNCTION
+	 * Đọc file xử lý số điện thoại
 	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
 	 * */
-	public List<ExcelObject> getDataFromExcel(File file) {
-		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
+	public List<ExcelObject> getDataFromExcelFilterFunction(File file) {
+		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
 //		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
 
 //	    System.out.println("IOFunction");
@@ -66,15 +93,34 @@ public class IOFunction {
 		return excelObjects;
 	}
 	
+
 	
+	
+	/*
+	 * Đọc file excel đơn giản nói chung để lấy dữ liệu ánh xạ qua ExcelObject
+	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * */
+	public List<ExcelObject> getDataFromExcelSimple(File file) {
+		SimpleExcelReader algorithmReaderExcel = new SimpleExcelReader();
+		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+
+		List<ExcelObject> excelObjects = algorithmReaderExcel.readFile(filePath);
+		
+		//check result
+       for (ExcelObject excelObject : excelObjects) {
+           System.out.println(">>"+excelObject);
+       }
+		
+		return excelObjects;
+	}
 	
 	
 	
 	/*
-	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * Bằng file từ client
 	 * */
 	public static void getDataFromExcel(String filePath) {
-		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
+		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
 //		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
 		
 		//use function from iofunction
@@ -91,7 +137,7 @@ public class IOFunction {
 	 * Đọc File được lấy trực tiếp từ client
 	 * */
 	public List<ExcelObject> dataFromExcelFileAndSaveToProject(MultipartFile[] files) throws IllegalStateException, IOException {
-		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
+		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
     	List<ExcelObject> excelObjects = new ArrayList<ExcelObject>();
     	
     	// Lặp qua các tệp người dùng đã chọn

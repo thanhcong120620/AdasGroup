@@ -1,19 +1,22 @@
 package SpringbootProject.algorithms.TestAlgorithm;
 
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
-import SpringbootProject.algorithms.IOAlgorithm.AlgorithmReaderExcel;
+import SpringbootProject.algorithms.IOAlgorithm.AlgorithmReadPhoneFromExcel;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
+import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-		algorithmReaderTest();
+//		algorithmReaderTest();
 //		printSentences();
 //		algorithmWritterTest();
-		
+		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+		getDataFromExcelSimple(filePath);
 		
 
 	}
@@ -59,18 +62,20 @@ public class TestMain {
 	/*
 	 * 
 	 * */
-	public static void algorithmReaderTest() {
-		AlgorithmReaderExcel algorithmReaderExcel = new AlgorithmReaderExcel();
-		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
-		
-		//use function from iofunction
-		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(filePath);
+	public static List<ExcelObject> getDataFromExcelSimple(String filePath) {
+		SimpleExcelReader algorithmReaderExcel = new SimpleExcelReader();
+//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+		File file = new File(filePath);
+		List<ExcelObject> excelObjects = algorithmReaderExcel.readFile(file);
 		
 		//check result
-        for (ExcelObject excelObject : excelObjects) {
-            System.out.println(">>"+excelObject);
-        }
+       for (ExcelObject excelObject : excelObjects) {
+           System.out.println(">>"+excelObject);
+       }
+		
+		return excelObjects;
 	}
+	
 	
 	
 	/*

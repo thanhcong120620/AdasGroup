@@ -4,90 +4,147 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Upload và Lọc File Excel</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #f4f7f6;
-        }
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
-        }
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-        .btn-success:hover {
-            background-color: #1e7e34;
-        }
-    </style>
+    <title>Công cụ Excel</title> <!-- Tiêu đề ngắn gọn hơn -->
+
+    <!-- Không cần Bootstrap CSS nữa nếu CSS tùy chỉnh định nghĩa lại hết -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Sử dụng font Inter giống mẫu hoặc Poppins/Lato -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet"> -->
+
+    <!-- Link CSS tùy chỉnh -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/data-process.css}" />
+
 </head>
 <body>
 
-<div class="container">
-    <div class="card p-4">
-        <h2 class="text-center text-primary mb-4">Upload và Lọc File Excel</h2>
+    <!-- Tiêu đề chính của trang -->
+    <h1 class="page-title">NGUYỄN THÀNH CÔNG - EXCEL DATA PROCESS</h1>
 
-        <!-- Hiển thị thông báo từ Controller -->
-        <div th:if="${statusMessage}" class="alert alert-info text-center">
-            <strong th:text="${statusMessage}"></strong>
-        </div>
-        
-        <div th:if="${errorMessage}" class="alert alert-danger text-center">
-            <strong th:text="${errorMessage}"></strong>
-        </div>
-        
-        
-        <div th:if="${notValidMessage}" class="alert alert-danger text-center">
-            <strong th:text="${notValidMessage}"></strong>
-        </div>
+    <!-- Container chính bao bọc các card -->
+    <div class="main-container">
 
-        <!-- Form Upload -->
-        <form th:action="@{/uploadAndFilter}" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label class="form-label">Chọn file Excel gốc (file này giữ nguyên không thể sửa đổi):</label>
-                <input type="file" name="excelFile1" accept=".xlsx,.xls" class="form-control" required>
+        <!-- Card 1: Lọc File Excel -->
+        <div class="glossy-card">
+            <h2 class="card-title">Lọc File Excel</h2>
+
+            <!-- Khu vực thông báo -->
+            <div class="messages-area">
+                <div th:if="${statusMessage}" class="alert alert-info">
+                    <strong th:text="${statusMessage}"></strong>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger">
+                    <strong th:text="${errorMessage}"></strong>
+                </div>
+                <div th:if="${notValidMessage}" class="alert alert-danger">
+                    <strong th:text="${notValidMessage}"></strong>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Chọn file Excel cần lọc (file này sẽ bị sửa đổi):</label>
-                <input type="file" name="excelFile2" accept=".xlsx,.xls" class="form-control" required>
+
+            <!-- Form Upload -->
+            <form th:action="@{/uploadAndFilter}" method="post" enctype="multipart/form-data" class="styled-form">
+                <!-- Row 1: File gốc -->
+                <div class="form-row">
+                    <label for="excelFile1" class="form-label-inline">File Gốc:</label>
+                    <div class="form-input-wrapper">
+                        <input type="file" id="excelFile1" name="excelFile1" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <small class="form-text-muted">File này giữ nguyên, không sửa đổi.</small>
+                    </div>
+                </div>
+                <!-- Row 2: File cần lọc -->
+                <div class="form-row">
+                    <label for="excelFile2" class="form-label-inline">File Lọc:</label>
+                    <div class="form-input-wrapper">
+                        <input type="file" id="excelFile2" name="excelFile2" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <small class="form-text-muted">File này sẽ bị sửa đổi.</small>
+                    </div>
+                </div>
+                <!-- Row 3: Actions -->
+                <div class="form-row form-actions">
+                    <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
+                    <div class="form-input-wrapper">
+                         <button type="submit" class="btn btn-primary-glossy">Tải lên & Lọc</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Khu vực kết quả / tải xuống -->
+            <div class="results-area">
+                 <!-- Conditional download link (nếu có) -->
+                <div th:if="${filteredFileUrl}" class="result-item">
+                     <!-- <h5 class="result-title">Đã lọc xong:</h5> -->
+                    <a th:href="@{${filteredFileUrl}}" download="filteredFile.xlsx" class="btn btn-secondary-dark">
+                         Tải File Đã Lọc (Trực tiếp)
+                    </a>
+                </div>
+
+                <!-- Other download buttons -->
+                <h5 class="result-title">Kết quả</h5>
+                 <div class="result-item">
+                    <a href="/excel-filter-response" class="btn btn-secondary-dark">Tải file đã lọc</a>
+                 </div>
+                 <div class="result-item">
+                    <a href="/excel-filter-error" class="btn btn-secondary-dark danger">Tải file lỗi</a>
+                 </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Tải lên và Lọc</button>
-        </form>
+        </div> <!-- End Card 1 -->
 
-        <!-- Tải file đã lọc nếu có -->
-        <div th:if="${filteredFileUrl}" class="mt-4 text-center">
-            <h5 class="text-success">File đã được lọc:</h5>
-            <a th:href="@{${filteredFileUrl}}" download="filteredFile.xlsx" class="btn btn-success w-100">
-                <i class="bi bi-download"></i> Tải File Đã Lọc
-            </a>
-        </div>
-        
-        <!-- Các nút tải file -->
-        <div class="mt-4 text-center">
-            <h5>Kết quả:</h5>
-            <a href="/excel-response" class="btn btn-success mb-2 w-100">Tải file đã lọc</a>
-            <a href="/excel-error" class="btn btn-danger w-100">Tải file lỗi</a>
-        </div>
-    </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Card 2: Gộp Sheet Excel -->
+        <div class="glossy-card">
+             <h2 class="card-title">Gộp Sheet Excel</h2>
+
+             <!-- Khu vực thông báo -->
+             <div class="messages-area">
+                 <div th:if="${mergerMessage}" class="alert alert-info">
+                    <strong th:text="${mergerMessage}"></strong>
+                 </div>
+             </div>
+
+            <!-- Form Upload -->
+            <form th:action="@{/uploadAndMerger}" method="post" enctype="multipart/form-data" class="styled-form">
+                 <!-- Row 1: File cần gộp -->
+                <div class="form-row">
+                    <label for="excelfilemerger" class="form-label-inline">File Excel:</label>
+                    <div class="form-input-wrapper">
+                        <input type="file" id="excelfilemerger" name="excelfilemerger" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <small class="form-text-muted">Chọn file để gộp tất cả sheet.</small>
+                    </div>
+                </div>
+                <!-- Row 2: Actions -->
+                <div class="form-row form-actions">
+                    <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
+                    <div class="form-input-wrapper">
+                        <button type="submit" class="btn btn-primary-glossy">Tải lên & Gộp</button>
+                    </div>
+                </div>
+            </form>
+
+             <!-- Khu vực kết quả / tải xuống -->
+            <div class="results-area">
+                 <!-- Conditional download link (nếu có) -->
+                 <div th:if="${mergedFileUrl}" class="result-item">
+                    <!-- <h5 class="result-title">Đã gộp xong:</h5> -->
+                    <a th:href="@{${mergedFileUrl}}" download="mergedFile.xlsx" class="btn btn-secondary-dark">
+                         Tải File Đã Gộp (Trực tiếp)
+                    </a>
+                 </div>
+
+                <!-- Other download buttons -->
+                 <h5 class="result-title">Kết quả</h5>
+                 <div class="result-item">
+                    <a href="/excel-merge-response" class="btn btn-secondary-dark">Tải file đã gộp</a>
+                 </div>
+            </div>
+        </div> <!-- End Card 2 -->
+
+    </div> <!-- End Main Container -->
+
+<!-- Không cần Bootstrap JS nếu không dùng thành phần JS của nó -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
 </body>
 </html>

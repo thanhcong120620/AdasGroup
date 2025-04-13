@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import SpringbootProject.algorithms.GmailMKTAlgorithm.GmailProcess;
-import SpringbootProject.algorithms.GmailMKTAlgorithm.NameProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GmailProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.NameProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.form.FormDevelop;

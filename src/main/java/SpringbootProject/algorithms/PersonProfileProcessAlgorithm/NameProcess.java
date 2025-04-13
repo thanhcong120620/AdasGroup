@@ -1,4 +1,4 @@
-package SpringbootProject.algorithms.GmailMKTAlgorithm;
+package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

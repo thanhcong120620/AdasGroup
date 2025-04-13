@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import SpringbootProject.algorithms.GmailMKTAlgorithm.HTMLFileToString;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.HTMLFileToString;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.service.IUser;
 import SpringbootProject.service.implement.ThymeleafService;

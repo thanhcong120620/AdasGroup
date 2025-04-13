@@ -1,0 +1,485 @@
+/* ==========================================================================
+   src/main/resources/static/css/data-process.css
+   Dark Mode, Glossy, Label-on-Left Style (Scrollbar Fix v2 + Title Margin)
+   ========================================================================== */
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+/* --- Variables --- */
+:root {
+    /* Dark Theme Colors */
+    --bg-gradient-start: #4a2f4a;
+    --bg-gradient-end: #2c1d31;
+    --card-bg: #1a1a1a;
+    --card-border: #383838;
+    --input-bg: #252525;
+    --input-border: #4d4d4d;
+    --input-focus-border: #00aaff;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-label: #b0b0b0;
+    --placeholder-text: #6a6a6a;
+    --text-muted: #777;
+
+    /* Button Colors */
+    --btn-primary-bg-start: #00aaff;
+    --btn-primary-bg-end: #0077cc;
+    --btn-primary-hover-start: #0099ee;
+    --btn-primary-hover-end: #0066bb;
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: #303030;
+    --btn-secondary-border: #555;
+    --btn-secondary-text: #b5b5b5;
+    --btn-secondary-hover-bg: #3a3a3a;
+    --btn-secondary-hover-border: #666;
+    --btn-secondary-hover-text: #d0d0d0;
+    --danger-text: #ff8a8a;
+    --danger-border: #a14b4b;
+    --danger-hover-bg: #4d3333;
+    --danger-hover-border: #b35f5f;
+    --danger-hover-text: #ffaaaa;
+
+    /* Alert Colors */
+    --info-bg: rgba(0, 123, 255, 0.1);
+    --info-border: rgba(0, 123, 255, 0.3);
+    --info-text: #a0d4ff;
+    --danger-alert-bg: rgba(220, 53, 69, 0.1);
+    --danger-alert-border: rgba(220, 53, 69, 0.3);
+    --danger-alert-text: #f5a7af;
+
+    /* Styles */
+    --base-font-family: 'Lato', sans-serif;
+    --heading-font-family: 'Poppins', sans-serif;
+    --label-font-family: 'Poppins', sans-serif;
+    --base-font-size: 15px;
+    --border-radius: 6px;
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    --input-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    --button-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    --button-inset-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    --transition-speed: 0.2s;
+}
+
+/* --- Base Styles --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: var(--base-font-size);
+}
+
+body {
+    /* background-image: linear-gradient(to bottom right, var(--bg-gradient-start), var(--bg-gradient-end)); */
+    background-image: url("https://anhdepfree.com/wp-content/uploads/2018/11/hinh-nen-Galaxy-Wallpaper-15.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    font-family: var(--base-font-family);
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100vh;
+    /* display: flex; <= BỎ flexbox */
+    /* flex-direction: column; <= BỎ flexbox */
+    /* align-items: center; <= BỎ flexbox */
+    /* justify-content: center; <= BỎ flexbox */
+}
+
+/* --- Page Title --- */
+.page-title {
+    font-family: var(--heading-font-family);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 2rem;
+    text-align: center;
+    /* THÊM khoảng cách trên 20px */
+    margin-top: 20px;
+    /* Giữ khoảng cách dưới */
+    margin-bottom: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    /* Căn giữa tiêu đề nếu body không còn là flex */
+    max-width: 1200px; /* Giới hạn chiều rộng giống container */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px; /* Thêm padding để khớp container */
+    padding-right: 15px;
+}
+
+/* --- Layout Container --- */
+.main-container {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+    /* Thêm margin auto để căn giữa container theo chiều ngang */
+    margin-left: auto;
+    margin-right: auto;
+    /* Padding dọc để tạo khoảng cách với đáy */
+    padding-bottom: 3rem;
+    /* Padding ngang */
+    padding-left: 15px;
+    padding-right: 15px;
+    /* Bỏ padding-top vì margin-bottom của title đã tạo khoảng cách */
+    /* padding-top: 1rem; */
+}
+
+/* --- Card Styling --- */
+.glossy-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+    padding: 30px 40px;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    min-width: 450px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0.9;
+}
+
+/* Gloss Effect */
+.glossy-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 90%);
+    pointer-events: none;
+    z-index: 1;
+}
+.glossy-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Card Title */
+.card-title {
+    font-family: var(--heading-font-family);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Messages Area --- */
+.messages-area {
+    margin-bottom: 1.5rem;
+}
+
+/* --- Form Styling --- */
+.styled-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.form-label-inline {
+    font-family: var(--label-font-family);
+    flex: 0 0 140px;
+    padding-top: 10px;
+    font-weight: 600;
+    color: var(--text-label);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    text-align: right;
+    letter-spacing: 0.5px;
+}
+
+.form-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control-custom {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 10px 14px;
+    transition: border-color var(--transition-speed) ease-in-out, background-color var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out;
+    box-shadow: var(--input-shadow);
+    font-size: 0.9rem;
+    width: 100%;
+    font-family: var(--base-font-family);
+}
+
+.form-control-custom::placeholder {
+    color: var(--placeholder-text);
+    opacity: 1;
+}
+
+.form-control-custom:focus {
+    background-color: #303030;
+    border-color: var(--input-focus-border);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 0 3px rgba(0, 170, 255, 0.15);
+    outline: none;
+    color: var(--text-primary);
+}
+
+/* File Input Specifics */
+input[type="file"].form-control-custom {
+    padding: 6px 12px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+input[type="file"].form-control-custom::file-selector-button {
+    background-color: #3a3a3a;
+    color: var(--text-label);
+    border: 1px solid #555;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-right: 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+input[type="file"].form-control-custom::file-selector-button:hover {
+    background-color: #454545;
+    border-color: #666;
+}
+
+.form-text-muted {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+}
+
+/* Form Actions */
+.form-actions .form-input-wrapper {
+    align-items: flex-start;
+}
+.form-actions {
+    padding-top: 0.5rem;
+}
+
+/* --- Button Styling --- */
+.btn {
+    font-family: var(--label-font-family);
+    font-weight: 600;
+    padding: 10px 25px;
+    border-radius: 4px;
+    transition: all var(--transition-speed) ease;
+    text-transform: none;
+    letter-spacing: 0.2px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+}
+.btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+.btn:active {
+    transform: translateY(0px);
+    filter: brightness(0.95);
+}
+
+/* Primary Button */
+.btn-primary-glossy {
+    background: linear-gradient(to bottom, var(--btn-primary-bg-start), var(--btn-primary-bg-end));
+    color: var(--btn-primary-text);
+    box-shadow: var(--button-inset-shadow), var(--button-shadow);
+    border-color: rgba(0, 0, 0, 0.4);
+    min-width: 150px;
+}
+.btn-primary-glossy:hover {
+    background: linear-gradient(to bottom, var(--btn-primary-hover-start), var(--btn-primary-hover-end));
+    box-shadow: var(--button-inset-shadow), 0 6px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Secondary Button */
+.btn-secondary-dark {
+    background-color: var(--btn-secondary-bg);
+    border: 1px solid var(--btn-secondary-border);
+    color: var(--btn-secondary-text);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 2px 3px rgba(0, 0, 0, 0.2);
+    text-shadow: none;
+    width: 100%;
+}
+.btn-secondary-dark:hover {
+    background-color: var(--btn-secondary-hover-bg);
+    border-color: var(--btn-secondary-hover-border);
+    color: var(--btn-secondary-hover-text);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 3px 5px rgba(0, 0, 0, 0.25);
+}
+.btn-secondary-dark.danger {
+    color: var(--danger-text);
+    border-color: var(--danger-border);
+}
+.btn-secondary-dark.danger:hover {
+    background-color: var(--danger-hover-bg);
+    border-color: var(--danger-hover-border);
+    color: var(--danger-hover-text);
+}
+
+/* --- Results Area --- */
+.results-area {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.result-title {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.result-item {
+    /* Styling for result items */
+}
+
+/* --- Alert Styling --- */
+.alert {
+    border-radius: 4px;
+    padding: 12px 18px;
+    margin-bottom: 1rem;
+    border-width: 1px;
+    border-style: solid;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.85rem;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+}
+.alert:last-child {
+    margin-bottom: 0;
+}
+.alert strong {
+    font-weight: 600;
+}
+
+.alert-info {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+}
+.alert-danger {
+    background-color: var(--danger-alert-bg);
+    border-color: var(--danger-alert-border);
+    color: var(--danger-alert-text);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+     .main-container {
+        max-width: 600px;
+        flex-direction: column;
+        gap: 2.5rem;
+        align-items: center;
+        /* Padding dọc/ngang vẫn giữ nguyên từ quy tắc chính */
+        padding-bottom: 2.5rem; /* Giảm padding đáy một chút */
+    }
+    .glossy-card {
+        min-width: auto;
+        width: 100%;
+        margin-bottom: 0;
+    }
+    /* Không cần last-child margin nữa */
+}
+
+@media (max-width: 600px) {
+    .page-title {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+        margin-top: 15px; /* Giảm margin top title trên mobile */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .main-container {
+        gap: 1.5rem;
+        padding-bottom: 2rem;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .glossy-card {
+        padding: 20px 25px;
+    }
+    .card-title {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .form-label-inline {
+        flex-basis: auto;
+        text-align: left;
+        padding-top: 0;
+        font-size: 0.75rem;
+    }
+    .form-actions .form-label-inline {
+        display: none;
+    }
+    .form-actions .form-input-wrapper {
+         align-items: stretch;
+    }
+     .btn-primary-glossy {
+         width: 100%;
+     }
+     .form-control-custom {
+        padding: 9px 12px;
+        font-size: 0.85rem;
+     }
+     input[type="file"].form-control-custom {
+         line-height: 1.6;
+     }
+     .btn {
+        padding: 9px 20px;
+        font-size: 0.85rem;
+     }
+     .alert {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+     }
+     .results-area {
+         margin-top: 2rem;
+         padding-top: 1rem;
+     }
+}
+
+/* Optional: Adjust further for very small screens */
+@media (max-width: 400px) {
+    .glossy-card {
+        padding: 15px 20px;
+    }
+    .form-label-inline {
+        font-size: 0.7rem; /* Slightly smaller label */
+    }
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+}

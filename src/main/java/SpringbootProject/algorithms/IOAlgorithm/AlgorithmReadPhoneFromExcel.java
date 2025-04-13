@@ -16,12 +16,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 // Bỏ import @SpringBootApplication vì không cần thiết
 // import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-// Import các lớp cần thiết khác
-import SpringbootProject.algorithms.GmailMKTAlgorithm.PhoneProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 // Bỏ @SpringBootApplication
-public class AlgorithmReaderExcel {
+public class AlgorithmReadPhoneFromExcel {
 
     // Định dạng số để tránh phần thập phân và ký hiệu khoa học
     private static final DecimalFormat df = new DecimalFormat("0");
@@ -72,7 +71,7 @@ public class AlgorithmReaderExcel {
 
                 // Lấy giá trị từ ô đầu tiên (cột 0) và xử lý để lấy danh sách SĐT
                 String rawPhoneData = getCellValueAsString(row.getCell(0));
-                List<String> phoneFromExcelList = phoneProcess.phoneStringProcessing(rawPhoneData);
+                List<String> phoneFromExcelList = phoneProcess.extractAndValidateVietnameseNumbers(rawPhoneData);
 
                 // Nếu ô không chứa số điện thoại nào hợp lệ sau khi xử lý, bỏ qua hàng này
                 if (phoneFromExcelList.isEmpty()) {

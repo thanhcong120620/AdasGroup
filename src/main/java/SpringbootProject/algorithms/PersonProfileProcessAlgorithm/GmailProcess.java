@@ -1,4 +1,4 @@
-package SpringbootProject.algorithms.GmailMKTAlgorithm;
+package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
