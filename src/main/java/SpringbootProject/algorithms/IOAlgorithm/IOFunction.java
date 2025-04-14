@@ -76,6 +76,45 @@ public class IOFunction {
 	}
 	
 	
+	
+	/*
+	 * READ EXCEL - FILTER FUNCTION - REMOVE PHONE DUPLICATE IN FILE
+	 * Đọc file xử lý số điện thoại Bằng đường dẫn trực tiếp, ko cần lấy từ client
+     * sử dụng filterAndValidatePhoneData trong phoneprocess để lọc sđt
+     * sử dụng getDataFromExcelFilterFunctionWithValidPhone trong AlgorithmExcelReaderUtil để đọc file excel với sđt chuẩn
+	 * */
+	public Map<String, Object> getDataFromExcelFilterFunctionWithValidPhoneSingle(File tempFileFilter) {
+//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+		PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
+
+		//use function from iofunction
+		List<ExcelObject> excelObjectListFilter = excelReaderUtil.readExcelFileWithValidPhone(tempFileFilter);
+		
+		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterInternalDuplicatesOnly(excelObjectListFilter);
+		List<ExcelObject> filteredList =  result.getFilteredList();
+		List<ExcelObject> errorList = result.getRemovedItems();
+        String[] countStatus = result.getStatusMessages();
+        
+        
+        Map<String, Object> excelResult = new HashMap<>();
+        excelResult.put("filteredObjectList", filteredList);
+        excelResult.put("errorObjectList", errorList);
+        excelResult.put("countStatus", countStatus);
+		//check result
+//       for (ExcelObject excelObject : excelObjects) {
+//           System.out.println(">>"+excelObject);
+//       }
+		
+		return excelResult;
+	}
+	
+	
+	
+	
+	
+	
+	
 	/*
 	 * READ EXCEL - INTERGRATED FILTER FUNCTION
 	 * Đọc file xử lý số điện thoại Bằng đường dẫn trực tiếp, ko cần lấy từ client
@@ -91,7 +130,7 @@ public class IOFunction {
 		List<ExcelObject> excelObjectListOrigin = excelReaderUtil.readExcelFileWithValidPhone(tempFileOrigin);
 		List<ExcelObject> excelObjectListFilter = excelReaderUtil.readExcelFileWithValidPhone(tempFileFilter);
 		
-		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterAndValidatePhoneData(excelObjectListOrigin, excelObjectListFilter);
+		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterAndValidatePhoneDataIntergrated(excelObjectListOrigin, excelObjectListFilter);
 		List<ExcelObject> filteredList =  result.getFilteredList();
 		List<ExcelObject> errorList = result.getRemovedItems();
         String[] countStatus = result.getStatusMessages();

@@ -82,7 +82,88 @@ public class DataExcelProcessController {
     
     @SuppressWarnings("unchecked")
 	/*
-     * POSTING ACTION - UPLOAD VÀ XỬ LÝ EXCEL FILTER
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ EXCEL FILTER SINGLE
+     * */
+    @PostMapping("/uploadAndFilterSingle")
+    public String handleFileUploadAndFilterSingle(@RequestParam("excelFileSingle") MultipartFile file,
+                                   RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+
+        // --- Khởi tạo các đối tượng cần thiết ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+//        PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
+
+        File tempFileFilter = null;
+        List<ExcelObject> filteredList = null; // Đổi tên biến để rõ ràng hơn
+        List<ExcelObject> errorList = null;    // Đổi tên biến để rõ ràng hơn
+        String[] countStatus = null;
+
+        try {
+            // --- Chuyển đổi MultipartFile thành File tạm ---
+            // Lưu ý: FileUtil.convertMultipartFileToFile cần xử lý việc tạo file tạm an toàn và xóa sau khi dùng
+        	tempFileFilter = FileUtil.convertMultipartFileToFile(file);
+
+            // --- Đọc dữ liệu từ file Excel ---
+            Map<String, Object> result = ioFunction.getDataFromExcelFilterFunctionWithValidPhoneSingle(tempFileFilter);
+            
+            // Lấy kết quả từ đối tượng result
+            filteredList = (List<ExcelObject>) result.get("filteredObjectList");
+            errorList = (List<ExcelObject>) result.get("errorObjectList");
+            countStatus = (String[]) result.get("countStatus");
+
+            // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+            excelFileResponseFilter = ioFunction.algorithmWitterMultipartFile(filteredList);
+            excelFileErrorFilter = ioFunction.algorithmWitterMultipartFile(errorList);
+
+            // --- Thêm thông báo vào Model để hiển thị trên view ---
+            if (countStatus != null && countStatus.length == 3) {
+                model.addAttribute("statusMessageSingle", countStatus[0]); // Trùng với gốc
+                model.addAttribute("errorMessageSingle", countStatus[1]);  // Trùng trong file lọc
+                model.addAttribute("notValidMessageSingle", countStatus[2]); // Không hợp lệ/rỗng
+            } else {
+                // Xử lý trường hợp countStatus không hợp lệ (ví dụ, ghi log)
+                 logger.error("Mảng countStatus trả về từ PhoneProcess không hợp lệ.");
+                 model.addAttribute("globalError", "Có lỗi xảy ra trong quá trình xử lý thống kê.");
+            }
+             model.addAttribute("processComplete", true); // Thêm cờ báo hiệu xử lý thành công
+
+
+        } catch (IOException e) {
+            logger.error("Lỗi IO trong quá trình xử lý file: {}", e.getMessage(), e);
+            // redirectAttributes.addFlashAttribute("errorMessage", "Lỗi đọc hoặc ghi file: " + e.getMessage()); // Dùng RedirectAttributes nếu chuyển hướng
+            model.addAttribute("globalError", "Lỗi đọc hoặc ghi file: " + e.getMessage()); // Dùng Model nếu trả về cùng view
+             model.addAttribute("processComplete", false); // Thêm cờ báo hiệu xử lý thất bại
+            // return "redirect:/data-process"; // Chuyển hướng về trang upload nếu lỗi
+        } catch (IllegalStateException e) {
+             logger.error("Lỗi trạng thái không hợp lệ (thường liên quan đến file): {}", e.getMessage(), e);
+             model.addAttribute("globalError", "Lỗi xử lý file: " + e.getMessage());
+             model.addAttribute("processComplete", false);
+        } catch (Exception e) {
+            // Bắt các lỗi khác không mong muốn
+            logger.error("Lỗi không mong muốn xảy ra: {}", e.getMessage(), e);
+            model.addAttribute("globalError", "Có lỗi hệ thống xảy ra trong quá trình xử lý.");
+            model.addAttribute("processComplete", false);
+        } finally {
+            // --- Dọn dẹp file tạm (RẤT QUAN TRỌNG) ---
+            if (tempFileFilter != null && tempFileFilter.exists()) {
+                 if (!tempFileFilter.delete()) {
+                     logger.warn("Không thể xóa file tạm: {}", tempFileFilter.getAbsolutePath());
+                 }
+            }
+        }
+
+        // Luôn trả về view xử lý, hiển thị kết quả hoặc thông báo lỗi qua Model
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+    }
+    
+    
+    
+    
+//===================================================================================================================   
+    
+    
+    @SuppressWarnings("unchecked")
+	/*
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ EXCEL FILTER INTERGATED
      * */
     @PostMapping("/uploadAndFilter")
     public String handleFileUploadAndFilter(@RequestParam("excelFile1") MultipartFile file1,
@@ -163,7 +244,7 @@ public class DataExcelProcessController {
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
     }
 
-//=================================================================================================================== 
+//==============================================DOWNLOAD METHOD===================================================================== 
     
     
     /*
@@ -188,9 +269,10 @@ public class DataExcelProcessController {
                 .body(resource);
     }
     
+//========================================================================================================== 
     
     /*
-     * FILTER
+     * FILTER INTERGRATED
      * Phương thức tải xuống file Excel 1
      * */
     @GetMapping("/excel-filter-response")
@@ -213,11 +295,59 @@ public class DataExcelProcessController {
 
 
     /*
-     * FILTER
+     * FILTER INTERGRATED
      * Phương thức tải xuống file Excel 2
      * */
     @GetMapping("/excel-filter-error")
     public ResponseEntity<ByteArrayResource> downloadExcel2Filter(Model model) throws IOException {
+         // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileError ---
+    	System.out.println("1");
+         if (excelFileErrorFilter == null) {
+             logger.warn("Yêu cầu tải file error nhưng excelFileError là null.");
+         	System.out.println("2");
+             return ResponseEntity.notFound().build();
+         }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileErrorFilter.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excelFileError.xlsx") // Đổi tên file nếu muốn
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileErrorFilter.getSize())
+                .body(resource);
+    }
+    
+//==========================================================================================================    
+    /*
+     * FILTER SINGLE
+     * Phương thức tải xuống file Excel 1
+     * */
+    @GetMapping("/excel-filter-response-single")
+    public ResponseEntity<ByteArrayResource> downloadExcelFile1FilterSingle() throws IOException {
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (excelFileResponseFilter == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseFilter.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excel_file-da-loc.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponseFilter.getSize())
+                .body(resource);
+    }
+    
+    
+    
+    /*
+     * FILTER SINGLE
+     * Phương thức tải xuống file Excel 2
+     * */
+    @GetMapping("/excel-filter-error-single")
+    public ResponseEntity<ByteArrayResource> downloadExcel2FilterSingle(Model model) throws IOException {
          // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileError ---
     	System.out.println("1");
          if (excelFileErrorFilter == null) {

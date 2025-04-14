@@ -111,7 +111,7 @@ public class PhoneProcess {
      * @param listToFilter Danh sách cần lọc (sẽ bị thay đổi).
      * @return PhoneProcessingResult chứa danh sách cuối cùng và các mục bị loại bỏ.
      */
-    public PhoneProcessingResult filterAndValidatePhoneData(List<ExcelObject> sourceList, List<ExcelObject> listToFilter) {
+    public PhoneProcessingResult filterAndValidatePhoneDataIntergrated(List<ExcelObject> sourceList, List<ExcelObject> listToFilter) {
         Set<String> sourceNormalizedPhones = new HashSet<>();
         Set<String> uniqueNormalizedPhonesInFilteredList = new HashSet<>(); // Theo dõi SĐT duy nhất đã giữ lại
         List<ExcelObject> removedItems = new ArrayList<>();

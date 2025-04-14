@@ -140,101 +140,38 @@
                     <a href="/excel-merge-response" class="btn btn-secondary-dark">Tải file đã gộp</a>
                  </div>
             </div>
-        </div> <!-- End Card 3 -->
+        </div> <!-- End Card 2 -->
         
-        <!-- Card 4: Kiểm tra trùng lặp số điện thoại trong 1 file -->
+       
+
+ <!-- Card 3: Kiểm tra số điện thoại lặp lại trong 1 file -->
         <div class="glossy-card">
-            <h2 class="card-title">Kiểm tra số điện thoại trùng lặp trong 1 file</h2>
+            <h2 class="card-title">Kiểm tra số điện thoại lặp lại trong 1 file</h2>
 
             <!-- Khu vực thông báo -->
             <div class="messages-area">
-                <div th:if="${statusMessageCard4}" class="alert alert-info">
-                    <strong th:text="${statusMessageCard4}"></strong>
+                <div th:if="${statusMessageSingle}" class="alert alert-info">
+                    <strong th:text="${statusMessageSingle}"></strong>
                 </div>
                 <div th:if="${errorMessageCard3}" class="alert alert-danger">
-                    <strong th:text="${errorMessageCard4}"></strong>
+                    <strong th:text="${errorMessageSingle}"></strong>
                 </div>
-                <div th:if="${notValidMessageCard3}" class="alert alert-danger">
-                    <strong th:text="${notValidMessageCard4}"></strong>
+                <div th:if="${notValidMessageCardSingle}" class="alert alert-danger">
+                    <strong th:text="${notValidMessageSingle}"></strong>
                 </div>
             </div>
 
             <!-- Form Upload -->
-            <form th:action="@{/uploadAndFilterCard4}" method="post" enctype="multipart/form-data" class="styled-form">
-                <!-- Row 1: File gốc -->
-                <div class="form-row">
-                    <label for="excelFile1Card4" class="form-label-inline">File Gốc:</label>
-                    <div class="form-input-wrapper">
-                        <input type="file" id="excelFile1Card4" name="excelFile1Card4" accept=".xlsx,.xls" class="form-control-custom" required>
-                        <small class="form-text-muted">File này giữ nguyên, không sửa đổi.</small>
-                    </div>
-                </div>
-                <!-- Row 3: Actions -->
-                <div class="form-row form-actions">
-                    <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
-                    <div class="form-input-wrapper">
-                         <button type="submit" class="btn btn-primary-glossy">Tải lên & Lọc</button>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Khu vực kết quả / tải xuống -->
-            <div class="results-area">
-                 <!-- Conditional download link (nếu có) -->
-                <div th:if="${filteredFileUrlCard4}" class="result-item">
-                     <!-- <h5 class="result-title">Đã lọc xong:</h5> -->
-                    <a th:href="@{${filteredFileUrlCard4}}" download="filteredFileCard3.xlsx" class="btn btn-secondary-dark">
-                         Tải File Đã Lọc (Trực tiếp)
-                    </a>
-                </div>
-
-                <!-- Other download buttons -->
-                <h5 class="result-title">Kết quả</h5>
-                 <div class="result-item">
-                    <a href="/excel-filter-responseCard4" class="btn btn-secondary-dark">Tải file đã lọc</a>
-                 </div>
-                 <div class="result-item">
-                    <a href="/excel-filter-errorCard4" class="btn btn-secondary-dark danger">Tải file lỗi</a>
-                 </div>
-            </div>
-        </div> <!-- End Card 4 -->
-
- <!-- Card 3: Kiểm tra số điện thoại đã tồn tài ở 1 File excel khác -->
-        <div class="glossy-card">
-            <h2 class="card-title">Kiểm tra số điện thoại đã tồn tại ở 1 File excel khác</h2>
-
-            <!-- Khu vực thông báo -->
-            <div class="messages-area">
-                <div th:if="${statusMessageCard3}" class="alert alert-info">
-                    <strong th:text="${statusMessageCard3}"></strong>
-                </div>
-                <div th:if="${errorMessageCard3}" class="alert alert-danger">
-                    <strong th:text="${errorMessageCard3}"></strong>
-                </div>
-                <div th:if="${notValidMessageCard3}" class="alert alert-danger">
-                    <strong th:text="${notValidMessageCard3}"></strong>
-                </div>
-            </div>
-
-            <!-- Form Upload -->
-            <form th:action="@{/uploadAndFilterCard3}" method="post" enctype="multipart/form-data" class="styled-form">
-                <!-- Row 1: File gốc -->
-                <div class="form-row">
-                    <label for="excelFile1Card3" class="form-label-inline">File Gốc:</label>
-                    <div class="form-input-wrapper">
-                        <input type="file" id="excelFile1Card3" name="excelFile1Card3" accept=".xlsx,.xls" class="form-control-custom" required>
-                        <small class="form-text-muted">File này giữ nguyên, không sửa đổi.</small>
-                    </div>
-                </div>
-                <!-- Row 2: File cần lọc -->
+            <form th:action="@{/uploadAndFilterSingle}" method="post" enctype="multipart/form-data" class="styled-form">
+                <!-- Row 1: File cần lọc -->
                 <div class="form-row">
                     <label for="excelFile2Card3" class="form-label-inline">File Lọc:</label>
                     <div class="form-input-wrapper">
-                        <input type="file" id="excelFile2Card3" name="excelFile2Card3" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <input type="file" id="excelFile2Card3" name="excelFileSingle" accept=".xlsx,.xls" class="form-control-custom" required>
                         <small class="form-text-muted">File này sẽ bị sửa đổi.</small>
                     </div>
                 </div>
-                <!-- Row 3: Actions -->
+                <!-- Row 2: Actions -->
                 <div class="form-row form-actions">
                     <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
                     <div class="form-input-wrapper">
@@ -246,9 +183,9 @@
             <!-- Khu vực kết quả / tải xuống -->
             <div class="results-area">
                  <!-- Conditional download link (nếu có) -->
-                <div th:if="${filteredFileUrlCard3}" class="result-item">
+                <div th:if="${filteredFileUrlSingle}" class="result-item">
                      <!-- <h5 class="result-title">Đã lọc xong:</h5> -->
-                    <a th:href="@{${filteredFileUrlCard3}}" download="filteredFileCard3.xlsx" class="btn btn-secondary-dark">
+                    <a th:href="@{${filteredFileUrlSingle}}" download="filteredFileSingle.xlsx" class="btn btn-secondary-dark">
                          Tải File Đã Lọc (Trực tiếp)
                     </a>
                 </div>
@@ -256,10 +193,10 @@
                 <!-- Other download buttons -->
                 <h5 class="result-title">Kết quả</h5>
                  <div class="result-item">
-                    <a href="/excel-filter-responseCard3" class="btn btn-secondary-dark">Tải file đã lọc</a>
+                    <a href="/excel-filter-response-single" class="btn btn-secondary-dark">Tải file đã lọc</a>
                  </div>
                  <div class="result-item">
-                    <a href="/excel-filter-errorCard3" class="btn btn-secondary-dark danger">Tải file lỗi</a>
+                    <a href="/excel-filter-error-single" class="btn btn-secondary-dark danger">Tải file lỗi</a>
                  </div>
             </div>
         </div> <!-- End Card 4 -->
