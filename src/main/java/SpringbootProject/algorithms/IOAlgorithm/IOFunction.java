@@ -3,17 +3,20 @@ package SpringbootProject.algorithms.IOAlgorithm;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class IOFunction {
 	private static final String FOLDER_PATH = "D:/Desktop/My data/1.My Working/1.IVC/2.ICV-Digital/1.Develop/1.IVCDevelop/2.BackEnd/2.IVCBackEnd/AdminSystem/src/main/resources/static/image/IVC-Realtor-Image/Gmail-MKT-Image/";
 	AlgorithmReaderExcelUserEntityList excelReader = new AlgorithmReaderExcelUserEntityList();
-	
+	AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
 	
 	
 //-----------------------------------------FUNCTION----------------------------------------------------------	
@@ -24,11 +27,12 @@ public class IOFunction {
 	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
 	 * */
 	public List<ExcelObject> getDataFromExcelMergeFunction(MultipartFile file) {
-		AlgorithmReadDataFromExcelMerge algorithmReaderExcel = new AlgorithmReadDataFromExcelMerge();
-
+//		AlgorithmReadDataFromExcelMerge algorithmReaderExcel = new AlgorithmReadDataFromExcelMerge();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+		
 		List<ExcelObject> excelObjects = null;
 		try {
-			excelObjects = algorithmReaderExcel.processExcelFile(file);
+			excelObjects = excelReaderUtil.processExcelFileAndMerge(file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,24 +77,36 @@ public class IOFunction {
 	
 	
 	/*
-	 * READ EXCEL - FILTER FUNCTION
-	 * Đọc file xử lý số điện thoại
-	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * READ EXCEL - INTERGRATED FILTER FUNCTION
+	 * Đọc file xử lý số điện thoại Bằng đường dẫn trực tiếp, ko cần lấy từ client
+     * sử dụng filterAndValidatePhoneData trong phoneprocess để lọc sđt
+     * sử dụng getDataFromExcelFilterFunctionWithValidPhone trong AlgorithmReadPhoneFromExcel để đọc file excel với sđt chuẩn
 	 * */
-	public List<ExcelObject> getDataFromExcelFilterFunction(File file) {
-		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
-//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
+	public Map<String, Object> getDataFromExcelFilterFunctionWithValidPhone(File tempFileOrigin,  File tempFileFilter) {
+//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+		PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
 
-//	    System.out.println("IOFunction");
 		//use function from iofunction
-		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(file);
+		List<ExcelObject> excelObjectListOrigin = excelReaderUtil.readExcelFileWithValidPhone(tempFileOrigin);
+		List<ExcelObject> excelObjectListFilter = excelReaderUtil.readExcelFileWithValidPhone(tempFileFilter);
 		
+		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterAndValidatePhoneData(excelObjectListOrigin, excelObjectListFilter);
+		List<ExcelObject> filteredList =  result.getFilteredList();
+		List<ExcelObject> errorList = result.getRemovedItems();
+        String[] countStatus = result.getStatusMessages();
+        
+        
+        Map<String, Object> excelResult = new HashMap<>();
+        excelResult.put("filteredObjectList", filteredList);
+        excelResult.put("errorObjectList", errorList);
+        excelResult.put("countStatus", countStatus);
 		//check result
 //       for (ExcelObject excelObject : excelObjects) {
 //           System.out.println(">>"+excelObject);
 //       }
 		
-		return excelObjects;
+		return excelResult;
 	}
 	
 
@@ -120,11 +136,10 @@ public class IOFunction {
 	 * Bằng file từ client
 	 * */
 	public static void getDataFromExcel(String filePath) {
-		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
-//		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
-		
+//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();		
 		//use function from iofunction
-		List<ExcelObject> excelObjects = algorithmReaderExcel.readExcelFile(filePath);
+		List<ExcelObject> excelObjects = excelReaderUtil.readExcelFile(filePath);
 		
 		//check result
        for (ExcelObject excelObject : excelObjects) {
@@ -137,7 +152,8 @@ public class IOFunction {
 	 * Đọc File được lấy trực tiếp từ client
 	 * */
 	public List<ExcelObject> dataFromExcelFileAndSaveToProject(MultipartFile[] files) throws IllegalStateException, IOException {
-		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();		
     	List<ExcelObject> excelObjects = new ArrayList<ExcelObject>();
     	
     	// Lặp qua các tệp người dùng đã chọn
@@ -155,7 +171,7 @@ public class IOFunction {
             // Lưu tệp vào thư mục đã chỉ định
             file.transferTo(new File(fullPath));           
             
-            excelObjects = algorithmReaderExcel.readExcelFile(fullPath);
+            excelObjects = excelReaderUtil.readExcelFile(fullPath);
             
             break;
         }

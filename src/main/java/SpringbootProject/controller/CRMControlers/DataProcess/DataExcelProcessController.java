@@ -3,6 +3,7 @@ package SpringbootProject.controller.CRMControlers.DataProcess;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger; // Import Logger
 import org.slf4j.LoggerFactory; // Import LoggerFactory
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import FileUtil.FileUtil; // Đảm bảo class này tồn tại và đúng vị trí
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction; // Đảm bảo class này tồn tại và đúng vị trí
-import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.notSaving.ExcelObject; // Đảm bảo class này tồn tại và đúng vị trí
 
 
@@ -80,7 +80,8 @@ public class DataExcelProcessController {
 //===================================================================================================================   
     
     
-    /*
+    @SuppressWarnings("unchecked")
+	/*
      * POSTING ACTION - UPLOAD VÀ XỬ LÝ EXCEL FILTER
      * */
     @PostMapping("/uploadAndFilter")
@@ -90,12 +91,10 @@ public class DataExcelProcessController {
 
         // --- Khởi tạo các đối tượng cần thiết ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
-        PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
+//        PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
 
         File tempFileOrigin = null;
         File tempFileFilter = null;
-        List<ExcelObject> excelObjectListOrigin = null;
-        List<ExcelObject> excelObjectListFilter = null;
         List<ExcelObject> filteredList = null; // Đổi tên biến để rõ ràng hơn
         List<ExcelObject> errorList = null;    // Đổi tên biến để rõ ràng hơn
         String[] countStatus = null;
@@ -107,20 +106,12 @@ public class DataExcelProcessController {
             tempFileFilter = FileUtil.convertMultipartFileToFile(file2);
 
             // --- Đọc dữ liệu từ file Excel ---
-            excelObjectListOrigin = ioFunction.getDataFromExcelFilterFunction(tempFileOrigin);
-            excelObjectListFilter = ioFunction.getDataFromExcelFilterFunction(tempFileFilter);
-//            for(ExcelObject excelObject : excelObjectListOrigin) {
-//            	System.out.println(excelObject.getColumn1());
-//            }
-//            
+            Map<String, Object> result = ioFunction.getDataFromExcelFilterFunctionWithValidPhone(tempFileOrigin, tempFileFilter);
             
-            // --- Thực hiện lọc và xác thực bằng PhoneProcess (phiên bản mới) ---
-            PhoneProcess.PhoneProcessingResult result = phoneProcess.filterAndValidatePhoneData(excelObjectListOrigin, excelObjectListFilter);
-
             // Lấy kết quả từ đối tượng result
-            filteredList = result.getFilteredList();
-            errorList = result.getRemovedItems();
-            countStatus = result.getStatusMessages();
+            filteredList = (List<ExcelObject>) result.get("filteredObjectList");
+            errorList = (List<ExcelObject>) result.get("errorObjectList");
+            countStatus = (String[]) result.get("countStatus");
 
             // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
             excelFileResponseFilter = ioFunction.algorithmWitterMultipartFile(filteredList);
