@@ -108,7 +108,11 @@
     <artifactId>commons-fileupload</artifactId>
     <version>1.4</version>
 </dependency>
-
+<dependency>
+    <groupId>com.github.slugify</groupId>
+    <artifactId>slugify</artifactId>
+    <version>3.0.2</version>
+</dependency>
 
 <!-- Map Struct -->
     <dependency>

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.entity.notSaving.ExcelObject;
@@ -76,7 +77,7 @@ public class IOFunction {
 	}
 	
 	
-	
+	@SuppressWarnings("unchecked")
 	/*
 	 * READ EXCEL - FILTER FUNCTION - REMOVE PHONE DUPLICATE IN FILE
 	 * Đọc file xử lý số điện thoại Bằng đường dẫn trực tiếp, ko cần lấy từ client
@@ -84,27 +85,23 @@ public class IOFunction {
      * sử dụng getDataFromExcelFilterFunctionWithValidPhone trong AlgorithmExcelReaderUtil để đọc file excel với sđt chuẩn
 	 * */
 	public Map<String, Object> getDataFromExcelFilterFunctionWithValidPhoneSingle(File tempFileFilter) {
-//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
 		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
-		PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
 
 		//use function from iofunction
 		List<ExcelObject> excelObjectListFilter = excelReaderUtil.readExcelFileWithValidPhone(tempFileFilter);
+		PersonProfileProcessFunction personProfileProcessFunction = new PersonProfileProcessFunction();
+		Map<String, Object> result = personProfileProcessFunction.phoneProcessFilterInternalDuplicatesOnly(excelObjectListFilter);
 		
-		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterInternalDuplicatesOnly(excelObjectListFilter);
-		List<ExcelObject> filteredList =  result.getFilteredList();
-		List<ExcelObject> errorList = result.getRemovedItems();
-        String[] countStatus = result.getStatusMessages();
-        
+		
+		 
+		List<ExcelObject> filteredList = (List<ExcelObject>) result.get("filteredList");
+		List<ExcelObject> errorList = (List<ExcelObject>) result.get("errorList");
+		String[] countStatus = (String[]) result.get("countStatus");
         
         Map<String, Object> excelResult = new HashMap<>();
         excelResult.put("filteredObjectList", filteredList);
         excelResult.put("errorObjectList", errorList);
         excelResult.put("countStatus", countStatus);
-		//check result
-//       for (ExcelObject excelObject : excelObjects) {
-//           System.out.println(">>"+excelObject);
-//       }
 		
 		return excelResult;
 	}
@@ -114,7 +111,7 @@ public class IOFunction {
 	
 	
 	
-	
+	@SuppressWarnings("unchecked")
 	/*
 	 * READ EXCEL - INTERGRATED FILTER FUNCTION
 	 * Đọc file xử lý số điện thoại Bằng đường dẫn trực tiếp, ko cần lấy từ client
@@ -124,26 +121,33 @@ public class IOFunction {
 	public Map<String, Object> getDataFromExcelFilterFunctionWithValidPhone(File tempFileOrigin,  File tempFileFilter) {
 //		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
 		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
-		PhoneProcess phoneProcess = new PhoneProcess(); // Nên inject bằng @Autowired nếu PhoneProcess là Spring Bean
 
 		//use function from iofunction
 		List<ExcelObject> excelObjectListOrigin = excelReaderUtil.readExcelFileWithValidPhone(tempFileOrigin);
 		List<ExcelObject> excelObjectListFilter = excelReaderUtil.readExcelFileWithValidPhone(tempFileFilter);
 		
-		PhoneProcess.PhoneProcessingResult result = phoneProcess.filterAndValidatePhoneDataIntergrated(excelObjectListOrigin, excelObjectListFilter);
-		List<ExcelObject> filteredList =  result.getFilteredList();
-		List<ExcelObject> errorList = result.getRemovedItems();
-        String[] countStatus = result.getStatusMessages();
+        System.out.println("tempFileOrigin: "+tempFileOrigin);
+        System.out.println("tempFileFilter: "+tempFileFilter);
+        
+        for (ExcelObject object : excelObjectListOrigin) {
+        	System.out.println("excelObjectListOrigin: " + object.toString());
+        }
+        
+
+		
+		PersonProfileProcessFunction personProfileProcessFunction = new PersonProfileProcessFunction();
+		Map<String, Object> result = personProfileProcessFunction.phoneProcessFilterAndValidatePhoneDataIntergrated(excelObjectListOrigin,excelObjectListFilter);
+		
+		
+		List<ExcelObject> filteredList = (List<ExcelObject>) result.get("filteredList");
+		List<ExcelObject> errorList = (List<ExcelObject>) result.get("errorList");
+		String[] countStatus = (String[]) result.get("countStatus");
         
         
         Map<String, Object> excelResult = new HashMap<>();
         excelResult.put("filteredObjectList", filteredList);
         excelResult.put("errorObjectList", errorList);
         excelResult.put("countStatus", countStatus);
-		//check result
-//       for (ExcelObject excelObject : excelObjects) {
-//           System.out.println(">>"+excelObject);
-//       }
 		
 		return excelResult;
 	}

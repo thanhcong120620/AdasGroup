@@ -6,20 +6,33 @@ import java.util.Scanner;
 
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
 import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-//		algorithmReaderTest();
-//		printSentences();
-//		algorithmWritterTest();
-		String filePath = "D:\\Desktop\\Diary\\ExcelObject.xlsx";
-		getDataFromExcelSimple(filePath);
+
+		System.out.println("Lấy tên1: "+ extractFirstName("NGUYEN THANH CONG", "thành công"));
+		System.out.println("Lấy tên2: "+ extractFirstName("NGUYEN THANH CONG", "công"));
+		System.out.println("Lấy tên3: "+ extractFirstName("NGUYEN THANH CONG", "công nguyễn"));
+		System.out.println("Lấy tên4: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "thành công"));
+		System.out.println("Lấy tên5: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "công"));
+		System.out.println("Lấy tên6: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "công nguyễn"));
+    
+}
 		
 
-	}
 	
+	
+	/*
+	 * Function test last name from String
+	 * Use for Excel Object
+	 * */
+	public static String extractFirstName (String fullName, String nickname) {
+		PersonProfileProcessFunction pppFunction = new PersonProfileProcessFunction();
+		return pppFunction.getNomalizeName(fullName);
+	}
 	
 	
 	public static void printSentences() {

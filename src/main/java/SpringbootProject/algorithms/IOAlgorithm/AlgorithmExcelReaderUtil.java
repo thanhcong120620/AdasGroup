@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.notSaving.ExcelObject; // Import ExcelObject
 
@@ -138,7 +139,8 @@ public class AlgorithmExcelReaderUtil {
     public List<ExcelObject> readExcelFileWithValidPhone(File file) {
         List<ExcelObject> excelObjects = new ArrayList<>();
         // Khởi tạo PhoneProcess để xử lý chuỗi số điện thoại
-        PhoneProcess phoneProcess = new PhoneProcess();
+//      PhoneProcess phoneProcess = new PhoneProcess();
+        PersonProfileProcessFunction personProfileProcessFunction = new PersonProfileProcessFunction();
 
         if (file == null || !file.exists()) {
             System.err.println("Lỗi: File không tồn tại hoặc là null.");
@@ -171,8 +173,8 @@ public class AlgorithmExcelReaderUtil {
 
                 // Lấy giá trị từ ô đầu tiên (cột 0) và xử lý để lấy danh sách SĐT
                 String rawPhoneData = getCellValueAsString(row.getCell(0));
-                List<String> phoneFromExcelList = phoneProcess.extractAndValidateVietnameseNumbers(rawPhoneData);
-
+                List<String> phoneFromExcelList = personProfileProcessFunction.phoneProcessExtractAndValidateVietnameseNumbers(rawPhoneData);
+                
                 // Nếu ô không chứa số điện thoại nào hợp lệ sau khi xử lý, bỏ qua hàng này
                 if (phoneFromExcelList.isEmpty()) {
                     System.out.println("Cảnh báo: Hàng " + (rowIndex + 1) + " không chứa số điện thoại hợp lệ trong cột đầu tiên. Dữ liệu gốc: '" + rawPhoneData + "'");

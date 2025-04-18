@@ -1,12 +1,93 @@
 package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NameProcess {
+    private static final boolean TO_UPPER_CASE = true;
+    private static final String WORD_SEPARATOR = " ";
+    private static final String UNKNOWN_FIRST_NAME = "";
+    
 	public NameProcess() {
 	}
+	
+//=======================================================================================================	
 
+	
+	static String extractFirstName (String fullName, String nickname) {
+		String convertFullname = convertVietnameseNameToEnglishName(fullName);
+		String convertNickName = convertVietnameseNameToEnglishName(nickname);
+		String[] fullNameParts = fullName.split(WORD_SEPARATOR);
+		String[] nickNameParts = nickname.split(WORD_SEPARATOR);
+		String[] convertFullNameParts = convertFullname.split(WORD_SEPARATOR);
+		String[] convertNickNameParts = convertNickName.split(WORD_SEPARATOR);
+		
+		// Duyệt qua các cụm từ trong mảng nickname đã convert
+	    for (int i = 0; i < convertNickNameParts.length; i++) {
+	        String nicknamePart = convertNickNameParts[i];
+
+	        // So sánh với các cụm từ trong mảng fullname đã convert
+	        for (int j = 0; j < convertFullNameParts.length; j++) {
+	            String fullnamePart = convertFullNameParts[j];
+
+	            if (nicknamePart.equals(fullnamePart)) {
+	                // Tìm thấy sự trùng khớp
+	                String position;
+	                if (j == 0) {
+	                    position = "lastname";
+	                } else if (j == convertFullNameParts.length - 1) {
+	                    position = "firstname";
+	                } else {
+	                    position = "midname";
+	                }
+	                System.out.println("Nickname part '" + nicknamePart + "' matches fullname part '" + fullnamePart + "' at position: " + position);
+	            }
+	        }
+
+	        //Nếu không tìm thấy bất kì cụm từ nào thì in ra
+	        boolean foundMatch = false;
+	        for (int j = 0; j < convertFullNameParts.length; j++) {
+	            if (nicknamePart.equals(convertFullNameParts[j])) {
+	                foundMatch = true;
+	                break;
+	            }
+	        }
+	        if(!foundMatch){
+	            System.out.println("Nickname part '" + nicknamePart + "' không xác định");
+	        }
+	    }
+
+		
+		return null;
+	}
+	
+	//convert Vietnamese name to english name
+	static String convertVietnameseNameToEnglishName(String nickname) {
+	    // 1. Loại bỏ dấu khỏi nickname
+	    String normalizedNickname = removeAccent(nickname);
+
+	    // 2. Chuyển đổi thành chữ thường
+	    normalizedNickname = normalizedNickname.toLowerCase();
+
+	    return normalizedNickname;
+	}
+
+	private static String removeAccent(String s) {
+        String temp = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < temp.length(); i++) {
+            char c = temp.charAt(i);
+            if (c < 128) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+	
+//==================================================================================================================	
+	
 	public String Name(String nameInput) {
 		String nameOutput;
 		String s1 = new String();
