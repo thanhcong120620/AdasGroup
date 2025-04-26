@@ -2,6 +2,7 @@ package SpringbootProject.controller.CRMControlers.DataProcess;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import FileUtil.FileUtil; // Đảm bảo class này tồn tại và đúng vị trí
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction; // Đảm bảo class này tồn tại và đúng vị trí
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.entity.notSaving.ExcelObject; // Đảm bảo class này tồn tại và đúng vị trí
 
 
@@ -38,6 +40,7 @@ public class DataExcelProcessController {
     private static MultipartFile excelFileResponseFilter;
     private static MultipartFile excelFileErrorFilter;
     private static MultipartFile excelFileResponseMerge;
+    private static MultipartFile excelFileResponseNameProcess;
     // --- KẾT THÚC CẢNH BÁO ---
 
 
@@ -52,6 +55,54 @@ public class DataExcelProcessController {
     }
 
 
+  //===================================================================================================================   
+
+	/*
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ NAME TRONG FILE EXCEL
+     * */
+    @PostMapping("/uploadAndProcessName")
+    public String handleFileUploadAndProcessName(@RequestParam("excelfilenameprocess") MultipartFile file, RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+
+        // --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+        List<ExcelObject> excelObjectInput = ioFunction.getDataFromExcelWithMultipartFile(file);
+        List<ExcelObject> excelObjectOutput = new ArrayList<>();
+        
+        PersonProfileProcessFunction pppFunction = new PersonProfileProcessFunction();
+        for(int i=0;i<excelObjectInput.size();i++) {
+        	String[] names = pppFunction.extractFirstName(excelObjectInput.get(i).getColumn1(), excelObjectInput.get(i).getColumn2());
+        
+        	ExcelObject excelObject = new ExcelObject();
+        	excelObject.setColumn1(names[0]);
+        	excelObject.setColumn2(names[1]);
+        	excelObject.setColumn3(names[2]);
+        	excelObject.setColumn4(names[3]);
+        	excelObjectOutput.add(excelObject);
+        }
+        
+		//check result
+//        for (ExcelObject excelObject : excelObjectOutput) {
+//        	System.out.println(">> Controller excelObjectOutput: "+excelObject);
+//        }
+        
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	excelFileResponseNameProcess = ioFunction.algorithmWitterMultipartFile(excelObjectOutput);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        model.addAttribute("name-process-message", "Xử lý thành công");
+        
+        // Luôn trả về view xử lý, hiển thị kết quả hoặc thông báo lỗi qua Model
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+    }
+    
+    
+    
+    
 //===================================================================================================================   
 
     /*
@@ -247,6 +298,30 @@ public class DataExcelProcessController {
     }
 
 //==============================================DOWNLOAD METHOD===================================================================== 
+    
+    /*
+     * NAME PROCESS EXCEL FILE		
+     * Phương thức tải xuống file Excel 
+     * */
+    @GetMapping("/excel-nameprocess-response")
+    public ResponseEntity<ByteArrayResource> downloadExcelFileNameProcess() throws IOException {
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (excelFileResponseNameProcess == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseNameProcess.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=excel_file-da-xu-ly-ten.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponseNameProcess.getSize())
+                .body(resource);
+    }
+    
+//========================================================================================================== 
     
     
     /*

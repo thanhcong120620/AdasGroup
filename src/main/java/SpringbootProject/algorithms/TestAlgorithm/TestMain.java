@@ -13,25 +13,81 @@ public class TestMain {
 
 	public static void main(String[] args) {
 
-		System.out.println("Lấy tên1: "+ extractFirstName("NGUYEN THANH CONG", "thành công"));
-		System.out.println("Lấy tên2: "+ extractFirstName("NGUYEN THANH CONG", "công"));
-		System.out.println("Lấy tên3: "+ extractFirstName("NGUYEN THANH CONG", "công nguyễn"));
-		System.out.println("Lấy tên4: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "thành công"));
-		System.out.println("Lấy tên5: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "công"));
-		System.out.println("Lấy tên6: "+ extractFirstName("NGUYỄN THÀNH CÔNG", "công nguyễn"));
-    
+		testGetName();
 }
 		
 
+//=========================================================	
 	
+	
+	public static void testGetName () {
+		// Dữ liệu test
+        String[][] data = {
+                {"HOANG THI LE THANH DINH", "Thanh Định"},
+                {"NGUYEN THI XUAN HUYEN", "Xuân Huyền"},
+                {"LE THI CHIEU AN", "Lê Thị Chiêu An"},
+                {"CAN THI TINH", "Tình Cần"},
+                {"NGUYEN HIEN LUONG", "Hien Luong"},
+                {"DOAN THI THU THUY", "Đoàn Thị Thu Thủy"},
+                {"HO THI ANH HONG", "Anh Hong"},
+                {"SU THI BICH PHUONG", "Phương"},
+                {"TRAN THI TU", "Tư Trần"},
+                {"TRAN THI NHAN", "Nhan"},
+                {"NGUYEN THI BAO", "Nguyễn Thị Bảo"},
+                {"NGUYEN THI LE HOA", "Lệ Hoa"},
+                {"TRAN CONG ANH", "Trần Anh"},
+                {"NGUYEN THI NHU THAO", "Thảo"},
+                {"CAO THI NGUYET HOA", "Cao Nguyệt Hoa"},
+                {"PHAM THI THANH", "Pham Thị Thanh"},
+                {"NGUYEN CONG LY", "Nguyễn Công Lý"},
+                {"NGUYEN THI MY HUONG", "Nguyễn Thị Mỹ Hương"},
+                {"HUYNH THI THU HUONG", "Huỳnh Hương"},
+                {"NGUYEN THI NGOC BA", "Nguyễn Thị Ngọc Ba"},
+                {"TRAN THI THANH THUY", "Thanh Thủy"},
+                {"NGUYEN THI HONG THO", "Hồng Tho Nguyễn"},
+                {"HUYNH THI TU", "Huỳnh Thị Tư"},
+                {"NGUYEN HOANG LIÊM", "Hoangliem Nguyen"},
+                {"PHAM MANH KHA", "Manh Kha"},
+                {"LE THI THANH HA", "Ha Nguyễn"},
+                {"LE THI THUY HA", "Ha Le"},
+                {"NGO THI HUONG", "Huong Tdtm"},
+                {"NGUYEN HUU NAM", "Nam Nguyễn"},
+                {"HUA THI PHUONG", "Phuonghua"},
+                {"HUYNH THI LIEN HUONG", "Huong Liên Huynh"},
+                {"NGUYEN TRONG MAN", "Trong Man"},
+                {"HUYNH THI KIM THU", "Thu"},
+                {"NGUYEN THI KIM ANH", "Nguyễn Thị Kim Anh"},
+                {"NGUYEN THI HONG ANH", "Nguyễn Thị Kim Anh"},
+                {"NGUYEN THI TƯ ANH", "Nguyễn Thị Kim Anh"},
+                {"NGUYEN THI KIM ANH", "Nguyễn Thị Kim Ánh"},
+                {"PHAM THI YEN", "Yen.pham"},
+                {"PHAM CHAN", "Chan Pham"},
+                {"LE THI THU VINH", "Thuvinh"},
+                {"LE THI HAI ANH", "Haianh Le"},
+                {"PHAM BON", "Phambonqh"},
+                {"PHAM DUC", "Đức Phạm"},
+                {"PHAM Dong", "Đông Phạm"}
+        };
+
+        System.out.println("Fullname\t\tNickname\t\tnames[0]\t\tnames[1]\t\tnames[2]");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------");
+
+        for (String[] row : data) {
+            String fullName = row[0];
+            String nickname = row[1];
+            String[] names = extractFirstName(fullName, nickname);
+            System.out.println(fullName + "\t\t" + nickname + "\t\t" + names[0] + "\t\t" + names[1] + "\t\t" + names[2]);
+        }
+		
+	}
 	
 	/*
 	 * Function test last name from String
 	 * Use for Excel Object
 	 * */
-	public static String extractFirstName (String fullName, String nickname) {
+	public static String[] extractFirstName (String fullName, String nickname) {
 		PersonProfileProcessFunction pppFunction = new PersonProfileProcessFunction();
-		return pppFunction.getNomalizeName(fullName);
+		return pppFunction.extractFirstName(fullName, nickname);
 	}
 	
 	

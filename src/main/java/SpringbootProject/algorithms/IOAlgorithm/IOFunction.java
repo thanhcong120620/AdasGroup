@@ -129,9 +129,9 @@ public class IOFunction {
         System.out.println("tempFileOrigin: "+tempFileOrigin);
         System.out.println("tempFileFilter: "+tempFileFilter);
         
-        for (ExcelObject object : excelObjectListOrigin) {
-        	System.out.println("excelObjectListOrigin: " + object.toString());
-        }
+//        for (ExcelObject object : excelObjectListOrigin) {
+//        	System.out.println("excelObjectListOrigin: " + object.toString());
+//        }
         
 
 		
@@ -165,20 +165,18 @@ public class IOFunction {
 
 		List<ExcelObject> excelObjects = algorithmReaderExcel.readFile(filePath);
 		
-		//check result
-       for (ExcelObject excelObject : excelObjects) {
-           System.out.println(">>"+excelObject);
-       }
+//		//check result
+//       for (ExcelObject excelObject : excelObjects) {
+//           System.out.println(">>"+excelObject);
+//       }
 		
 		return excelObjects;
 	}
 	
-	
-	
 	/*
-	 * Bằng file từ client
+	 * Bằng file từ client với đầu vào là String Path
 	 * */
-	public static void getDataFromExcel(String filePath) {
+	public static void getDataFromExcelWithPath(String filePath) {
 //		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
 		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();		
 		//use function from iofunction
@@ -188,6 +186,24 @@ public class IOFunction {
        for (ExcelObject excelObject : excelObjects) {
            System.out.println(">>"+excelObject);
        }
+	}
+	
+	
+	/*
+	 * Bằng file từ client với đầu vào là String Path
+	 * */
+	public List<ExcelObject> getDataFromExcelWithMultipartFile(MultipartFile file) {
+//		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();		
+		//use function from iofunction
+		List<ExcelObject> excelObjects = excelReaderUtil.readExcelFile(file);
+		
+		//check result
+//       for (ExcelObject excelObject : excelObjects) {
+//           System.out.println(">>"+excelObject);
+//       }
+       
+       return excelObjects;
 	}
 	
 	

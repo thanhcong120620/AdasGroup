@@ -2,28 +2,170 @@ package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NameProcess {
-    private static final boolean TO_UPPER_CASE = true;
-    private static final String WORD_SEPARATOR = " ";
-    private static final String UNKNOWN_FIRST_NAME = "";
-    
 	public NameProcess() {
 	}
+	
+	
+    
+
 	
 //=======================================================================================================	
 
 	
-	static String extractFirstName (String fullName, String nickname) {
-		String convertFullname = convertVietnameseNameToEnglishName(fullName);
-		String convertNickName = convertVietnameseNameToEnglishName(nickname);
-		String[] fullNameParts = fullName.split(WORD_SEPARATOR);
-		String[] nickNameParts = nickname.split(WORD_SEPARATOR);
-		String[] convertFullNameParts = convertFullname.split(WORD_SEPARATOR);
-		String[] convertNickNameParts = convertNickName.split(WORD_SEPARATOR);
-		
-		// Duyệt qua các cụm từ trong mảng nickname đã convert
+	private static final String WORD_SEPARATOR = " ";
+    private static final String[] ONLY_FIRST_NAMES_EXIT = {"Mai", "Hồng", "Kim", "Đạt", "Đức", "Ngọc", "Bích", "Xuân",
+            "Tùng", "Thái", "Hạnh", "Công", "Loan", "Nhung", "Oanh", "Hoàng", "Minh", "Tuyết", "Liên", "Trang", "Phúc",
+            "Phát", "Long", "Sơn"};
+
+    // Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
+    private static final String[] ONLY_FIRST_NAMES_EXIT_NO_ACCENT;
+
+    static {
+        ONLY_FIRST_NAMES_EXIT_NO_ACCENT = new String[ONLY_FIRST_NAMES_EXIT.length];
+        for (int i = 0; i < ONLY_FIRST_NAMES_EXIT.length; i++) {
+            ONLY_FIRST_NAMES_EXIT_NO_ACCENT[i] = removeAccent(ONLY_FIRST_NAMES_EXIT[i]).toLowerCase();
+        }
+    }
+
+    // Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
+    static String[] extractFirstNameAndMidFirstName(String fullName, String nickname) {
+    	String convertFullname = removeAccent(fullName).toLowerCase();
+        String convertNickName = removeAccent(nickname).toLowerCase();
+        String[] arrayFullNamePartsOrigin = fullName.split(WORD_SEPARATOR);
+        String[] arrayNickNamePartsOrigin = nickname.split(WORD_SEPARATOR);
+        String[] arrayConvertFullNameParts = convertFullname.split(WORD_SEPARATOR);
+        String[] arrayConvertNickNameParts = convertNickName.split(WORD_SEPARATOR);
+        
+        //Khởi tạo firstName từ Full Name
+        	String firstNameAtFullnameConvert  = arrayConvertFullNameParts[arrayConvertFullNameParts.length-1];
+        	String firstNameAtFullnameOrigin  = arrayFullNamePartsOrigin[arrayFullNamePartsOrigin.length-1];
+        	String midNameAtFullnameOrigin  = convertToLowerCaseAndCapitalizeFirstLetter(arrayFullNamePartsOrigin[arrayFullNamePartsOrigin.length-2]);
+
+        // Mảng để lưu trữ kết quả: {firstName, midNameAndFirstName, originalFirstName}
+        String[] names = {convertToLowerCaseAndCapitalizeFirstLetter(firstNameAtFullnameOrigin), "ko xác định", ">>> ERROR",""}; // Giá trị mặc định
+        	
+            //Bước 1: Tìm tên khớp trong static Array
+            for (int iarrstatic = 0; iarrstatic < ONLY_FIRST_NAMES_EXIT_NO_ACCENT.length; iarrstatic++) {
+                if (firstNameAtFullnameConvert.equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
+                	names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
+                	names[1] = midNameAtFullnameOrigin + " " + ONLY_FIRST_NAMES_EXIT[iarrstatic];
+                    names[2] = "Tên được tìm thấy từ static Array";
+                    names[3] = names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; 
+                	return names;
+                }
+            }
+            
+            //Bước 2: Ko tìm thấy firstname từ static Array thì qua kiểm tra với nickname
+
+            	// Duyệt qua các cụm từ trong mảng nickname đã convert
+            	for (int i = 0; i < arrayConvertNickNameParts.length; i++) {
+            		String nicknamePart = arrayConvertNickNameParts[i];
+
+            		//So sánh với firstName của convertFullname
+            		if (nicknamePart.equals(firstNameAtFullnameConvert)) {
+            			if(capitalizeFirstLetter(arrayNickNamePartsOrigin[i]).equals("Anh")) {
+               	            for (int iarrstatic = 0; iarrstatic < ONLY_FIRST_NAMES_EXIT_NO_ACCENT.length; iarrstatic++) {
+            	                if (removeAccent(midNameAtFullnameOrigin).toLowerCase().equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
+            	                	midNameAtFullnameOrigin = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
+            	                }
+            	            }
+            				names[0] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+                            names[1] = "Tên \"Anh\" đặc biệt, đã lấy tên lót";
+                            names[3] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+            			} else {
+            				names[0] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+                            names[1] = midNameAtFullnameOrigin + " " + capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+            				names[3] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+            			}
+            			
+            			// Trường hợp: Trùng với firstName của convertFullname thì kiểm tra tính hợp lệ
+                        if (!capitalizeFirstLetter(arrayNickNamePartsOrigin[i]).equals(capitalizeFirstLetter(removeAccent(nicknamePart)))) {
+                            // Tên có dấu --> Hợp lệ, giữ nguyên
+                            names[2] = "Tên có dấu từ nick name !";
+                            return names;
+                        } else {
+                        	// Tên ko có dấu and warning
+                            names[2] = ">>> Waring: Tên không có dấu từ nick name !";
+                            names[3] = "";
+                            return names;
+                        }
+                  
+            		}
+        }
+
+        return names;
+
+}
+
+    /*
+     * convert name to lower case and Capitalize first letter
+     * */
+    static String convertToLowerCaseAndCapitalizeFirstLetter(String nickname) {
+    	return capitalizeFirstLetter(nickname.toLowerCase());
+    }
+    
+    
+    /*
+     * convert name to no accent name
+     * */
+     static String removeAccent(String s) {
+        String temp = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < temp.length(); i++) {
+            char c = temp.charAt(i);
+            if (c < 128) {
+                sb.append(c);
+            } else if (c=='Đ') {
+            	sb.append('D');
+            } else if (c=='đ') {
+            	sb.append('d');
+            } 
+        }
+        return sb.toString();
+    }
+
+    /*
+     * "công" --> "Công"
+     * */
+    private static String capitalizeFirstLetter(String name) {
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
+        String firstChar = name.substring(0, 1).toUpperCase();
+        String rest = name.substring(1).toLowerCase();
+        return firstChar + rest;
+    }
+
+	
+//back up code:
+/*	private static final String WORD_SEPARATOR = " ";
+    private static final String[] ONLY_FIRST_NAMES_EXIT = {"Mai", "Hồng", "Kim", "Đạt", "Đức", "Ngọc", "Bích", "Xuân", 
+    		"Tùng", "Thái", "Hạnh", "Tú", "Công", "Loan", "Nhung", "Oanh","Hoàng", "Minh", "Tuyết", "Liên", "Trang", "Phúc", 
+    		"Phát", "Long", "Sơn"}; 
+    
+
+	
+//=======================================================================================================	
+
+	static String[] extractFirstNameAndMidFirstName (String fullName, String nickname) {
+	    String convertFullname = convertVietnameseNameToEnglishName(fullName);
+	    String convertNickName = convertVietnameseNameToEnglishName(nickname);
+	    String[] fullNameParts = fullName.split(WORD_SEPARATOR);
+	    String[] nickNameParts = nickname.split(WORD_SEPARATOR);
+	    String[] convertFullNameParts = convertFullname.split(WORD_SEPARATOR);
+	    String[] convertNickNameParts = convertNickName.split(WORD_SEPARATOR);
+
+	    // Mảng để lưu trữ kết quả: {firstName, midNameAndFirstName, originalFirstName}
+	    String[] names = {"ko xác định", "mid-name-và-first name-ko-xác-định", null}; // Giá trị mặc định
+
+	    // Tập hợp các tên tiếng Việt không dấu phổ biến (có thể mở rộng)
+	    
+
+	    // Duyệt qua các cụm từ trong mảng nickname đã convert
 	    for (int i = 0; i < convertNickNameParts.length; i++) {
 	        String nicknamePart = convertNickNameParts[i];
 
@@ -31,35 +173,24 @@ public class NameProcess {
 	        for (int j = 0; j < convertFullNameParts.length; j++) {
 	            String fullnamePart = convertFullNameParts[j];
 
-	            if (nicknamePart.equals(fullnamePart)) {
-	                // Tìm thấy sự trùng khớp
-	                String position;
-	                if (j == 0) {
-	                    position = "lastname";
-	                } else if (j == convertFullNameParts.length - 1) {
-	                    position = "firstname";
-	                } else {
-	                    position = "midname";
-	                }
-	                System.out.println("Nickname part '" + nicknamePart + "' matches fullname part '" + fullnamePart + "' at position: " + position);
-	            }
-	        }
+	            if (nicknamePart.equals(fullnamePart) && j == convertFullNameParts.length - 1) {
+	                // Tìm thấy sự trùng khớp và trùng với firstname
+	                names[0] = capitalizeFirstLetter(nickNameParts[i]); // Lấy firstname từ nickname
+	                names[1] = capitalizeFirstLetter(fullNameParts[convertFullNameParts.length - 2]) + " " + capitalizeFirstLetter(nickNameParts[i]);
 
-	        //Nếu không tìm thấy bất kì cụm từ nào thì in ra
-	        boolean foundMatch = false;
-	        for (int j = 0; j < convertFullNameParts.length; j++) {
-	            if (nicknamePart.equals(convertFullNameParts[j])) {
-	                foundMatch = true;
-	                break;
+	                // Kiểm tra xem firstname có thuộc tập hợp tên không dấu hay không
+	                boolean isCommonNoAccentName = Arrays.asList(ONLY_FIRST_NAMES_EXIT).contains(convertNickNameParts[i]);
+	                if (isCommonNoAccentName) {
+	                    // Nếu không thuộc tập hợp, lưu giá trị ban đầu và đặt thành "ko xác định"
+	                    names[2] = names[0];
+	                    names[0] = "ko xác định";
+	                }
+
+	                return names; // Tìm thấy và xử lý xong, trả về luôn
 	            }
-	        }
-	        if(!foundMatch){
-	            System.out.println("Nickname part '" + nicknamePart + "' không xác định");
 	        }
 	    }
-
-		
-		return null;
+	    return names;
 	}
 	
 	//convert Vietnamese name to english name
@@ -85,6 +216,17 @@ public class NameProcess {
         return sb.toString();
     }
 
+		//"công" --> "Công"
+		private static String capitalizeFirstLetter (String name) {
+			if (name == null || name.isEmpty()) {
+		        return name;
+		    }
+		    String firstChar = name.substring(0, 1).toUpperCase();
+		    String rest = name.substring(1).toLowerCase();
+		    return firstChar + rest;
+		}
+	
+	*/
 	
 //==================================================================================================================	
 	

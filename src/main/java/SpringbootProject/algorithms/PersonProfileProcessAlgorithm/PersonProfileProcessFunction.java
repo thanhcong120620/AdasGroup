@@ -11,13 +11,13 @@ public class PersonProfileProcessFunction {
 
 
 //=============================================NAME PROCES================================================================
-	public String extractFirstName (String fullName, String nickname) {
-		return nameProcess.extractFirstName(fullName, nickname);
+	public String[] extractFirstName (String fullName, String nickname) {
+		return nameProcess.extractFirstNameAndMidFirstName(fullName, nickname);
 		
 	}
 	
-	public String getNomalizeName (String name) {
-		return nameProcess.convertVietnameseNameToEnglishName(name);
+	public String getNoAccenName (String name) {
+		return nameProcess.removeAccent(name);
 	}
 	
 //=============================================PHONE PROCESS==============================================================

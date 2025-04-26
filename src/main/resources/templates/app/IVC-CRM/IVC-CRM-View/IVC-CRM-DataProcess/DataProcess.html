@@ -199,7 +199,60 @@
                     <a href="/excel-filter-error-single" class="btn btn-secondary-dark danger">Tải file lỗi</a>
                  </div>
             </div>
-        </div> <!-- End Card 4 -->
+        </div> <!-- End Card 3 -->
+        
+        
+        
+<!-- Card 4: Lọc tên trong 1 file Excel -->
+        <div class="glossy-card">
+            <h2 class="card-title">Xử lý tên trong file Excel</h2>
+
+            <!-- Khu vực thông báo -->
+            <div class="messages-area">
+                <div class="alert alert-info">
+                    <strong>{{name-process-message}}</strong>
+                </div>
+
+            <!-- Form Upload -->
+            <form th:action="@{/uploadAndProcessName}" method="post" enctype="multipart/form-data" class="styled-form">
+                <!-- Row 1: File cần lọc -->
+                <div class="form-row">
+                    <label for="excelFileCard4" class="form-label-inline">File Lọc:</label>
+                    <div class="form-input-wrapper">
+                        <input type="file" id="excelFile2Card4" name="excelfilenameprocess" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <small class="form-text-muted">File này sẽ bị sửa đổi.</small>
+                    </div>
+                </div>
+                <!-- Row 2: Actions -->
+                <div class="form-row form-actions">
+                    <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
+                    <div class="form-input-wrapper">
+                         <button type="submit" class="btn btn-primary-glossy">Tải lên & Xử lý</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Khu vực kết quả / tải xuống -->
+            <div class="results-area">
+                 <!-- Conditional download link (nếu có) -->
+                <div th:if="${nameProcessFileUrl}" class="result-item">
+                     <!-- <h5 class="result-title">Đã lọc xong:</h5> -->
+                    <a th:href="@{${nameProcessFileUrl}}" download="nameProcessFile.xlsx" class="btn btn-secondary-dark">
+                         Tải File Đã xử lý (Trực tiếp)
+                    </a>
+                </div>
+
+                <!-- Other download buttons -->
+                <h5 class="result-title">Kết quả</h5>
+                 <div class="result-item">
+                    <a href="/excel-nameprocess-response" class="btn btn-secondary-dark">Tải file đã xử lý</a>
+                 </div>
+            </div>
+        </div> 
+        <!-- End Card 4 -->        
+        
+        
+        
 
 
     </div> <!-- End Main Container -->

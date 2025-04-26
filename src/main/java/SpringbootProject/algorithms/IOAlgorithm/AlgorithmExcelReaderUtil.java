@@ -38,6 +38,7 @@ public class AlgorithmExcelReaderUtil {
 
     
     /**
+     * Đầu vào là: File
      * Đọc file Excel từ đường dẫn (filePath) và trả về danh sách ExcelObject.
      * Phương thức này tạo một ExcelObject cho mỗi hàng dữ liệu (sau header).
      * @param filePath Đường dẫn đến file Excel.
@@ -46,6 +47,91 @@ public class AlgorithmExcelReaderUtil {
     public List<ExcelObject> readExcelFile(String filePath) {
          return readExcelFileWithValidPhone(new File(filePath)); // Gọi lại phương thức trên để tránh lặp code
         
+    }
+    
+    
+    /**
+     * Đầu vào là MultipartFile
+     * Đọc file Excel từ đối tượng MultipartFile và trả về danh sách ExcelObject.
+     * Mỗi hàng trong Excel (sau header) sẽ tương ứng với một ExcelObject.
+     * Chỉ đọc dữ liệu, không thực hiện xử lý logic phức tạp.
+     *
+     * @param multipartFile Đối tượng MultipartFile chứa dữ liệu Excel cần đọc.
+     * @return Danh sách các đối tượng ExcelObject.
+     */
+    public List<ExcelObject> readExcelFile(MultipartFile multipartFile) { // <-- Thay đổi parameter thành MultipartFile
+        List<ExcelObject> excelObjects = new ArrayList<>();
+        // Khởi tạo các đối tượng khác nếu cần (ví dụ PersonProfileProcessFunction)
+        // PersonProfileProcessFunction personProfileProcessFunction = new PersonProfileProcessFunction();
+
+        // --- Thay đổi kiểm tra đầu vào ---
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            System.err.println("Lỗi: MultipartFile không tồn tại hoặc là null/rỗng.");
+            return excelObjects; // Trả về danh sách rỗng
+        }
+        // ---------------------------------
+
+        // --- Thay đổi cách lấy InputStream ---
+        try (InputStream inputStream = multipartFile.getInputStream()) { // <-- Lấy InputStream từ MultipartFile
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            Sheet sheet = workbook.getSheetAt(0); // Lấy sheet đầu tiên
+
+            // Kiểm tra nếu sheet rỗng
+            if (sheet == null || sheet.getLastRowNum() < 0) {
+                 System.err.println("Cảnh báo: Sheet đầu tiên trong file Excel trống hoặc không tồn tại.");
+                 return excelObjects;
+            }
+        // --------------------------------------
+
+            // Đọc dòng tiêu đề (header) - Tùy chọn
+            Row headerRow = sheet.getRow(0);
+            if (headerRow == null) {
+                System.err.println("Cảnh báo: Tệp Excel không có dòng tiêu đề (dòng 0).");
+            }
+
+            // Đọc dữ liệu từ các dòng tiếp theo, bắt đầu từ dòng thứ 1 (sau header)
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+                if (row == null || isRowEmpty(row)) { // Kiểm tra nếu hàng null hoặc trống
+                    continue; // Bỏ qua hàng trống
+                }
+
+                // Tạo đối tượng ExcelObject trực tiếp từ dữ liệu ô
+                ExcelObject excelObject = new ExcelObject(
+                        getCellValueAsString(row.getCell(0)),
+                        getCellValueAsString(row.getCell(1)),
+                        getCellValueAsString(row.getCell(2)),
+                        getCellValueAsString(row.getCell(3)),
+                        getCellValueAsString(row.getCell(4)),
+                        getCellValueAsString(row.getCell(5)),
+                        getCellValueAsString(row.getCell(6)),
+                        getCellValueAsString(row.getCell(7)),
+                        getCellValueAsString(row.getCell(8)),
+                        getCellValueAsString(row.getCell(9)),
+                        getCellValueAsString(row.getCell(10)),
+                        getCellValueAsString(row.getCell(11)),
+                        getCellValueAsString(row.getCell(12)),
+                        getCellValueAsString(row.getCell(13)),
+                        getCellValueAsString(row.getCell(14)),
+                        getCellValueAsString(row.getCell(15)),
+                        getCellValueAsString(row.getCell(16)),
+                        getCellValueAsString(row.getCell(17)),
+                        getCellValueAsString(row.getCell(18)),
+                        getCellValueAsString(row.getCell(19))
+                );
+                // Thêm đối tượng vào danh sách kết quả
+                excelObjects.add(excelObject);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Lỗi IO khi đọc tệp Excel từ MultipartFile: " + e.getMessage());
+            e.printStackTrace(); // In stack trace để debug
+        } catch (Exception e) { // Bắt các lỗi khác như định dạng file không hợp lệ
+            System.err.println("Lỗi không mong muốn khi đọc file Excel từ MultipartFile: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return excelObjects;
     }
     
     
