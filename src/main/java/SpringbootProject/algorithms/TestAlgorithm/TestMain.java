@@ -13,7 +13,15 @@ public class TestMain {
 
 	public static void main(String[] args) {
 
-		testGetName();
+//		testGetName();
+		
+		List<ExcelObject> excelObjectList =  getDataFromExcelSimple("D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx");
+		for(ExcelObject excelObject : excelObjectList) {
+			String value2 =  excelObject.getColumnByIndex(2);
+			System.out.println(">>>value2: "+value2);
+			
+		}
+		
 }
 		
 

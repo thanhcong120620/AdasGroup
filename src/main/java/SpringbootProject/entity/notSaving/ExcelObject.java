@@ -1,7 +1,9 @@
 
 package SpringbootProject.entity.notSaving;
 
+import java.util.List;
 //import javax.persistence.Entity;
+import java.util.function.Function;
 
 //@Entity
 public class ExcelObject   {
@@ -260,5 +262,58 @@ public ExcelObject(String column1, String column2, String column3, String column
 	
 	
 	//Note: Nếu sử file entity, hãy sửa các file phụ thuộc dữ liệu bởi UserEntity trong package (IOAlgorithm; GmailMKTAlgorithm)
+	
+	
+	// --- Mảng/List chứa các tham chiếu đến phương thức getter ---
+    
+	
+	
+	// --- Mảng/List chứa các tham chiếu đến phương thức getter ---
+    // Function<ExcelObject, String> đại diện cho một hàm nhận ExcelObject trả về String
+    private static final List<Function<ExcelObject, String>> COLUMN_GETTERS = List.of(
+            ExcelObject::getColumn1,  // Tham chiếu phương thức getColumn1
+            ExcelObject::getColumn2,  // Tham chiếu phương thức getColumn2
+            ExcelObject::getColumn3,
+            ExcelObject::getColumn4,
+            ExcelObject::getColumn5,
+            ExcelObject::getColumn6,
+            ExcelObject::getColumn7,
+            ExcelObject::getColumn8,
+            ExcelObject::getColumn9,
+            ExcelObject::getColumn10,
+            ExcelObject::getColumn11,
+            ExcelObject::getColumn12,
+            ExcelObject::getColumn13,
+            ExcelObject::getColumn14,
+            ExcelObject::getColumn15,
+            ExcelObject::getColumn16,
+            ExcelObject::getColumn17,
+            ExcelObject::getColumn18,
+            ExcelObject::getColumn19,
+            ExcelObject::getColumn20  // Tham chiếu phương thức getColumn20
+    );
+    // Lưu ý: Khai báo static final để nó chỉ được tạo một lần cho cả class
 
+
+    // --- Hàm mới sử dụng Method Reference ---
+    /**
+     * Lấy giá trị của cột tương ứng với index (1-based).
+     * Sử dụng danh sách các Method Reference để gọi getter hiệu quả.
+     *
+     * @param index Số thứ tự cột (từ 1 đến 20).
+     * @return Giá trị của cột dưới dạng String.
+     * @throws IllegalArgumentException Nếu index nằm ngoài khoảng [1, 20].
+     */
+    public String getColumnByIndex(int index) {
+        // Kiểm tra index hợp lệ (1-based)
+        if (index < 1 || index > COLUMN_GETTERS.size()) {
+             throw new IllegalArgumentException("Chỉ số cột phải nằm trong khoảng từ 1 đến " + COLUMN_GETTERS.size() + ". Chỉ số nhận được: " + index);
+        }
+
+        // Lấy hàm getter tương ứng từ danh sách (chuyển index 1-based thành 0-based)
+        Function<ExcelObject, String> getter = COLUMN_GETTERS.get(index - 1);
+
+        // Áp dụng hàm getter đó lên đối tượng hiện tại (this)
+        return getter.apply(this);
+    }
 }

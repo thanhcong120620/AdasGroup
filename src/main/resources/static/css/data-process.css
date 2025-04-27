@@ -129,19 +129,19 @@ body {
 
 /* --- Card Styling --- */
 .glossy-card {
-    background-color: var(--card-bg);
+	background-color: rgba(26, 26, 26, 0.9); /* Đặt màu nền với độ mờ */
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
     border: 1px solid var(--card-border);
     padding: 30px 40px;
-    position: relative;
     overflow: hidden;
     flex: 1;
     min-width: 450px;
     display: flex;
     flex-direction: column;
-    opacity: 0.9;
+     position: relative; /* !! BẮT BUỘC PHẢI CÓ DÒNG NÀY !! */
 }
+    
 
 /* Gloss Effect */
 .glossy-card::before {
@@ -155,9 +155,10 @@ body {
     pointer-events: none;
     z-index: 1;
 }
+/* Áp dụng cho các con trực tiếp NGOẠI TRỪ modal */
 .glossy-card > * {
     position: relative;
-    z-index: 2;
+     /* Z-index này vẫn có thể không cần thiết cho tất cả, cân nhắc thêm  z-index: 2; */
 }
 
 /* Card Title */
@@ -389,6 +390,77 @@ input[type="file"].form-control-custom::file-selector-button:hover {
     border-color: var(--danger-alert-border);
     color: var(--danger-alert-text);
 }
+
+
+
+/* --- Modal chú thích --- */
+/* --- Nút Hướng dẫn --- */
+.help-icon-link {
+    position: absolute;
+    top: 28px;       /* Điều chỉnh */
+    right: 18px;      /* Điều chỉnh */
+    z-index: 10;
+    width: 30px;      /* Điều chỉnh */
+    height: 30px;     /* Điều chỉnh */
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
+    border-radius: 50%; /* Làm tròn */
+    font-size: 1.1rem; /* Kích thước icon/chữ */
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+
+}
+
+.help-icon-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--text-primary);
+    color: rgb(220 201 201);
+    transform: scale(1.1); /* Phóng to nhẹ */
+}
+
+ /* Style riêng cho icon bên trong nếu cần */
+.help-icon-link i {
+    vertical-align: middle;
+    /* font-size: 1rem; */ /* Có thể chỉnh kích thước icon riêng */
+}
+
+/* Các style khác cho form, messages, results */
+.modal-body ol { padding-left: 20px; } /* Thụt lề danh sách */
+.modal-body li { margin-bottom: 5px; }
+
+/* Nếu bạn muốn nền modal tối */
+.modal-content {
+    background-color: #252525; /* Ví dụ màu nền tối */
+    color: var(--text-primary); /* Đặt màu chữ mặc định cho modal */
+    border: 1px solid var(--card-border); /* Thêm viền nếu cần */
+}
+.modal-header {
+    border-bottom: 1px solid var(--card-border); /* Style header */
+}
+.modal-footer {
+    border-top: 1px solid var(--card-border); /* Style footer */
+}
+/* Đảm bảo các thẻ cụ thể bên trong modal cũng có màu phù hợp */
+.modal-body p,
+.modal-body li,
+.modal-body h6 {
+    color: var(--text-primary); /* Hoặc một màu sáng hơn nếu cần */
+}
+.modal-body strong {
+     color: #ffffff; /* Làm nổi bật chữ đậm */
+}
+/* Chỉnh màu nút X nếu cần */
+.modal-header .btn-close {
+     filter: invert(1) grayscale(100%) brightness(200%); /* Làm nút X màu trắng */
+}
+
 
 /* --- Responsive Design --- */
 @media (max-width: 1024px) {

@@ -61,40 +61,38 @@ public class DataExcelProcessController {
      * POSTING ACTION - UPLOAD VÀ XỬ LÝ NAME TRONG FILE EXCEL
      * */
     @PostMapping("/uploadAndProcessName")
-    public String handleFileUploadAndProcessName(@RequestParam("excelfilenameprocess") MultipartFile file, RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+    public String handleFileUploadAndProcessName(@RequestParam("excelfilenameprocess") MultipartFile file, // Tên khớp với input file
+            @RequestParam(name = "columnIndex1", required = false, defaultValue = "1") int index1,     // Tên khớp với select đầu tiên
+            @RequestParam(name = "columnIndex2", required = false, defaultValue = "2") int index2,     // Tên khớp với select thứ, 
+            RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
 
         // --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
-        List<ExcelObject> excelObjectInput = ioFunction.getDataFromExcelWithMultipartFile(file);
-        List<ExcelObject> excelObjectOutput = new ArrayList<>();
+        List<ExcelObject> excelObjectInputList = ioFunction.getDataFromExcelWithMultipartFile(file);
+        List<ExcelObject> excelObjectOutputList = new ArrayList<>();
         
         PersonProfileProcessFunction pppFunction = new PersonProfileProcessFunction();
-        for(int i=0;i<excelObjectInput.size();i++) {
-        	String[] names = pppFunction.extractFirstName(excelObjectInput.get(i).getColumn1(), excelObjectInput.get(i).getColumn2());
+        for(int i=0;i<excelObjectInputList.size();i++) {
+        	String[] names = pppFunction.extractFirstName(excelObjectInputList.get(i).getColumnByIndex(index1), excelObjectInputList.get(i).getColumnByIndex(index2));
         
         	ExcelObject excelObject = new ExcelObject();
         	excelObject.setColumn1(names[0]);
         	excelObject.setColumn2(names[1]);
         	excelObject.setColumn3(names[2]);
         	excelObject.setColumn4(names[3]);
-        	excelObjectOutput.add(excelObject);
+        	excelObjectOutputList.add(excelObject);
         }
-        
-		//check result
-//        for (ExcelObject excelObject : excelObjectOutput) {
-//        	System.out.println(">> Controller excelObjectOutput: "+excelObject);
-//        }
         
         // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
         try {
-        	excelFileResponseNameProcess = ioFunction.algorithmWitterMultipartFile(excelObjectOutput);
+        	excelFileResponseNameProcess = ioFunction.algorithmWitterMultipartFile(excelObjectOutputList);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
-        model.addAttribute("name-process-message", "Xử lý thành công");
+//        model.addAttribute("name-process-message", "Xử lý thành công");
         
         // Luôn trả về view xử lý, hiển thị kết quả hoặc thông báo lỗi qua Model
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
