@@ -13,14 +13,14 @@ public class TestMain {
 
 	public static void main(String[] args) {
 
-//		testGetName();
+		testGetName();
 		
-		List<ExcelObject> excelObjectList =  getDataFromExcelSimple("D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx");
-		for(ExcelObject excelObject : excelObjectList) {
-			String value2 =  excelObject.getColumnByIndex(2);
-			System.out.println(">>>value2: "+value2);
-			
-		}
+//		List<ExcelObject> excelObjectList =  getDataFromExcelSimple("D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx");
+//		for(ExcelObject excelObject : excelObjectList) {
+//			String value2 =  excelObject.getColumnByIndex(2);
+//			System.out.println(">>>value2: "+value2);
+//			
+//		}
 		
 }
 		
@@ -32,16 +32,18 @@ public class TestMain {
 		// Dữ liệu test
         String[][] data = {
                 {"HOANG THI LE THANH DINH", "Thanh Định"},
+                {"NGUYEN THI XUAN NGUYEN", "Nguyên nguyễn"},
                 {"NGUYEN THI XUAN HUYEN", "Xuân Huyền"},
                 {"LE THI CHIEU AN", "Lê Thị Chiêu An"},
                 {"CAN THI TINH", "Tình Cần"},
                 {"NGUYEN HIEN LUONG", "Hien Luong"},
                 {"DOAN THI THU THUY", "Đoàn Thị Thu Thủy"},
+                {"HONG THI ANH HONG", "Anh Hong"},
                 {"HO THI ANH HONG", "Anh Hong"},
-                {"SU THI BICH PHUONG", "Phương"},
+                {"NGUYEN THI THANH LINH", "Linh Nguyen"},
                 {"TRAN THI TU", "Tư Trần"},
                 {"TRAN THI NHAN", "Nhan"},
-                {"NGUYEN THI BAO", "Nguyễn Thị Bảo"},
+                {"HUYNH THI NGOC HOA", "Huỳnh Hoa"},
                 {"NGUYEN THI LE HOA", "Lệ Hoa"},
                 {"TRAN CONG ANH", "Trần Anh"},
                 {"NGUYEN THI NHU THAO", "Thảo"},

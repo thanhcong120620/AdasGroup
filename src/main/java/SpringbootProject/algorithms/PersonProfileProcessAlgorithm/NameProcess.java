@@ -18,8 +18,8 @@ public class NameProcess {
 	
 	private static final String WORD_SEPARATOR = " ";
     private static final String[] ONLY_FIRST_NAMES_EXIT = {"Mai", "Hồng", "Kim", "Đạt", "Đức", "Ngọc", "Bích", "Xuân",
-            "Tùng", "Thái", "Hạnh", "Công", "Loan", "Nhung", "Oanh", "Hoàng", "Minh", "Tuyết", "Liên", "Trang", "Phúc",
-            "Phát", "Long", "Sơn"};
+            "Tùng", "Thái", "Hạnh", "Công", "Loan", "Nhung", "Oanh", "Hoàng", "Minh", "Tuyết", "Liên", "Liêm", "Trang", "Phúc",
+            "Phát", "Long", "Sơn", "Ái"};
 
     // Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
     private static final String[] ONLY_FIRST_NAMES_EXIT_NO_ACCENT;
@@ -45,6 +45,24 @@ public class NameProcess {
         	String firstNameAtFullnameOrigin  = arrayFullNamePartsOrigin[arrayFullNamePartsOrigin.length-1];
         	String midNameAtFullnameOrigin  = convertToLowerCaseAndCapitalizeFirstLetter(arrayFullNamePartsOrigin[arrayFullNamePartsOrigin.length-2]);
 
+        //Kiểm tra nick name có dấu hay ko có dấu.
+        	boolean nickNameIsAccent = false;
+        	for(int i = 0; i < arrayConvertNickNameParts.length; i++) {
+//        		Trong vòng lặp i của nickname, để kiểm tra các phần tử còn lại thì cần so sánh các phần tử trong 
+//        		Array nickname origin và Array nickname convert có trùng nhau hay không 
+//        		(convert to lowercase rồi capitalize lên để so sánh), để lấy các phần tử ấy thì (length - i -1)
+        		if(! convertToLowerCaseAndCapitalizeFirstLetter(arrayNickNamePartsOrigin[i]).equals(convertToLowerCaseAndCapitalizeFirstLetter(arrayConvertNickNameParts[i]))) {
+        			nickNameIsAccent=true;
+        			break;
+        		}
+        	}
+        	
+            //Kiểm tra Họ và Tên có trùng dạng với nhau không.
+        	boolean lastNameIsEqualFirstName = false;        	
+        	if(arrayConvertFullNameParts[0].equals(arrayConvertFullNameParts[(arrayConvertFullNameParts.length)-1])) {
+        		lastNameIsEqualFirstName = true;
+        	}
+        	
         // Mảng để lưu trữ kết quả: {firstName, midNameAndFirstName, originalFirstName}
         String[] names = {convertToLowerCaseAndCapitalizeFirstLetter(firstNameAtFullnameOrigin), "ko xác định", ">>> ERROR",""}; // Giá trị mặc định
         	
@@ -53,8 +71,13 @@ public class NameProcess {
                 if (firstNameAtFullnameConvert.equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
                 	names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
                 	names[1] = midNameAtFullnameOrigin + " " + ONLY_FIRST_NAMES_EXIT[iarrstatic];
-                    names[2] = "Tên được tìm thấy từ static Array";
+                    names[2] = "Tên duy nhất trong tên Tiếng Việt";
                     names[3] = names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; 
+                    
+                    if(lastNameIsEqualFirstName) {
+                    	names[2] = "Tên trùng định dạng với Họ - ";
+                    }
+                    
                 	return names;
                 }
             }
@@ -76,6 +99,7 @@ public class NameProcess {
             				names[0] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
                             names[1] = "Tên \"Anh\" đặc biệt, đã lấy tên lót";
                             names[3] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+                            
             			} else {
             				names[0] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
                             names[1] = midNameAtFullnameOrigin + " " + capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
@@ -85,15 +109,24 @@ public class NameProcess {
             			// Trường hợp: Trùng với firstName của convertFullname thì kiểm tra tính hợp lệ
                         if (!capitalizeFirstLetter(arrayNickNamePartsOrigin[i]).equals(capitalizeFirstLetter(removeAccent(nicknamePart)))) {
                             // Tên có dấu --> Hợp lệ, giữ nguyên
-                            names[2] = "Tên có dấu từ nick name !";
-                            return names;
+                            names[2] = "Tên có dấu - Độ chính xác cao!";
+//                            return names;
                         } else {
-                        	// Tên ko có dấu and warning
-                            names[2] = ">>> Waring: Tên không có dấu từ nick name !";
+                        	//Check có phải thực sự không dấu không bằng việc kiểm tra các phần tử còn lại của nick name có dấu hay không
+                        	if(nickNameIsAccent) {
+                        		names[2] = "Tên không dấu - Độ chính xác tương đối";	
+                        	} else {
+                        		// Tên ko có dấu and warning
+                        		names[2] = ">>> Waring: Tên không có dấu từ nick name ! - Độ chính xác tương đối";
+                        	}
                             names[3] = "";
-                            return names;
+//                            return names;
                         }
-                  
+                        
+                        if(lastNameIsEqualFirstName) {
+                        	names[2] = "Tên trùng định dạng với Họ";
+                        }
+                        return names;
             		}
         }
 
