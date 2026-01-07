@@ -17,7 +17,7 @@ public class UserService implements IUser {
 	@Autowired
 	UserRepository userRepository;
 	
-	
+
 	
 	@Override
 	public UserEntity userCreater(UserEntity userEntity) {

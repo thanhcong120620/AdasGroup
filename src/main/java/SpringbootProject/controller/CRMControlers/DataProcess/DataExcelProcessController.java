@@ -41,6 +41,8 @@ public class DataExcelProcessController {
     private static MultipartFile excelFileErrorFilter;
     private static MultipartFile excelFileResponseMerge;
     private static MultipartFile excelFileResponseNameProcess;
+    private static MultipartFile excelFileResponseInvalidDataList;
+    private static MultipartFile excelFileResponseValidDataList;
     // --- KẾT THÚC CẢNH BÁO ---
 
 
@@ -57,6 +59,64 @@ public class DataExcelProcessController {
 
   //===================================================================================================================   
 
+    
+    
+    
+    /*
+     * POSTING ACTION - UPLOAD VÀ XỬ LÝ DỮ LIỆU CẦN TÁCH TRONG FILE EXCEL
+     * */
+    @PostMapping("/uploadAndProcessFilterConditionColumnData")
+    public String handleFileUploadAndProcessFilterConditionColumnData(@RequestParam("excelFileFilterByCodition") MultipartFile file, // Tên khớp với input file
+            @RequestParam(name = "columnIndex", required = false, defaultValue = "1") int index1,     // Tên khớp với select đầu tiên
+            RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+System.out.println("1");
+		//Khi chưa làm chức năng tùy ý chọn cột và dữ liệu. Khởi tạo List có String chứa những thuộc tính cần tách
+		List<String> stringInValidDataList1 = new ArrayList<>();
+		stringInValidDataList1.add("Không tồn tại");
+		stringInValidDataList1.add("Bị chặn tin nhắn");
+		stringInValidDataList1.add("Thất bại");
+		
+//		List<String> stringInValidDataList2 = new ArrayList<>();
+//		stringInValidDataList2.add("Anh");
+//		stringInValidDataList2.add("Chị");
+//		stringInValidDataList2.add("Cô");
+//		stringInValidDataList2.add("Chú");
+		
+        // --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+        List<List<ExcelObject>> excelObjectInputList = ioFunction.getDataFromExcelConditionFilterColumnn(file, index1, stringInValidDataList1);
+        
+        List<ExcelObject> validDataList = excelObjectInputList.get(0);
+        List<ExcelObject> invalidDataList = excelObjectInputList.get(1);
+//        for (ExcelObject output : validDataList) {
+//            System.out.println(">>"+output);
+//            }
+//        for (ExcelObject output : invalidDataList) {
+//            System.out.println(">>"+output);
+//            }
+        
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	excelFileResponseValidDataList = ioFunction.algorithmWitterMultipartFile(validDataList);
+        	excelFileResponseInvalidDataList = ioFunction.algorithmWitterMultipartFile(invalidDataList);
+        	System.out.println("3");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+//        model.addAttribute("name-process-message", "Xử lý thành công");
+        
+        // Luôn trả về view xử lý, hiển thị kết quả hoặc thông báo lỗi qua Model
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DataProcess";
+    }
+    
+    
+    
+    
+    
+    
 	/*
      * POSTING ACTION - UPLOAD VÀ XỬ LÝ NAME TRONG FILE EXCEL
      * */
@@ -344,6 +404,54 @@ public class DataExcelProcessController {
                 .body(resource);
     }
     
+//========================================================================================================== 
+    
+    /*
+     * FILTER CODITION COLUMN DATA
+     * Phương thức tải xuống file Excel Invalid
+     * */
+    @GetMapping("/excel-invalid-filter-condition-response")
+    public ResponseEntity<ByteArrayResource> downloadInvalidDataExcelFile() throws IOException {
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (excelFileResponseInvalidDataList == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseInvalidDataList.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file-du-lieu-can-lay.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponseInvalidDataList.getSize())
+                .body(resource);
+    }
+
+
+    /*
+     * FILTER CODITION COLUMN DATA
+     * Phương thức tải xuống file Excel Valid
+     * */
+    @GetMapping("/excel-valid-filter-condition-response")
+    public ResponseEntity<ByteArrayResource> downloadValidDataExcelFile(Model model) throws IOException {
+         // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileError ---
+    	System.out.println("1");
+         if (excelFileResponseValidDataList == null) {
+             logger.warn("Yêu cầu tải file error nhưng excelFileError là null.");
+         	System.out.println("2");
+             return ResponseEntity.notFound().build();
+         }
+
+        ByteArrayResource resource = new ByteArrayResource(excelFileResponseValidDataList.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file-du-lieu-con-lai.xlsx") // Đổi tên file nếu muốn
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelFileResponseValidDataList.getSize())
+                .body(resource);
+    }
+        
 //========================================================================================================== 
     
     /*

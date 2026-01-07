@@ -8,6 +8,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user")
 public class UserEntity extends BaseEntity {
+	
+	private int x;
+	private int y;
 
 	@Column(name = "fullName")
 	private String fullName;
@@ -52,12 +55,34 @@ public class UserEntity extends BaseEntity {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
 
 	@Override
 	public String toString() {
 		return "UserEntity [fullName=" + fullName + ", genderUser=" + genderUser + ", gmail=" + gmail + ", status="
 				+ status + "]";
 	}
+	
+	public int caculator() {
+		return (x+y);
+	}
+	
 	
 	//Note: Nếu sử file entity, hãy sửa các file phụ thuộc dữ liệu bởi UserEntity trong package (IOAlgorithm; GmailMKTAlgorithm)
 

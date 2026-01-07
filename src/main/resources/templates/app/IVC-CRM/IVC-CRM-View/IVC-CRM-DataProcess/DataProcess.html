@@ -223,7 +223,7 @@
                 <div th:if="${nameProcessMessage}"  class="alert alert-info">
                     <strong th:text="${nameProcessMessage}"></strong>
                 </div>
-
+			</div> <!--13/9/2025 thêm ở đây-->
             <!-- Form Upload -->
             <form th:action="@{/uploadAndProcessName}" method="post" enctype="multipart/form-data" class="styled-form">
                 <!-- Row 1: File cần lọc -->
@@ -349,10 +349,108 @@
         <!-- End Card 4 -->        
         
         
-        
+<!-- Card 5: Lọc và Tách dữ liệu tùy ý -->      
+ <!-- Card 3: Kiểm tra số điện thoại lặp lại trong 1 file -->
+        <div class="glossy-card">
+            <h2 class="card-title">Lọc dữ liệu có điều kiện</h2>
+            <p>Hiện tại đang có "Không tồn tại" Và "Chặn tin nhắn người lạ"</p>
+
+            <!-- Khu vực thông báo 
+            <div class="messages-area">
+                <div th:if="${statusMessageSingle}" class="alert alert-info">
+                    <strong th:text="${statusMessageSingle}"></strong>
+                </div>
+                <div th:if="${errorMessageCard3}" class="alert alert-danger">
+                    <strong th:text="${errorMessageSingle}"></strong>
+                </div>
+                <div th:if="${notValidMessageCardSingle}" class="alert alert-danger">
+                    <strong th:text="${notValidMessageSingle}"></strong>
+                </div>
+            </div>  -->
+
+            <!-- Form Upload -->
+            <form th:action="@{/uploadAndProcessFilterConditionColumnData}" method="post" enctype="multipart/form-data" class="styled-form">
+                <!-- Row 1: File cần lọc -->
+                <div class="form-row">
+                    <label for="excelFileCard5" class="form-label-inline">File Lọc:</label>
+                    <div class="form-input-wrapper">
+                        <input type="file" id="excelFileCard5" name="excelFileFilterByCodition" accept=".xlsx,.xls" class="form-control-custom" required>
+                        <small class="form-text-muted">File này sẽ bị sửa đổi.</small>
+                    </div>
+                </div>
+                
+                <!-- Row Mới: Chọn cột -->
+				<div class="form-row">
+    				<label for="columnIndexSelect" class="form-label-inline">Vị trí cột của Fullname:</label>
+    				<div class="form-input-wrapper">
+        				<!-- Bỏ required -->
+        				<select id="columnIndexSelect" name="columnIndex" class="form-control-custom">
+            		 	<!-- Thêm option mặc định/placeholder -->
+             				<option value="" disabled selected>Mặc định cột 1</option>
+            			 <!-- Vòng lặp tạo các option -->
+            			<option th:each="num : ${#numbers.sequence(1, 20)}"
+                    			th:value="${num}"
+                    			th:text="${num}">1</option>
+         				</select>
+         				<small class="form-text-muted">Chọn chỉ số cột (1-20) thứ nhất.</small>
+    				</div>
+				</div>
+                
+                
+                <!-- Row Actions -->
+                <div class="form-row form-actions">
+                    <div class="form-label-inline"></div> <!-- Giữ chỗ trống bên trái -->
+                    <div class="form-input-wrapper">
+                         <button type="submit" class="btn btn-primary-glossy">Tải lên & Lọc</button>
+                    </div>
+                </div>
+            </form>
+            
+            
+
+            <!-- Khu vực kết quả / tải xuống -->
+            <div class="results-area">
+                 <!-- Conditional download link (nếu có) 
+                <div th:if="${filteredFileUrlFilterByParameter}" class="result-item">
+                    <a th:href="@{${filteredFileUrlFilterByParameter}}" download="filteredFileFilterByParameter.xlsx" class="btn btn-secondary-dark">
+                         Tải File Đã Lọc (Trực tiếp)
+                    </a>
+                </div>  -->
+
+                <!-- Other download buttons -->
+                <h5 class="result-title">Kết quả</h5>
+                 <div class="result-item">
+                    <a href="/excel-invalid-filter-condition-response" class="btn btn-secondary-dark">Tải file dữ liệu cần lấy</a>
+                 </div>
+                 <div class="result-item">
+                    <a href="/excel-valid-filter-condition-response" class="btn btn-secondary-dark danger">Tải file dữ liệu còn lại</a>
+                 </div>
+            </div>
+        </div> <!-- End Card 3 -->
 
 
-    </div> <!-- End Main Container -->
+
+
+
+
+
+
+
+
+
+
+</div> <!-- End Main Container -->
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Không cần Bootstrap JS nếu không dùng thành phần JS của nó -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->

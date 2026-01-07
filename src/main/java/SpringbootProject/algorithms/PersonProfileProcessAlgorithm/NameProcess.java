@@ -17,9 +17,26 @@ public class NameProcess {
 
 	
 	private static final String WORD_SEPARATOR = " ";
-    private static final String[] ONLY_FIRST_NAMES_EXIT = {"Mai", "Hồng", "Kim", "Đạt", "Đức", "Ngọc", "Bích", "Xuân",
-            "Tùng", "Thái", "Hạnh", "Công", "Loan", "Nhung", "Oanh", "Hoàng", "Minh", "Tuyết", "Liên", "Liêm", "Trang", "Phúc",
-            "Phát", "Long", "Sơn", "Ái"};
+    private static final String[] ONLY_FIRST_NAMES_EXIT = {
+    		"Ái",
+    		"Bách","Bảo","Bắc","Bích","Bình","Biên",
+    		"Cảnh","Châu","Chi","Chiến","Chính","Chung","Chương","Công","Cúc",
+    		"Duy","Duyệt","Duyên","Dương","Đạt","Đại","Đào","Đức",
+    		"Giang","Giáp",
+    		"Hà","Hải","Hằng","Hạnh","Hậu","Huệ","Hiệp","Hiền","Hiếu","Hoàng","Hồng","Hợp","Hữu","Huy","Huyền",
+    		"Khải","Khiêm","Khôi","Khoa","Kiên","Kiệt","Kim","Khuê","Khương",
+    		"Lan","Lành","Lập","Linh","Liên","Liêm","Loan","Long","Lộc",
+    		"Mai","Mạnh","Minh",
+    		"Na","Nam","Nhã","Nhi","Nhung", "Như","Nga","Ngân","Nghĩa","Nghiệp","Nguyệt","Ngọc","Ninh",
+    		"Oanh",
+    		"Phát","Phong","Phú","Phúc",
+    		"Quang","Quân","Quốc","Quyết","Quỳnh",
+    		"Sang","Sinh","Sơn","Sỹ",
+    		"Tài","Tâm","Thái","Thảo","Thắng","Thịnh","Thông","Thơm","Thương","Trang","Trà","Tiệp","Trâm","Trung","Tuấn","Tú","Tùng","Tuyết","Tươi",
+    		"Xiêm","Xuân",
+    		"Út","Uyên", 
+    		"Vân", "Việt","Vũ","Vương"
+            };
 
     // Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
     private static final String[] ONLY_FIRST_NAMES_EXIT_NO_ACCENT;
@@ -114,12 +131,14 @@ public class NameProcess {
                         } else {
                         	//Check có phải thực sự không dấu không bằng việc kiểm tra các phần tử còn lại của nick name có dấu hay không
                         	if(nickNameIsAccent) {
-                        		names[2] = "Tên không dấu - Độ chính xác tương đối";	
+                        		names[2] = "Tên không dấu - Độ chính xác tương đối";
+                        		names[3] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
                         	} else {
                         		// Tên ko có dấu and warning
                         		names[2] = ">>> Waring: Tên không có dấu từ nick name ! - Độ chính xác tương đối";
+                        		names[3] = "";
                         	}
-                            names[3] = "";
+                            
 //                            return names;
                         }
                         

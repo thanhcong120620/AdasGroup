@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +24,65 @@ public class IOFunction {
 	
 //-----------------------------------------FUNCTION----------------------------------------------------------	
 	
+	
+	
 	/*
 	 * READ EXCEL - MERGE FUNCTION
-	 * Đọc file xử lý số điện thoại
+	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
+	 * */
+	public List<List<ExcelObject>> getDataFromExcelConditionFilterColumnn(MultipartFile file, int indexColumn, List<String> stringInValidDataList) {
+//		AlgorithmReadDataFromExcelMerge algorithmReaderExcel = new AlgorithmReadDataFromExcelMerge();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+	
+		//Khởi tạo List Object từ File
+		List<ExcelObject> originDataList = excelReaderUtil.readExcelFile(file);
+		 //Khởi tạo invalidDataList rỗng để chứa các phần tử không hợp lệ
+        List<ExcelObject> invalidDataList = new ArrayList<>();
+		 //Khởi tạo validDataList rỗng để chứa các phần tử hợp lệ
+        List<ExcelObject> validDataList = new ArrayList<>();
+
+		//Chuyển dữ liệu cần tách sang validDataList.
+		for(int i=0; i<originDataList.size(); i++) {
+			boolean valid = true;
+			for(int j=0; j<stringInValidDataList.size(); j++) {
+				//Kiểm tra mỗi record có column chứa dự liệu trùng với list dữ liệu ko hợp lệ hay ko
+				if(stringInValidDataList.get(j).equals(originDataList.get(i).getColumnByIndex(indexColumn))) {
+					valid = false;
+				}				
+			}
+			//Nếu ko hợp lệ thì add vào list invalid
+			if(!valid) {
+				invalidDataList.add(originDataList.get(i));
+			}				
+			//Nếu ko có dữ liệu ko hợp lệ thì add vào list hợp lệ.
+			if(valid) {
+				validDataList.add(originDataList.get(i));
+			}
+		}
+		
+	
+		//check result
+//		System.out.println("invalidDataList: ");
+//		displayObject(invalidDataList);
+//		
+//		System.out.println("validDataList: ");
+//		displayObject(validDataList);
+		
+		List<List<ExcelObject>> result = new ArrayList<>();
+		result.add(validDataList);
+		result.add(invalidDataList);
+		
+		return result;
+	}	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * READ EXCEL - MERGE FUNCTION
 	 * Bằng đường dẫn trực tiếp, ko cần lấy từ client
 	 * */
 	public List<ExcelObject> getDataFromExcelMergeFunction(MultipartFile file) {
@@ -190,7 +248,7 @@ public class IOFunction {
 	
 	
 	/*
-	 * Bằng file từ client với đầu vào là String Path
+	 * Bằng file từ client với đầu vào là MultipartFile file
 	 * */
 	public List<ExcelObject> getDataFromExcelWithMultipartFile(MultipartFile file) {
 //		AlgorithmReadPhoneFromExcel algorithmReaderExcel = new AlgorithmReadPhoneFromExcel();
@@ -289,5 +347,14 @@ public class IOFunction {
         return users;
     }
     
+    
+//=================================HELPER==================================
+    
+    
+    public void displayObject (List<ExcelObject> input) {
+      for (ExcelObject output : input) {
+      System.out.println(">>"+output);
+      }
+    }
 
 }

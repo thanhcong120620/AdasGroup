@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat; // Import DecimalFormat
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -316,6 +317,7 @@ public class AlgorithmExcelReaderUtil {
 
 
     
+//===========================================HELPER FUNCTION - KO SỬA===========================================================       
     
     
 //================logic nội bộ phụ trợ - không thể thay đổi=============================================    
@@ -393,7 +395,7 @@ public class AlgorithmExcelReaderUtil {
         }
     }
     
-    
+ 
     // --- Các phương thức helper giữ nguyên như trong Service ---
     private int findHeaderRowIndex(Sheet sheet) {
         DataFormatter dataFormatter = new DataFormatter();
