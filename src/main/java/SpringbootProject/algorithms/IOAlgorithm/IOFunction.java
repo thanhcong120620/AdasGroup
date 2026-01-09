@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.UserEntity;
+import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class IOFunction {
@@ -22,7 +23,60 @@ public class IOFunction {
 	AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
 	
 	
-//-----------------------------------------FUNCTION----------------------------------------------------------	
+
+//----------------------------------------EXCEL WITH ENTITY -FUNCTION----------------------------------------------------------		
+	/*
+	 * Get TP3 FILTER ENTITY from DTP3FilterData.xlx
+	 * EXCEL OBJECT --> DTP3 FILTER ENTITY
+	 * READ
+	 * */
+	public List<DTP3FilterData> getDtp3FilterEntityListFromExcel (MultipartFile file){
+		List<DTP3FilterData> dtp3FilterDataList = new ArrayList<>();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+		List<ExcelObject> excelDataList = excelReaderUtil.readExcelFile(file);
+		dtp3FilterDataList = mapperToExcelObject.ExcelObjectToDPT3FilterData(excelDataList);
+		
+		return dtp3FilterDataList;
+	}
+	
+	/*
+	 * Create DTP3FilterData.xlx from DTP3 FILTER ENTITY Full Data
+	 * DTP3 FILTER ENTITY --> EXCEL OBJECT
+	 * WRITE
+	 * */
+	public MultipartFile createExcelFromDtp3FilterFullData (List<DTP3FilterData> dtp3FilterDataList) throws IOException{
+		List<ExcelObject> excelDataList= new ArrayList<>();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+		excelDataList = mapperToExcelObject.DPT3FilterDataToExcelObject(dtp3FilterDataList);
+		
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHead(excelDataList, mapperToExcelObject.DPT3FilterDataExcelGetHead());
+		
+		return multipartFile;
+	}
+	
+	/*
+	 * Create DTP3FilterForm.xlx from DTP3 FILTER ENTITY
+	 * DTP3 FILTER ENTITY --> EXCEL OBJECT
+	 * WRTITE
+	 * */
+	public MultipartFile createlFromDtp3FilterExceForm () throws IOException{
+//		List<ExcelObject> excelDataList= new ArrayList<>();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+//		ExcelObject excelObject = mapperToExcelObject.DPT3FilterDataToExcelObjectGetHead();
+//		String [] excelHeadArr = mapperToExcelObject.DPT3FilterDataExcelGetHead();
+		
+//		excelDataList.add(excelObject);
+		
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHead(null, mapperToExcelObject.DPT3FilterDataExcelGetHead());
+		
+		return multipartFile;
+	}
+	
+//----------------------------------------OLD -FUNCTION----------------------------------------------------------	
 	
 	
 	

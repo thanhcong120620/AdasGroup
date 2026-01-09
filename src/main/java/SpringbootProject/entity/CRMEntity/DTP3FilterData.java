@@ -43,13 +43,13 @@ public class DTP3FilterData {
     private String consultDiary;
  	
     // Thông tin liên hệ cơ bản
-    @Column(name = "full_name1", nullable = false, length = 150)
+    @Column(name = "full_name1", nullable = true, length = 150)
     private String fullName1; // Họ và tên
     
-    @Column(name = "full_name2", nullable = false, length = 150)
+    @Column(name = "full_name2", nullable = true, length = 150)
     private String fullName2; // Họ và tên
     
-    @Column(name = "last_name", nullable = false, length = 150)
+    @Column(name = "last_name", nullable = true, length = 150)
     private String lastName; // Tên
 
     @Enumerated(EnumType.STRING)
@@ -63,19 +63,19 @@ public class DTP3FilterData {
     @Column(name = "zalo_name", length = 100)
     private String zaloName; // Tên Zalo
 
-    @Column(name = "zalo_uid", length = 100, unique = true) // Zalo UID có thể là unique
+    @Column(name = "zalo_uid", length = 100) // Zalo UID có thể là unique
     private String zaloUid; // Zalo-UID
 
     @Column(name = "facebook_link", length = 200)
     private String facebookLink; // Link facebook
 
-    @Column(name = "phone_number1", length = 20, unique = true) // Số điện thoại có thể là unique
+    @Column(name = "phone_number1", length = 20) // Số điện thoại có thể là unique
     private String phoneNumber1; // Contact (SĐT)
     
-    @Column(name = "phone_number2", length = 20, unique = true) // Số điện thoại có thể là unique
+    @Column(name = "phone_number2", length = 20) // Số điện thoại có thể là unique
     private String phoneNumber2; // Contact (SĐT)
 
-    @Column(name = "gmail", length = 100, unique = true) // Email cũng có thể là unique
+    @Column(name = "gmail", length = 100) // Email cũng có thể là unique
     private String gmail;
     
     @Column(name = "date_of_birth")
@@ -101,7 +101,7 @@ public class DTP3FilterData {
     private String mixContacts; //Contact tổng hợp
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "next_action", length = 30, nullable = false)
+    @Column(name = "next_action", length = 30, nullable = true)
     private NextAction nextAction;
     
     @Column(name = "next_follow_date")

@@ -9,7 +9,9 @@ public enum NextAction {
     SMS("SMS"),
     EMAIL("Gmail"),
     FIELD_MARKETING("Làm thị trường"),
-    KEEP_INTERACTION("Giữ tương tác");
+    KEEP_INTERACTION("Giữ tương tác"),
+    COLLECT_INFORMATION("Thu thập thông tin"),
+    UNDEFINED("Không xác định");
 
     private final String label;
 

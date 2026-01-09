@@ -163,14 +163,14 @@ public class TestMain {
 	/*
 	 * 
 	 * */
-	public static void algorithmWritterTest() {
-		String filePathSaving = "D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx";
-		 // Giả sử bạn có một list các entity
-       List<ExcelObject> excelObjectList = List.of(
-           new ExcelObject("Value122", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20"),
-           new ExcelObject("Value1", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20")
-       );
-       IOFunction.algorithmWitter(filePathSaving, excelObjectList);
-	}
+//	public static void algorithmWritterTest() {
+//		String filePathSaving = "D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx";
+//		 // Giả sử bạn có một list các entity
+//       List<ExcelObject> excelObjectList = List.of(
+//           new ExcelObject("Value122", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20"),
+//           new ExcelObject("Value1", "Value2", "Value3", "Value4", "Value5", "Value6", "Value7", "Value8", "Value9", "Value10", "Value11", "Value12", "Value13", "Value14", "Value15", "Value16", "Value17", "Value18", "Value19", "Value20")
+//       );
+//       IOFunction.algorithmWitter(filePathSaving, excelObjectList);
+//	}
 
 }

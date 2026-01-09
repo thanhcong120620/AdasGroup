@@ -33,7 +33,7 @@ public class AlgorithmExcelReaderUtil {
     private static final DecimalFormat df = new DecimalFormat("0");
     
     private static final Logger logger = LoggerFactory.getLogger(AlgorithmExcelReaderUtil.class);
-    private static final int MAX_COLUMNS_TO_PROCESS = 20;
+    private static final int MAX_COLUMNS_TO_PROCESS = 100;
 
 
 
@@ -118,7 +118,87 @@ public class AlgorithmExcelReaderUtil {
                         getCellValueAsString(row.getCell(16)),
                         getCellValueAsString(row.getCell(17)),
                         getCellValueAsString(row.getCell(18)),
-                        getCellValueAsString(row.getCell(19))
+                        getCellValueAsString(row.getCell(19)),
+                        getCellValueAsString(row.getCell(20)),
+                        getCellValueAsString(row.getCell(21)),
+                        getCellValueAsString(row.getCell(22)),
+                        getCellValueAsString(row.getCell(23)),
+                        getCellValueAsString(row.getCell(24)),
+                        getCellValueAsString(row.getCell(25)),
+                        getCellValueAsString(row.getCell(26)),
+                        getCellValueAsString(row.getCell(27)),
+                        getCellValueAsString(row.getCell(28)),
+                        getCellValueAsString(row.getCell(29)),
+                        getCellValueAsString(row.getCell(30)),
+                        getCellValueAsString(row.getCell(31)),
+                        getCellValueAsString(row.getCell(32)),
+                        getCellValueAsString(row.getCell(33)),
+                        getCellValueAsString(row.getCell(34)),
+                        getCellValueAsString(row.getCell(35)),
+                        getCellValueAsString(row.getCell(36)),
+                        getCellValueAsString(row.getCell(37)),
+                        getCellValueAsString(row.getCell(38)),
+                        getCellValueAsString(row.getCell(39)),
+                        getCellValueAsString(row.getCell(40)),
+                        getCellValueAsString(row.getCell(41)),
+                        getCellValueAsString(row.getCell(42)),
+                        getCellValueAsString(row.getCell(43)),
+                        getCellValueAsString(row.getCell(44)),
+                        getCellValueAsString(row.getCell(45)),
+                        getCellValueAsString(row.getCell(46)),
+                        getCellValueAsString(row.getCell(47)),
+                        getCellValueAsString(row.getCell(48)),
+                        getCellValueAsString(row.getCell(49)),
+                        getCellValueAsString(row.getCell(50)),
+                        getCellValueAsString(row.getCell(51)),
+                        getCellValueAsString(row.getCell(52)),
+                        getCellValueAsString(row.getCell(53)),
+                        getCellValueAsString(row.getCell(54)),
+                        getCellValueAsString(row.getCell(55)),
+                        getCellValueAsString(row.getCell(56)),
+                        getCellValueAsString(row.getCell(57)),
+                        getCellValueAsString(row.getCell(58)),
+                        getCellValueAsString(row.getCell(59)),
+                        getCellValueAsString(row.getCell(60)),
+                        getCellValueAsString(row.getCell(61)),
+                        getCellValueAsString(row.getCell(62)),
+                        getCellValueAsString(row.getCell(63)),
+                        getCellValueAsString(row.getCell(64)),
+                        getCellValueAsString(row.getCell(65)),
+                        getCellValueAsString(row.getCell(66)),
+                        getCellValueAsString(row.getCell(67)),
+                        getCellValueAsString(row.getCell(68)),
+                        getCellValueAsString(row.getCell(69)),
+                        getCellValueAsString(row.getCell(70)),
+                        getCellValueAsString(row.getCell(71)),
+                        getCellValueAsString(row.getCell(72)),
+                        getCellValueAsString(row.getCell(73)),
+                        getCellValueAsString(row.getCell(74)),
+                        getCellValueAsString(row.getCell(75)),
+                        getCellValueAsString(row.getCell(76)),
+                        getCellValueAsString(row.getCell(77)),
+                        getCellValueAsString(row.getCell(78)),
+                        getCellValueAsString(row.getCell(79)),
+                        getCellValueAsString(row.getCell(80)),
+                        getCellValueAsString(row.getCell(81)),
+                        getCellValueAsString(row.getCell(82)),
+                        getCellValueAsString(row.getCell(83)),
+                        getCellValueAsString(row.getCell(84)),
+                        getCellValueAsString(row.getCell(85)),
+                        getCellValueAsString(row.getCell(86)),
+                        getCellValueAsString(row.getCell(87)),
+                        getCellValueAsString(row.getCell(88)),
+                        getCellValueAsString(row.getCell(89)),
+                        getCellValueAsString(row.getCell(90)),
+                        getCellValueAsString(row.getCell(91)),
+                        getCellValueAsString(row.getCell(92)),
+                        getCellValueAsString(row.getCell(93)),
+                        getCellValueAsString(row.getCell(94)),
+                        getCellValueAsString(row.getCell(95)),
+                        getCellValueAsString(row.getCell(96)),
+                        getCellValueAsString(row.getCell(97)),
+                        getCellValueAsString(row.getCell(98)),
+                        getCellValueAsString(row.getCell(99))
                 );
                 // Thêm đối tượng vào danh sách kết quả
                 excelObjects.add(excelObject);
@@ -292,7 +372,87 @@ public class AlgorithmExcelReaderUtil {
                             getCellValueAsString(row.getCell(16)),
                             getCellValueAsString(row.getCell(17)),
                             getCellValueAsString(row.getCell(18)),
-                            getCellValueAsString(row.getCell(19))
+                            getCellValueAsString(row.getCell(19)),
+                            getCellValueAsString(row.getCell(20)),
+                            getCellValueAsString(row.getCell(21)),
+                            getCellValueAsString(row.getCell(22)),
+                            getCellValueAsString(row.getCell(23)),
+                            getCellValueAsString(row.getCell(24)),
+                            getCellValueAsString(row.getCell(25)),
+                            getCellValueAsString(row.getCell(26)),
+                            getCellValueAsString(row.getCell(27)),
+                            getCellValueAsString(row.getCell(28)),
+                            getCellValueAsString(row.getCell(29)),
+                            getCellValueAsString(row.getCell(30)),
+                            getCellValueAsString(row.getCell(31)),
+                            getCellValueAsString(row.getCell(32)),
+                            getCellValueAsString(row.getCell(33)),
+                            getCellValueAsString(row.getCell(34)),
+                            getCellValueAsString(row.getCell(35)),
+                            getCellValueAsString(row.getCell(36)),
+                            getCellValueAsString(row.getCell(37)),
+                            getCellValueAsString(row.getCell(38)),
+                            getCellValueAsString(row.getCell(39)),
+                            getCellValueAsString(row.getCell(40)),
+                            getCellValueAsString(row.getCell(41)),
+                            getCellValueAsString(row.getCell(42)),
+                            getCellValueAsString(row.getCell(43)),
+                            getCellValueAsString(row.getCell(44)),
+                            getCellValueAsString(row.getCell(45)),
+                            getCellValueAsString(row.getCell(46)),
+                            getCellValueAsString(row.getCell(47)),
+                            getCellValueAsString(row.getCell(48)),
+                            getCellValueAsString(row.getCell(49)),
+                            getCellValueAsString(row.getCell(50)),
+                            getCellValueAsString(row.getCell(51)),
+                            getCellValueAsString(row.getCell(52)),
+                            getCellValueAsString(row.getCell(53)),
+                            getCellValueAsString(row.getCell(54)),
+                            getCellValueAsString(row.getCell(55)),
+                            getCellValueAsString(row.getCell(56)),
+                            getCellValueAsString(row.getCell(57)),
+                            getCellValueAsString(row.getCell(58)),
+                            getCellValueAsString(row.getCell(59)),
+                            getCellValueAsString(row.getCell(60)),
+                            getCellValueAsString(row.getCell(61)),
+                            getCellValueAsString(row.getCell(62)),
+                            getCellValueAsString(row.getCell(63)),
+                            getCellValueAsString(row.getCell(64)),
+                            getCellValueAsString(row.getCell(65)),
+                            getCellValueAsString(row.getCell(66)),
+                            getCellValueAsString(row.getCell(67)),
+                            getCellValueAsString(row.getCell(68)),
+                            getCellValueAsString(row.getCell(69)),
+                            getCellValueAsString(row.getCell(70)),
+                            getCellValueAsString(row.getCell(71)),
+                            getCellValueAsString(row.getCell(72)),
+                            getCellValueAsString(row.getCell(73)),
+                            getCellValueAsString(row.getCell(74)),
+                            getCellValueAsString(row.getCell(75)),
+                            getCellValueAsString(row.getCell(76)),
+                            getCellValueAsString(row.getCell(77)),
+                            getCellValueAsString(row.getCell(78)),
+                            getCellValueAsString(row.getCell(79)),
+                            getCellValueAsString(row.getCell(80)),
+                            getCellValueAsString(row.getCell(81)),
+                            getCellValueAsString(row.getCell(82)),
+                            getCellValueAsString(row.getCell(83)),
+                            getCellValueAsString(row.getCell(84)),
+                            getCellValueAsString(row.getCell(85)),
+                            getCellValueAsString(row.getCell(86)),
+                            getCellValueAsString(row.getCell(87)),
+                            getCellValueAsString(row.getCell(88)),
+                            getCellValueAsString(row.getCell(89)),
+                            getCellValueAsString(row.getCell(90)),
+                            getCellValueAsString(row.getCell(91)),
+                            getCellValueAsString(row.getCell(92)),
+                            getCellValueAsString(row.getCell(93)),
+                            getCellValueAsString(row.getCell(94)),
+                            getCellValueAsString(row.getCell(95)),
+                            getCellValueAsString(row.getCell(96)),
+                            getCellValueAsString(row.getCell(97)),
+                            getCellValueAsString(row.getCell(98)),
+                            getCellValueAsString(row.getCell(99))
                     );
                     // Thêm đối tượng vào danh sách kết quả
                     excelObjects.add(excelObject);
@@ -468,6 +628,86 @@ public class AlgorithmExcelReaderUtil {
             case 18: excelObject.setColumn18(value); break;
             case 19: excelObject.setColumn19(value); break;
             case 20: excelObject.setColumn20(value); break;
+            case 21: excelObject.setColumn21(value); break;
+            case 22: excelObject.setColumn22(value); break;
+            case 23: excelObject.setColumn23(value); break;
+            case 24: excelObject.setColumn24(value); break;
+            case 25: excelObject.setColumn25(value); break;
+            case 26: excelObject.setColumn26(value); break;
+            case 27: excelObject.setColumn27(value); break;
+            case 28: excelObject.setColumn28(value); break;
+            case 29: excelObject.setColumn29(value); break;
+            case 30: excelObject.setColumn30(value); break;
+            case 31: excelObject.setColumn31(value); break;
+            case 32: excelObject.setColumn32(value); break;
+            case 33: excelObject.setColumn33(value); break;
+            case 34: excelObject.setColumn34(value); break;
+            case 35: excelObject.setColumn35(value); break;
+            case 36: excelObject.setColumn36(value); break;
+            case 37: excelObject.setColumn37(value); break;
+            case 38: excelObject.setColumn38(value); break;
+            case 39: excelObject.setColumn39(value); break;
+            case 40: excelObject.setColumn40(value); break;
+            case 41: excelObject.setColumn41(value); break;
+            case 42: excelObject.setColumn42(value); break;
+            case 43: excelObject.setColumn43(value); break;
+            case 44: excelObject.setColumn44(value); break;
+            case 45: excelObject.setColumn45(value); break;
+            case 46: excelObject.setColumn46(value); break;
+            case 47: excelObject.setColumn47(value); break;
+            case 48: excelObject.setColumn48(value); break;
+            case 49: excelObject.setColumn49(value); break;
+            case 50: excelObject.setColumn50(value); break;
+            case 51: excelObject.setColumn51(value); break;
+            case 52: excelObject.setColumn52(value); break;
+            case 53: excelObject.setColumn53(value); break;
+            case 54: excelObject.setColumn54(value); break;
+            case 55: excelObject.setColumn55(value); break;
+            case 56: excelObject.setColumn56(value); break;
+            case 57: excelObject.setColumn57(value); break;
+            case 58: excelObject.setColumn58(value); break;
+            case 59: excelObject.setColumn59(value); break;
+            case 60: excelObject.setColumn60(value); break;
+            case 61: excelObject.setColumn61(value); break;
+            case 62: excelObject.setColumn62(value); break;
+            case 63: excelObject.setColumn63(value); break;
+            case 64: excelObject.setColumn64(value); break;
+            case 65: excelObject.setColumn65(value); break;
+            case 66: excelObject.setColumn66(value); break;
+            case 67: excelObject.setColumn67(value); break;
+            case 68: excelObject.setColumn68(value); break;
+            case 69: excelObject.setColumn69(value); break;
+            case 70: excelObject.setColumn70(value); break;
+            case 71: excelObject.setColumn71(value); break;
+            case 72: excelObject.setColumn72(value); break;
+            case 73: excelObject.setColumn73(value); break;
+            case 74: excelObject.setColumn74(value); break;
+            case 75: excelObject.setColumn75(value); break;
+            case 76: excelObject.setColumn76(value); break;
+            case 77: excelObject.setColumn77(value); break;
+            case 78: excelObject.setColumn78(value); break;
+            case 79: excelObject.setColumn79(value); break;
+            case 80: excelObject.setColumn80(value); break;
+            case 81: excelObject.setColumn81(value); break;
+            case 82: excelObject.setColumn82(value); break;
+            case 83: excelObject.setColumn83(value); break;
+            case 84: excelObject.setColumn84(value); break;
+            case 85: excelObject.setColumn85(value); break;
+            case 86: excelObject.setColumn86(value); break;
+            case 87: excelObject.setColumn87(value); break;
+            case 88: excelObject.setColumn88(value); break;
+            case 89: excelObject.setColumn89(value); break;
+            case 90: excelObject.setColumn90(value); break;
+            case 91: excelObject.setColumn91(value); break;
+            case 92: excelObject.setColumn92(value); break;
+            case 93: excelObject.setColumn93(value); break;
+            case 94: excelObject.setColumn94(value); break;
+            case 95: excelObject.setColumn95(value); break;
+            case 96: excelObject.setColumn96(value); break;
+            case 97: excelObject.setColumn97(value); break;
+            case 98: excelObject.setColumn98(value); break;
+            case 99: excelObject.setColumn99(value); break;
+            case 100: excelObject.setColumn100(value); break;
             default: break;
         }
     }

@@ -76,7 +76,7 @@
                         </select>
                         <button class="btn btn-sm btn-danger">Lấy dữ liệu</button>
                     </form>
-                    <span class="badge badge-secondary" th:text="${'Tổng cộng: ' + DTP1CRMListResponse.size()}"></span>
+                    <span class="badge badge-secondary" th:text="${'Tổng cộng: ' + DTP3FilterDataList.size()}"></span>
                 </div>
 
     <!-- Div mới với khả năng cuộn dọc -->
@@ -85,34 +85,60 @@
             <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Type</th>
-                    <th>Source</th>
-                    <th>Lead Date</th>
-                    <th>Consult Diary</th>
-                    <th>Full Name</th>
+                    <th>Loại dữ liệu</th>
+                    <th>Nguồn dữ liệu</th>
+                    <th>Ngày phát sinh</th>
+                    <th>Nhật ký tư vấn</th>
+                    <th>Họ và tên 1</th>
+                    <th>Họ và tên 2</th>
+                    <th>Tên</th>
+                    <th>Danh Xưng</th>
                     <th>Gender</th>
                     <th>Zalo</th>
-                    <th>Phone 1</th>
-                    <th>Savings</th>
-                    <th>Next Action</th>
+                    <th>Zalo UID</th>
+                    <th>Facebook Link</th>
+                    <th>Số điện thoại 1</th>
+                    <th>Số điện thoại 2</th>
+                    <th>Gmail</th>
+                    <th>Ngày/Tháng/Năm sinh</th>
+                    <th>Tiết kiệm/Vốn</th>
+                    <th>Địa chỉ</th>
+                    <th>Nơi làm việc</th>
+                    <th>Sản phẩm đã mua</th>
+                    <th>Contact tổng hợp</th>
+                    <th>Hành động tiếp</th>
+                    <th>Người thực hiện</th>
                     <th>Follow Date</th>
                     <th>Result</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${DTP1CRMListResponse}">
+                <tr th:each="item : ${DTP3FilterDataList}">
                     <td th:text="${item.id}"></td>
                     <td><span class="badge badge-info" th:text="${item.dataType}"></span></td>
                     <td th:text="${item.dataSource}"></td>
                     <td th:text="${#temporals.format(item.dateOfLead, 'dd/MM/yyyy')}"></td>
                     <td class="text-truncate" style="max-width: 120px;" th:title="${item.consultDiary}" th:text="${item.consultDiary}"></td>
                     <td th:text="${item.fullName1}"></td>
+                    <td th:text="${item.fullName2}"></td>
+                    <td th:text="${item.lastName}"></td>
+                    <td th:text="${item.salutation}"></td>
                     <td th:text="${item.gender}"></td>
                     <td th:text="${item.zaloName}"></td>
+                    <td th:text="${item.zaloUid}"></td>
+                    <td th:text="${item.facebookLink}"></td>
                     <td class="font-weight-bold text-primary" th:text="${item.phoneNumber1}"></td>
+                    <td class="font-weight-bold text-primary" th:text="${item.phoneNumber2}"></td>
+                    <td th:text="${item.gmail}"></td>
+                    <td th:text="${#temporals.format(item.dateOfBirth, 'dd/MM/yyyy')}"></td>
                     <td th:text="${#numbers.formatDecimal(item.savingsAmount, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td th:text="${item.address}"></td>
+                    <td th:text="${item.workingArea}"></td>
+                    <td th:text="${item.productBought}"></td>
+                    <td th:text="${item.mixContacts}"></td>
                     <td><span class="badge badge-warning" th:text="${item.nextAction}"></span></td>
+                    <td th:text="${item.accountFollow}"></td>
                     <td th:text="${#temporals.format(item.nextFollowDate, 'dd/MM/yyyy')}"></td>
                     <td th:text="${item.resultFollow}"></td>
                     <td class="text-center">
@@ -176,10 +202,56 @@
                         </div>
                     </div>
 
-                    <!-- Card Thao tác nhanh -->
+                    <!-- Card Thao tác nhanh - Các chức năng tải dữ liệu -->
                     <div class="card shadow-sm border-warning">
                         <div class="card-header bg-warning text-dark">
-                            <i class="fas fa-tools mr-2"></i>Thao tác hệ thống
+                            <i class="fas fa-tools mr-2"></i>Thao tác hệ thống - Các chức năng tải dữ liệu
+                        </div>
+                        <div class="card-body action-btn-group">
+                            <button class="btn btn-success btn-block" onclick="openAddModal()">
+                                <i class="fas fa-plus-circle mr-1"></i> Thêm dữ liệu mới
+                            </button>
+                            <hr>
+                            <div class="row px-2">
+								
+                                <div class="col-6 p-1">
+                                    <button class="btn btn-outline-info btn-block btn-sm">
+                                        <i class="fas fa-file-export mr-1"></i> Export Excel
+                                    </button>
+                                </div>
+  
+                                <div class="col-6 p-1">
+                                    <button class="btn btn-outline-danger btn-block btn-sm">
+                                        <i class="fas fa-trash-alt mr-1"></i> Xóa hàng loạt
+                                    </button>
+                                </div>
+                                
+                                <div class="col-6 p-1">
+                 					<a href="/getDtp3FilterFormExcelFile" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i> Download Form Data.xlx
+                                    </a>
+                                    
+                                </div>
+                                
+                                <div class="col-6 p-1">
+                                    <a href="/getDtp3FilterFullDataExcelFile" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i>  Download tất cả dữ liệu xuống.xlx
+                                    </a>
+                                </div>
+                                
+                                <div class="col-6 p-1">
+                                    <a href="/getDtp3FilterDuplicatePhoneExcelFile" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i> Download các dữ liệu trùng số điện thoại.xlx
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Thao tác nhanh - Các chức năng upload dữ liệu -->
+                    <div class="card shadow-sm border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <i class="fas fa-tools mr-2"></i>Thao tác hệ thống - Các chức năng upload dữ liệu
                         </div>
                         <div class="card-body action-btn-group">
                             <button class="btn btn-success btn-block" onclick="openAddModal()">
@@ -192,11 +264,76 @@
                                         <i class="fas fa-file-export mr-1"></i> Export Excel
                                     </button>
                                 </div>
+                                
                                 <div class="col-6 p-1">
                                     <button class="btn btn-outline-danger btn-block btn-sm">
                                         <i class="fas fa-trash-alt mr-1"></i> Xóa hàng loạt
                                     </button>
                                 </div>
+                                
+								<div class="col-12 p-1">
+								    <form th:action="@{/uploadAndUpdateDtp3FilterData}" method="post" enctype="multipart/form-data">
+								        <div class="form-group">
+								            <label for="excelFileCreateNewDtp3FilterData" class="font-weight-bold"> Upload dữ liệu mới </label>
+								            <div class="input-group input-group-sm">
+								                <input type="file" id="excelFileCreateNewDtp3FilterData"
+								                       name="excelFileCreateNewDtp3FilterData"
+								                       accept=".xlsx,.xls"
+								                       class="form-control"
+								                       required
+								                 >
+								                <div class="input-group-append">
+								                    <button type="submit" class="btn btn-primary">
+								                        <i class="fas fa-upload mr-1"></i> Tải lên
+								                    </button>
+								                </div>
+								            </div>
+								        </div>
+								    </form>
+								</div>		
+                                
+								<div class="col-12 p-1">
+								    <form th:action="@{/uploadAndDeleteDtp3FilterDataByPhone}" method="post" enctype="multipart/form-data">
+								        <div class="form-group">
+								            <label for="excelFileDeleteDtp3FilterDataByPhone" class="font-weight-bold"> Upload danh sách số điện thoại cần xóa </label>
+								            <div class="input-group input-group-sm">
+								                <input type="file" id="excelFileDeleteDtp3FilterDataByPhone"
+								                       name="excelFileDeleteDtp3FilterDataByPhone"
+								                       accept=".xlsx,.xls"
+								                       class="form-control"
+								                       required
+								                 >
+								                <div class="input-group-append">
+								                    <button type="submit" class="btn btn-primary">
+								                        <i class="fas fa-trash-alt mr-1"></i> Xóa
+								                    </button>
+								                </div>
+								            </div>
+								        </div>
+								    </form>
+								</div>		
+                                
+								<div class="col-12 p-1">
+								    <form th:action="@{/uploadAndUpdateDtp3FilterOldDataByPhone}" method="post" enctype="multipart/form-data">
+								        <div class="form-group">
+								            <label for="excelFileUpdateDtp3FilterOldDataByPhone" class="font-weight-bold"> Upload dữ liệu cần cập nhật </label>
+								            <div class="input-group input-group-sm">
+								                <input type="file" id="excelFileUpdateDtp3FilterOldDataByPhone"
+								                       name="excelFileUpdateDtp3FilterOldDataByPhone"
+								                       accept=".xlsx,.xls"
+								                       class="form-control"
+								                       required
+								                 >
+								                <div class="input-group-append">
+								                    <button type="submit" class="btn btn-primary">
+								                        <i class="fas fa-trash-alt mr-1"></i> Cập nhật
+								                    </button>
+								                </div>
+								            </div>
+								        </div>
+								    </form>
+								</div>							
+                                
                             </div>
                         </div>
                     </div>
@@ -207,6 +344,9 @@
                             <i class="fas fa-info-circle mr-1"></i>
                             PHẦN MÔ TẢ TÌNH TRẠNG DỮ LIỆU
                         </small>
+                        <ul class="mr-1">
+        					<li th:each="msg : ${DTP3FilterControllerMessagesList}" th:text="${msg}"></li>
+    					</ul>
                     </div>
 
                     <!-- Card Hướng dẫn / Thông tin nhanh (Optional) -->

@@ -63,26 +63,106 @@ public class SimpleExcelReader {
                 // Tạo một đối tượng ExcelObject cho mỗi hàng
                 // Đọc tối đa 20 cột (index 0 đến 19)
                 ExcelObject excelObject = new ExcelObject(
-                        getCellValueAsString(row.getCell(0)),  // Column 1
-                        getCellValueAsString(row.getCell(1)),  // Column 2
-                        getCellValueAsString(row.getCell(2)),  // Column 3
-                        getCellValueAsString(row.getCell(3)),  // Column 4
-                        getCellValueAsString(row.getCell(4)),  // Column 5
-                        getCellValueAsString(row.getCell(5)),  // Column 6
-                        getCellValueAsString(row.getCell(6)),  // Column 7
-                        getCellValueAsString(row.getCell(7)),  // Column 8
-                        getCellValueAsString(row.getCell(8)),  // Column 9
-                        getCellValueAsString(row.getCell(9)),  // Column 10
-                        getCellValueAsString(row.getCell(10)), // Column 11
-                        getCellValueAsString(row.getCell(11)), // Column 12
-                        getCellValueAsString(row.getCell(12)), // Column 13
-                        getCellValueAsString(row.getCell(13)), // Column 14
-                        getCellValueAsString(row.getCell(14)), // Column 15
-                        getCellValueAsString(row.getCell(15)), // Column 16
-                        getCellValueAsString(row.getCell(16)), // Column 17
-                        getCellValueAsString(row.getCell(17)), // Column 18
-                        getCellValueAsString(row.getCell(18)), // Column 19
-                        getCellValueAsString(row.getCell(19))  // Column 20
+                		getCellValueAsString(row.getCell(0)),
+                        getCellValueAsString(row.getCell(1)),
+                        getCellValueAsString(row.getCell(2)),
+                        getCellValueAsString(row.getCell(3)),
+                        getCellValueAsString(row.getCell(4)),
+                        getCellValueAsString(row.getCell(5)),
+                        getCellValueAsString(row.getCell(6)),
+                        getCellValueAsString(row.getCell(7)),
+                        getCellValueAsString(row.getCell(8)),
+                        getCellValueAsString(row.getCell(9)),
+                        getCellValueAsString(row.getCell(10)),
+                        getCellValueAsString(row.getCell(11)),
+                        getCellValueAsString(row.getCell(12)),
+                        getCellValueAsString(row.getCell(13)),
+                        getCellValueAsString(row.getCell(14)),
+                        getCellValueAsString(row.getCell(15)),
+                        getCellValueAsString(row.getCell(16)),
+                        getCellValueAsString(row.getCell(17)),
+                        getCellValueAsString(row.getCell(18)),
+                        getCellValueAsString(row.getCell(19)),
+                        getCellValueAsString(row.getCell(20)),
+                        getCellValueAsString(row.getCell(21)),
+                        getCellValueAsString(row.getCell(22)),
+                        getCellValueAsString(row.getCell(23)),
+                        getCellValueAsString(row.getCell(24)),
+                        getCellValueAsString(row.getCell(25)),
+                        getCellValueAsString(row.getCell(26)),
+                        getCellValueAsString(row.getCell(27)),
+                        getCellValueAsString(row.getCell(28)),
+                        getCellValueAsString(row.getCell(29)),
+                        getCellValueAsString(row.getCell(30)),
+                        getCellValueAsString(row.getCell(31)),
+                        getCellValueAsString(row.getCell(32)),
+                        getCellValueAsString(row.getCell(33)),
+                        getCellValueAsString(row.getCell(34)),
+                        getCellValueAsString(row.getCell(35)),
+                        getCellValueAsString(row.getCell(36)),
+                        getCellValueAsString(row.getCell(37)),
+                        getCellValueAsString(row.getCell(38)),
+                        getCellValueAsString(row.getCell(39)),
+                        getCellValueAsString(row.getCell(40)),
+                        getCellValueAsString(row.getCell(41)),
+                        getCellValueAsString(row.getCell(42)),
+                        getCellValueAsString(row.getCell(43)),
+                        getCellValueAsString(row.getCell(44)),
+                        getCellValueAsString(row.getCell(45)),
+                        getCellValueAsString(row.getCell(46)),
+                        getCellValueAsString(row.getCell(47)),
+                        getCellValueAsString(row.getCell(48)),
+                        getCellValueAsString(row.getCell(49)),
+                        getCellValueAsString(row.getCell(50)),
+                        getCellValueAsString(row.getCell(51)),
+                        getCellValueAsString(row.getCell(52)),
+                        getCellValueAsString(row.getCell(53)),
+                        getCellValueAsString(row.getCell(54)),
+                        getCellValueAsString(row.getCell(55)),
+                        getCellValueAsString(row.getCell(56)),
+                        getCellValueAsString(row.getCell(57)),
+                        getCellValueAsString(row.getCell(58)),
+                        getCellValueAsString(row.getCell(59)),
+                        getCellValueAsString(row.getCell(60)),
+                        getCellValueAsString(row.getCell(61)),
+                        getCellValueAsString(row.getCell(62)),
+                        getCellValueAsString(row.getCell(63)),
+                        getCellValueAsString(row.getCell(64)),
+                        getCellValueAsString(row.getCell(65)),
+                        getCellValueAsString(row.getCell(66)),
+                        getCellValueAsString(row.getCell(67)),
+                        getCellValueAsString(row.getCell(68)),
+                        getCellValueAsString(row.getCell(69)),
+                        getCellValueAsString(row.getCell(70)),
+                        getCellValueAsString(row.getCell(71)),
+                        getCellValueAsString(row.getCell(72)),
+                        getCellValueAsString(row.getCell(73)),
+                        getCellValueAsString(row.getCell(74)),
+                        getCellValueAsString(row.getCell(75)),
+                        getCellValueAsString(row.getCell(76)),
+                        getCellValueAsString(row.getCell(77)),
+                        getCellValueAsString(row.getCell(78)),
+                        getCellValueAsString(row.getCell(79)),
+                        getCellValueAsString(row.getCell(80)),
+                        getCellValueAsString(row.getCell(81)),
+                        getCellValueAsString(row.getCell(82)),
+                        getCellValueAsString(row.getCell(83)),
+                        getCellValueAsString(row.getCell(84)),
+                        getCellValueAsString(row.getCell(85)),
+                        getCellValueAsString(row.getCell(86)),
+                        getCellValueAsString(row.getCell(87)),
+                        getCellValueAsString(row.getCell(88)),
+                        getCellValueAsString(row.getCell(89)),
+                        getCellValueAsString(row.getCell(90)),
+                        getCellValueAsString(row.getCell(91)),
+                        getCellValueAsString(row.getCell(92)),
+                        getCellValueAsString(row.getCell(93)),
+                        getCellValueAsString(row.getCell(94)),
+                        getCellValueAsString(row.getCell(95)),
+                        getCellValueAsString(row.getCell(96)),
+                        getCellValueAsString(row.getCell(97)),
+                        getCellValueAsString(row.getCell(98)),
+                        getCellValueAsString(row.getCell(99))
                 );
 
                 excelObjects.add(excelObject);

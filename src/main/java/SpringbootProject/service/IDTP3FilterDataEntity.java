@@ -12,4 +12,7 @@ public interface IDTP3FilterDataEntity {
 	List<DTP3FilterData> findByDataType(DataType dataType);
 	DTP3FilterData dataDTP3FilterCreaterAndUpdate(DTP3FilterData dtp3FilterDataEntity);
 	void deleteDTP3FilterData(Long id);
+	int deleteDTP3FilterDataByPhone1(String phoneNumber1);
+	List<DTP3FilterData> findAllByPhoneDuplicate();
+	String dataDTP3FilterUpdateOldDataByPhone(DTP3FilterData dtp3FilterDataEntity);
 }

@@ -7,7 +7,8 @@ public enum Salutation {
     CHU("Chú"),
     CO("Cô"),
     BAN("Bạn"),
-    EM("Em");
+    EM("Em"),
+    UNDEFINED("Không xác định");
 
     private final String label;
 
