@@ -5,19 +5,34 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import FileUtil.EnumExtractorUtil;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
 import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
+import SpringbootProject.entity.CRMEntity.DTP1CRMEntity;
+import SpringbootProject.entity.CRMEntity.DTP3FilterData;
+import SpringbootProject.entity.enums.Status;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-
-		testGetName();
+		
+		testLabelEnum("Sắp chốt");
+		testLabelEnum("SẮP CHỐT");
+		testLabelEnum("SC");
+		testLabelEnum("Đang giữ tương tác");
+		testLabelEnum("dang giu tuong tac");
+		testLabelEnum("danggiutuongtac");
+		
+		
+//		DTP1CRMEntity entity = new DTP1CRMEntity();
+//		testEnumExtractorUtil(entity);
+//		testGetName();
 		
 //		List<ExcelObject> excelObjectList =  getDataFromExcelSimple("D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx");
 //		for(ExcelObject excelObject : excelObjectList) {
@@ -30,6 +45,29 @@ public class TestMain {
 		
 
 //=========================================================	
+	
+	
+	private static void testLabelEnum(String input) {
+        try {
+            System.out.println("Input: " + input);
+            Status status = Status.fromLabel(input);
+            System.out.println("=> Result: " + status);
+        } catch (Exception e) {
+            System.out.println("=> Error: " + e.getMessage());
+        }
+        System.out.println("---------------------");
+    }
+	
+	public static void testEnumExtractorUtil (Object entity) {
+		System.out.println("=== ENUM NAME MAP ===");
+	    EnumExtractorUtil.extractEnumMap(entity)
+	            .forEach((k, v) -> System.out.println(k + " -> " + v));
+
+	    System.out.println("\n=== ENUM LABEL MAP ===");
+	    EnumExtractorUtil.extractEnumLabelMap(entity)
+	            .forEach((k, v) -> System.out.println(k + " -> " + v));
+	}
+	
 	
 	
 	public static void testGetName () {

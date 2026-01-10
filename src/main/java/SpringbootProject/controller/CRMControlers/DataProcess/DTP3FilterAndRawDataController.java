@@ -23,12 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
-import SpringbootProject.entity.UserEntity;
-import SpringbootProject.entity.CRMEntity.DTP1CRMEntity;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
-import SpringbootProject.entity.notSaving.ExcelObject;
-import SpringbootProject.service.IDTP1CRMEntity;
 import SpringbootProject.service.IDTP3FilterDataEntity;
 
 @Controller
@@ -40,10 +36,11 @@ public class DTP3FilterAndRawDataController {
     // Logger để ghi lại thông tin và lỗi
     private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
     
-//    private static MultipartFile dtp3FilterFormExcelFileResponse;
 	
 	@Autowired
 	private IDTP3FilterDataEntity Dtp3FilterDataServices;
+	
+
 	 /*
      * TRUY CẬP VÀO THYMLEAF
      * Sau này tạo thêm những phần hiển thị theo bộ lọc
@@ -53,6 +50,7 @@ public class DTP3FilterAndRawDataController {
         // Có thể thêm logic xóa file cũ hoặc reset trạng thái ở đây nếu cần
         // Ví dụ: excelFileResponse = null; excelFileError = null;
     	List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.findAllDtp3FilterData();
+
     	
 //    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
 //    		System.out.println(">>> "+DTP3Filter.toString());
@@ -187,13 +185,14 @@ public class DTP3FilterAndRawDataController {
     public ResponseEntity<ByteArrayResource> downloadExcelFileDTP3FilterDataForm() throws IOException {
     	// --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
-    	
-    	MultipartFile dtp3FilterFormExcelFileResponse = ioFunction.createlFromDtp3FilterExceForm();;
+        DTP3FilterData dTP3FilterData = new DTP3FilterData(); //tạo enity để biết lấy form của DTP3FilterData
+        
+    	MultipartFile dtp3FilterFormExcelFileResponse = ioFunction.createlFromDtp3FilterExceForm(dTP3FilterData);
     	
         
         // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
         try {
-        	dtp3FilterFormExcelFileResponse = ioFunction.createlFromDtp3FilterExceForm();
+        	dtp3FilterFormExcelFileResponse = ioFunction.createlFromDtp3FilterExceForm(dTP3FilterData);
         	System.out.println("3");
 
 		} catch (IOException e) {

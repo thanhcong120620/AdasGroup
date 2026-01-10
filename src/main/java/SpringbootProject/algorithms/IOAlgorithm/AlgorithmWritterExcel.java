@@ -6,14 +6,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle; // Import CellStyle
 import org.apache.poi.ss.usermodel.DataFormat; // Import DataFormat
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -21,10 +24,12 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.multipart.MultipartFile;
 
+import FileUtil.EnumExtractorUtil;
+import FileUtil.StringProcess;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 
@@ -714,8 +719,7 @@ public class AlgorithmWritterExcel {
 		    }
 		 
 		 /**
-			 * Ghi danh sách ExcelObject vào bộ nhớ và trả về dưới dạng MultipartFile.
-			 * Cột đầu tiên (Column1 - số điện thoại) sẽ được định dạng là Text để giữ số 0 ở đầu.
+			 * Hàm ghi dữ liệu có sẵn dòng head 1.
 			 * @param entities Danh sách các đối tượng ExcelObject.
 			 * @return Một đối tượng MultipartFile chứa dữ liệu Excel.
 			 * @throws IOException Nếu có lỗi trong quá trình tạo file trong bộ nhớ.
@@ -961,5 +965,191 @@ public class AlgorithmWritterExcel {
 			                // Files.copy(getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			            }
 			        };
-			    }	 
+			    }
+//=====================CÁC HÀM MỚI==========================================================================================================
+			 /**
+				 * Hàm ghi dữ liệu có sẵn dòng head 1, tạo file excel có droplist với data sẵn
+				 * Ghi danh sách ExcelObject vào bộ nhớ và trả về dưới dạng MultipartFile.
+				 * @param entities Danh sách các đối tượng ExcelObject.
+				 * @return Một đối tượng MultipartFile chứa dữ liệu Excel.
+				 * @throws IOException Nếu có lỗi trong quá trình tạo file trong bộ nhớ.
+				 */
+				 public static MultipartFile writeToExcelHasHeadWithDropListForm(Object object) throws IOException {
+					 
+					 // Tạo workbook và sheet mới
+				        Workbook workbook = new XSSFWorkbook();
+				        Sheet dataSheet = workbook.createSheet("Main Data");
+				        
+				        // --- TẠO CELL STYLE CHO TEXT ---
+				        CellStyle textCellStyle = workbook.createCellStyle();
+				        DataFormat fmt = workbook.createDataFormat();
+				        textCellStyle.setDataFormat(fmt.getFormat("@")); // "@" là mã định dạng Text
+				        // --- KẾT THÚC TẠO CELL STYLE ---
+
+				        // Tạo header row
+				        Row headerRow = dataSheet.createRow(0);
+				        // Tạo CellStyle cho header
+				        CellStyle headerStyle = workbook.createCellStyle();
+
+				        // Tô màu nền
+				        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+				        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+				        // (Tuỳ chọn) căn giữa
+				        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+				        // (Tuỳ chọn) font đậm
+				        Font font = workbook.createFont();
+				        font.setBold(true);
+				        headerStyle.setFont(font);
+//				        String[] headers = Arrays.copyOf(headArray, headArray.length);
+				        String[] headers = StringProcess.getAllFieldNames(object);
+
+				        // Ghi header vào các cột
+				        for (int i = 0; i < headers.length; i++) {
+				            Cell cell = headerRow.createCell(i);
+				            cell.setCellValue(headers[i]);
+				            cell.setCellStyle(headerStyle);
+				            int columnWidth = (headers[i].length() + 2) * 256;
+				            dataSheet.setColumnWidth(i, columnWidth);
+				        }
+				        
+
+//				        Tạo droplist
+				        int firstRow = 1;
+			            int lastRow = 10000;
+				        Map<String, List<String>> enumValueMap = EnumExtractorUtil.extractEnumLabelMap(object);
+//				        int columCount = enumValue.size();
+				        for (Map.Entry<String, List<String>> enumList : enumValueMap.entrySet()) {
+				            String enumValue = enumList.getKey();
+				            List<String> enumeLablesList = enumList.getValue();
+				            String[] enumeLablesArray = enumeLablesList.stream().toArray(String[]::new);
+				            int indexOfValueValue = StringProcess.indexOfIgnoreCase(headers, enumValue);
+				            createDropdown(workbook,dataSheet,firstRow,lastRow, indexOfValueValue,enumeLablesArray);
+//				            Row valueRow = dataSheet.createRow(1);
+//				            Cell cell = valueRow.createCell(firstRow+=1);
+//				            cell.setCellStyle(dropListCell);
+				        }
+
+				        // Ghi dữ liệu của từng Entity vào sheet (bỏ, vì chỉ là tạo form.
+				        
+
+				        // Sử dụng ByteArrayOutputStream để lưu file vào bộ nhớ
+				        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				        try {
+				            workbook.write(byteArrayOutputStream);
+				        } finally {
+				             // Đảm bảo đóng workbook ngay cả khi có lỗi ghi vào stream
+				             workbook.close();
+				        }
+
+
+				        // Lấy byte array từ ByteArrayOutputStream
+				        byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+				        // --- Tạo đối tượng MultipartFile ẩn danh ---
+				        // (Phần này giữ nguyên logic tạo MultipartFile của bạn)
+				        return new MultipartFile() {
+				            @Override
+				            public String getName() {
+				                // Thường là tên của trường input file trong form
+				                return "excelFile";
+				            }
+
+				            @Override
+				            public String getOriginalFilename() {
+				                // Đặt tên file mặc định khi tải về
+				                return "exported_data.xlsx";
+				            }
+
+				            @Override
+				            public String getContentType() {
+				                // MIME type cho file .xlsx
+				                return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+				            }
+
+				            @Override
+				            public boolean isEmpty() {
+				                return byteArray.length == 0;
+				            }
+
+				            @Override
+				            public long getSize() {
+				                return byteArray.length;
+				            }
+
+				            @Override
+				            public byte[] getBytes() throws IOException {
+				                return byteArray;
+				            }
+
+				            @Override
+				            public InputStream getInputStream() throws IOException {
+				                return new ByteArrayInputStream(byteArray);
+				            }
+
+				            @Override
+				            public void transferTo(File dest) throws IOException, IllegalStateException {
+				                // Ghi trực tiếp byte array vào file đích
+				                 try (FileOutputStream fos = new FileOutputStream(dest)) {
+				                     fos.write(byteArray);
+				                 }
+				                // Hoặc dùng cách của bạn nếu thích:
+				                // Files.copy(getInputStream(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				            }
+				        };
+				    }
+				 
+				 
+				 
+//==========================CÁC HÀM HELPER=========================================================================				 
+				 
+				 	/**
+				     * Tạo dropdown (Data Validation) cho Excel
+				     */
+				    public static void createDropdown(
+				    		Workbook workbook,
+				            Sheet sheet,
+				            int firstRow,
+				            int lastRow,
+				            int column,
+				            String[] listData
+				    ) {
+				        DataValidationHelper helper = sheet.getDataValidationHelper();
+				        DataValidationConstraint constraint =
+				                helper.createExplicitListConstraint(listData);
+
+				        CellRangeAddressList addressList =
+				                new CellRangeAddressList(firstRow, lastRow, column, column);
+
+				        DataValidation validation =
+				                helper.createValidation(constraint, addressList);
+
+				        validation.setSuppressDropDownArrow(true);
+				        validation.setShowErrorBox(true);
+
+				        sheet.addValidationData(validation);
+				        
+				     // ===== 2. Tạo style tô màu
+				        CellStyle style = workbook.createCellStyle();
+				        style.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
+				        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+				        style.setBorderBottom(BorderStyle.THIN);
+				        style.setBorderTop(BorderStyle.THIN);
+				        style.setBorderLeft(BorderStyle.THIN);
+				        style.setBorderRight(BorderStyle.THIN);
+
+				        // ===== 3. Áp style cho toàn bộ vùng droplist
+				        for (int r = firstRow; r <= lastRow; r++) {
+				            Row row = sheet.getRow(r);
+				            if (row == null) row = sheet.createRow(r);
+
+				            Cell cell = row.getCell(column);
+				            if (cell == null) cell = row.createCell(column);
+
+				            cell.setCellStyle(style);
+				    }
+				    }
+				    
+				    
 }

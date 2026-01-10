@@ -14,6 +14,7 @@ import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
 import SpringbootProject.entity.enums.NextAction;
 import SpringbootProject.entity.enums.Salutation;
+import SpringbootProject.entity.enums.Status;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class MapperToExcelObject {
@@ -30,15 +31,15 @@ public class MapperToExcelObject {
 			
 			
 			excelObject.setColumn1(safeToString(dtp3FilterData.getId()));
-		    excelObject.setColumn2(safeToString(dtp3FilterData.getDataType()));
+		    excelObject.setColumn2(safeToString(dtp3FilterData.getDataType().getLabel()));
 		    excelObject.setColumn3(safeToString(dtp3FilterData.getDataSource()));
 		    excelObject.setColumn4(safeToString(dtp3FilterData.getDateOfLead()));
 		    excelObject.setColumn5(safeToString(dtp3FilterData.getConsultDiary()));
 		    excelObject.setColumn6(safeToString(dtp3FilterData.getFullName1()));
 		    excelObject.setColumn7(safeToString(dtp3FilterData.getFullName2()));
 			excelObject.setColumn8(safeToString(dtp3FilterData.getLastName()));
-			excelObject.setColumn9(safeToString(dtp3FilterData.getSalutation()));
-			excelObject.setColumn10(safeToString(dtp3FilterData.getGender()));
+			excelObject.setColumn9(safeToString(dtp3FilterData.getSalutation().getLabel()));
+			excelObject.setColumn10(safeToString(dtp3FilterData.getGender().getLabel()));
 			excelObject.setColumn11(safeToString(dtp3FilterData.getZaloName()));
 			excelObject.setColumn12(safeToString(dtp3FilterData.getZaloUid()));
 			excelObject.setColumn13(safeToString(dtp3FilterData.getFacebookLink()));
@@ -51,7 +52,7 @@ public class MapperToExcelObject {
 			excelObject.setColumn20(safeToString(dtp3FilterData.getWorkingArea()));
 			excelObject.setColumn21(safeToString(dtp3FilterData.getProductBought()));
 			excelObject.setColumn22(safeToString(dtp3FilterData.getMixContacts()));
-			excelObject.setColumn23(safeToString(dtp3FilterData.getNextAction()));
+			excelObject.setColumn23(safeToString(dtp3FilterData.getNextAction().getLabel()));
 			excelObject.setColumn24(safeToString(dtp3FilterData.getNextFollowDate()));
 			excelObject.setColumn25(safeToString(dtp3FilterData.getResultFollow()));
 			excelObject.setColumn26(safeToString(dtp3FilterData.getAccountFollow()));
@@ -129,13 +130,13 @@ public class MapperToExcelObject {
 
 			
 //			Long id = excelObject.getColumn1().isEmpty() ? null : Long.valueOf(excelObject.getColumn1());
-			DataType dataType = excelObject.getColumn2().isEmpty()|| excelObject.getColumn2()==null ? DataType.RAW_DATA : DataType.valueOf(excelObject.getColumn2());
+			DataType dataType = excelObject.getColumn2().isEmpty()|| excelObject.getColumn2()==null ? DataType.RAW_DATA : DataType.fromLabel(excelObject.getColumn2());
 			LocalDate dateOfLead = excelObject.getColumn4().isEmpty()|| excelObject.getColumn4()==null ? LocalDate.now() : dateProcess.parseLocalDateFlexible(excelObject.getColumn4());
-			Salutation salutation = excelObject.getColumn9().isEmpty()|| excelObject.getColumn9()==null ? Salutation.UNDEFINED : Salutation.valueOf(excelObject.getColumn9());
-			Gender gender = excelObject.getColumn10().isEmpty()|| excelObject.getColumn10()==null ? Gender.UNDEFINED : Gender.valueOf(excelObject.getColumn10());
+			Salutation salutation = excelObject.getColumn9().isEmpty()|| excelObject.getColumn9()==null ? Salutation.UNDEFINED : Salutation.fromLabel(excelObject.getColumn9());
+			Gender gender = excelObject.getColumn10().isEmpty()|| excelObject.getColumn10()==null ? Gender.UNDEFINED : Gender.fromLabel(excelObject.getColumn10());
 			LocalDate dateOfBirth = excelObject.getColumn17().isEmpty()|| excelObject.getColumn17()==null ? null : dateProcess.parseLocalDateFlexible(excelObject.getColumn17());
 			BigDecimal SavingsAmount = excelObject.getColumn18().isEmpty()|| excelObject.getColumn18()==null ? null :new BigDecimal(excelObject.getColumn18());
-			NextAction nextAction = excelObject.getColumn23().isEmpty()|| excelObject.getColumn23()==null ? NextAction.UNDEFINED : NextAction.valueOf(excelObject.getColumn23());
+			NextAction nextAction = excelObject.getColumn23().isEmpty()|| excelObject.getColumn23()==null ? NextAction.UNDEFINED : NextAction.fromLabel(excelObject.getColumn23());
 			LocalDate nextFollowDate = excelObject.getColumn24().isEmpty()|| excelObject.getColumn24()==null ? null : dateProcess.parseLocalDateFlexible(excelObject.getColumn24());
 			String col27 = excelObject.getColumn27();
 			LocalDateTime createdAt = (col27 == null || col27.isBlank()) ? LocalDateTime.now() : dateProcess.parseLocalDateTimeFlexible(col27);

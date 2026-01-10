@@ -4,15 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
-import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.UserEntity;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.notSaving.ExcelObject;
@@ -62,16 +59,9 @@ public class IOFunction {
 	 * DTP3 FILTER ENTITY --> EXCEL OBJECT
 	 * WRTITE
 	 * */
-	public MultipartFile createlFromDtp3FilterExceForm () throws IOException{
-//		List<ExcelObject> excelDataList= new ArrayList<>();
-		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+	public MultipartFile createlFromDtp3FilterExceForm (Object object) throws IOException{
 		
-//		ExcelObject excelObject = mapperToExcelObject.DPT3FilterDataToExcelObjectGetHead();
-//		String [] excelHeadArr = mapperToExcelObject.DPT3FilterDataExcelGetHead();
-		
-//		excelDataList.add(excelObject);
-		
-		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHead(null, mapperToExcelObject.DPT3FilterDataExcelGetHead());
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHeadWithDropListForm(object);
 		
 		return multipartFile;
 	}
