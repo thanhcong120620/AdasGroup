@@ -14,5 +14,6 @@ public interface IDTP3FilterDataEntity {
 	void deleteDTP3FilterData(Long id);
 	int deleteDTP3FilterDataByPhone1(String phoneNumber1);
 	List<DTP3FilterData> findAllByPhoneDuplicate();
+	List<DTP3FilterData> findAllByPhoneNumber1(String phoneNumber1);
 	String dataDTP3FilterUpdateOldDataByPhone(DTP3FilterData dtp3FilterDataEntity);
 }

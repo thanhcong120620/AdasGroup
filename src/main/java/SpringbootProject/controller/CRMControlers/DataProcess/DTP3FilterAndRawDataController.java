@@ -23,8 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.NameProcess;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
+import SpringbootProject.entity.enums.Gender;
 import SpringbootProject.service.IDTP3FilterDataEntity;
 
 @Controller
@@ -77,12 +80,33 @@ public class DTP3FilterAndRawDataController {
         // --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
         List<DTP3FilterData> excelObjectInputList = ioFunction.getDtp3FilterEntityListFromExcel(file);
+        NameProcess nameProcess = new NameProcess();
+//        GenderProcess genderProcess = new GenderProcess();
+
+        for(int i =0; i<excelObjectInputList.size(); i++) {
+            //Tạo mới Last Name nếu chưa có
+            if(!excelObjectInputList.get(i).getFullName1().isEmpty() && !excelObjectInputList.get(i).getZaloName().isEmpty()) {
+            	if(excelObjectInputList.get(i).getLastName()==null||excelObjectInputList.get(i).getLastName().isEmpty() || excelObjectInputList.get(i).getLastName().isBlank()) {
+            		excelObjectInputList.get(i).setLastName(nameProcess.getLastName(excelObjectInputList.get(i).getFullName1(), excelObjectInputList.get(i).getZaloName()));
+            	}
+            }
+            
+            //Tạo mới Gender nếu chưa có
+            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && !excelObjectInputList.get(i).getFullName1().isEmpty()) {
+            	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getFullName1()));
+            }
+            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && excelObjectInputList.get(i).getLastName()!=null) {
+            	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getLastName()));
+            }
+            
+
+        }
         
         //Update data to database
         for(DTP3FilterData dTP3FilterData : excelObjectInputList) {
         	String phoneUpdate = Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dTP3FilterData);
-        	if(!phoneUpdate.contentEquals("Cập nhật thành công")) {
-        		DTP3FilterControllerMessagesList.add(phoneUpdate.concat("; "));
+        	if (phoneUpdate == null) {
+        		DTP3FilterControllerMessagesList.add("Dữ liệu để cập nhật không tồn tại: "+dTP3FilterData.getPhoneNumber1());
         	}
         }
         
@@ -104,22 +128,32 @@ public class DTP3FilterAndRawDataController {
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
         List<DTP3FilterData> excelObjectInputList = ioFunction.getDtp3FilterEntityListFromExcel(file);
         int countData = 0;
+        int countDataPhoneNull = 0;
         //Save new data to database
         for(DTP3FilterData dTP3FilterData : excelObjectInputList) {
-        	int deletedCount = Dtp3FilterDataServices.deleteDTP3FilterDataByPhone1(dTP3FilterData.getPhoneNumber1());
-        	System.out.println(">>> deletedCount: "+deletedCount);
-        countData = countData + deletedCount;
+        	if(dTP3FilterData.getPhoneNumber1() !=null ) {
+        		System.out.println("Phone: "+ dTP3FilterData.getPhoneNumber1());
+        		int deletedCount = Dtp3FilterDataServices.deleteDTP3FilterDataByPhone1(dTP3FilterData.getPhoneNumber1());
+            	System.out.println(">>> deletedCount: "+deletedCount);
+            	countData = countData + deletedCount;
+        	} else {
+        		countDataPhoneNull = countDataPhoneNull+1;
+        	}
+        	
+        
         }
         
         DTP3FilterControllerMessagesList.add("Tổng có: "+ countData+" bị xóa");
+        DTP3FilterControllerMessagesList.add("Tổng có: "+ countDataPhoneNull+" chưa bị xóa vì ko tồn tại.");
+        
         
         return "redirect:/data-dtp3-filter-and-raw-pannel";
     }    
     
     /*
-     * POSTING ACTION - UPLOAD LẤY DỮ LIỆU TỪ EXCEL ĐỂ UPDATE/CREATE.
+     * POSTING ACTION - UPLOAD LẤY DỮ LIỆU TỪ EXCEL ĐỂ CREATE.
      * */
-    @PostMapping("/uploadAndUpdateDtp3FilterData")
+    @PostMapping("/uploadAndCreateDtp3FilterData")
     public String handleFileUploadAndUpdateDtp3FilterData (@RequestParam("excelFileCreateNewDtp3FilterData") MultipartFile file, // Tên khớp với input file
             RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
 		
@@ -127,6 +161,17 @@ public class DTP3FilterAndRawDataController {
         // --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
         List<DTP3FilterData> excelObjectInputList = ioFunction.getDtp3FilterEntityListFromExcel(file);
+        NameProcess nameProcess = new NameProcess();
+        for(int i =0; i<excelObjectInputList.size(); i++) {
+            //Tạo mới Last Name nếu chưa có
+            if(!excelObjectInputList.get(i).getFullName1().isEmpty() && !excelObjectInputList.get(i).getZaloName().isEmpty()) {
+            	if(excelObjectInputList.get(i).getLastName()==null||excelObjectInputList.get(i).getLastName().isEmpty() || excelObjectInputList.get(i).getLastName().isBlank()) {
+            		excelObjectInputList.get(i).setLastName(nameProcess.getLastName(excelObjectInputList.get(i).getFullName1(), excelObjectInputList.get(i).getZaloName()));
+            	}
+            }
+            
+
+        }
         
         //Save new data to database
         for(DTP3FilterData dTP3FilterData : excelObjectInputList) {
@@ -309,6 +354,22 @@ public class DTP3FilterAndRawDataController {
 			DTP3FilterData dtp3FilterData = Dtp3FilterDataServices.findByphoneNumber1(phoneNumber1s[i]);
 			dtp3FilterDataResponse.add(dtp3FilterData);
 		}
+		 
+		return ResponseEntity.ok("Find DTP3FilterData with Phone: " + dtp3FilterDataResponse);
+	}
+	
+	/*
+	 * Lấy danh sách các racord có cùng sđt là phong1Input
+	 * Dùng khi bạn muốn xóa một tài nguyên hoặc đối tượng khỏi hệ thống.
+	 * */
+	@GetMapping("/find-list-by-one-phoneNumber1")
+	public ResponseEntity<String> findAllDTP3FilterDataByOnePhone1(@RequestBody String phoneNumber1s) {
+		
+		 List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findAllByPhoneNumber1(phoneNumber1s);
+		 for(DTP3FilterData dtp3FilterData : dtp3FilterDataResponse) {
+			 System.out.println(dtp3FilterData.toString());			 
+		 }
+
 		 
 		return ResponseEntity.ok("Find DTP3FilterData with Phone: " + dtp3FilterDataResponse);
 	}

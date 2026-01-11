@@ -1,33 +1,27 @@
 package SpringbootProject.algorithms.TestAlgorithm;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import FileUtil.EnumExtractorUtil;
-import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
 import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
-import SpringbootProject.entity.CRMEntity.DTP1CRMEntity;
-import SpringbootProject.entity.CRMEntity.DTP3FilterData;
+import SpringbootProject.entity.enums.Gender;
 import SpringbootProject.entity.enums.Status;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
 	public static void main(String[] args) {
-		
-		testLabelEnum("Sắp chốt");
-		testLabelEnum("SẮP CHỐT");
-		testLabelEnum("SC");
-		testLabelEnum("Đang giữ tương tác");
-		testLabelEnum("dang giu tuong tac");
-		testLabelEnum("danggiutuongtac");
+		testGenderProcess();
+//		testLabelEnum("Sắp chốt");
+//		testLabelEnum("SẮP CHỐT");
+//		testLabelEnum("SC");
+//		testLabelEnum("Đang giữ tương tác");
+//		testLabelEnum("dang giu tuong tac");
+//		testLabelEnum("danggiutuongtac");
 		
 		
 //		DTP1CRMEntity entity = new DTP1CRMEntity();
@@ -47,6 +41,60 @@ public class TestMain {
 //=========================================================	
 	
 	
+	//Test sự hoạt động của GenderProcess
+	static void testGenderProcess() {
+		String[] testCases = {
+                "ONG NGUYEN THANH CONG",
+                "NGUYEN THANH CONG",
+                "NGUYỄN THÀNH CÔNG",
+                "Nguyễn Thành Công",
+                "Ông Nguyễn Thành Công",
+                "ong nguyen thanh cong",
+
+                "Bà Nguyễn Thị Hoàng Thi",
+                "ba nguyen thi hoang thi",
+                
+                "Nguyễn Thị Hoàng Thi",
+                "nguyen van thi hoang thi",
+
+                "Nguyễn Văn Công",
+                "nguyen van cong",
+
+                "Nguyễn Thị Hoàng Thi",
+                "nguyen thi hoang thi",
+
+                "nguyen thi van",
+                "nguyen van thi sach",
+                "nguyen thi van sach",
+
+                "Nguyễn Lan",
+                "Nguyễn Dũng",
+                "Nguyễn Mai",
+                "Nguyễn Hùng",
+
+                null,
+                "",
+                "   "
+        };
+
+        System.out.println("====== TEST GENDER DETECTION ======");
+        GenderProcess genderProcess = new GenderProcess();
+        for (String fullName : testCases) {
+            Gender gender = genderProcess.detectGenderFromFullName(fullName);
+
+            System.out.printf(
+                    "Input: %-30s => Gender: %-10s | Label: %s%n",
+                    String.valueOf(fullName),
+                    gender.name(),
+                    gender.getLabel()
+            );
+        }
+
+        System.out.println("====== END TEST ======");
+	}
+	
+	
+	//Test giá trị được lấy ra dữ liệu của một enum
 	private static void testLabelEnum(String input) {
         try {
             System.out.println("Input: " + input);

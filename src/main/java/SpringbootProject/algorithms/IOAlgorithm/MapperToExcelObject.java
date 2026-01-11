@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import FileUtil.DateAndTimeProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
@@ -124,6 +125,7 @@ public class MapperToExcelObject {
 		
 		for(ExcelObject excelObject : excelObjectList) {
 			DTP3FilterData dtp3FilterData = new DTP3FilterData();
+			PhoneProcess phoneProcess = new PhoneProcess();
 			
 
 			//Process input data and add data if null
@@ -156,8 +158,8 @@ public class MapperToExcelObject {
 			dtp3FilterData.setZaloName(excelObject.getColumn11());
 			dtp3FilterData.setZaloUid(excelObject.getColumn12());
 			dtp3FilterData.setFacebookLink(excelObject.getColumn13());
-			dtp3FilterData.setPhoneNumber1(excelObject.getColumn14());
-			dtp3FilterData.setPhoneNumber2(excelObject.getColumn15());
+			dtp3FilterData.setPhoneNumber1(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn14()));
+			dtp3FilterData.setPhoneNumber2(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn15()));
 			dtp3FilterData.setGmail(excelObject.getColumn16());
 			dtp3FilterData.setDateOfBirth(dateOfBirth);
 			dtp3FilterData.setSavingsAmount(SavingsAmount);

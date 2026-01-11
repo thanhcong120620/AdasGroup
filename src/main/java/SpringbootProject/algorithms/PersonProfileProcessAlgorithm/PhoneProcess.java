@@ -49,7 +49,7 @@ public class PhoneProcess {
      * Chuẩn hóa và xác thực một số điện thoại *đã được làm sạch*.
      * Ưu tiên chuẩn hóa thành số di động VN (10 số, bắt đầu bằng 0).
      */
-    private String normalizeAndValidateVietnameseNumber(String cleanedPhone) {
+    public String normalizeAndValidateVietnameseNumber(String cleanedPhone) {
         // (Giữ nguyên logic của hàm này)
         if (cleanedPhone == null || cleanedPhone.isEmpty()) {
             return null;

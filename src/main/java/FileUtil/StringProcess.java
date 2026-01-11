@@ -1,9 +1,11 @@
 package FileUtil;
 
 import java.lang.reflect.Field;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class StringProcess {
 	
@@ -58,4 +60,7 @@ public class StringProcess {
         }
         return -1;
     }
+    
+    
+    
 }

@@ -1,19 +1,26 @@
 package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NameProcess {
 	public NameProcess() {
 	}
 	
-	
+	/*
+	 * Chưa xử lý tên kết hợp giới tính, ví dụ: Dung - Dũng, Tiến - Tiên.
+	 * */
+	public String getLastName (String fullName, String nickname) {
+		
+		String[] nameElementArray = extractFirstNameAndMidFirstName(fullName,nickname);
+		String lastName = nameElementArray[3];
+		
+		return lastName;
+	}
     
 
 	
-//=======================================================================================================	
+//=======================================HELPER & ALGORITHM================================================================	
 
 	
 	private static final String WORD_SEPARATOR = " ";
@@ -29,10 +36,10 @@ public class NameProcess {
     		"Mai","Mạnh","Minh",
     		"Na","Nam","Nhã","Nhi","Nhung", "Như","Nga","Ngân","Nghĩa","Nghiệp","Nguyệt","Ngọc","Ninh",
     		"Oanh",
-    		"Phát","Phong","Phú","Phúc",
+    		"Phát","Phi","Phong","Phú","Phúc",
     		"Quang","Quân","Quốc","Quyết","Quỳnh",
     		"Sang","Sinh","Sơn","Sỹ",
-    		"Tài","Tâm","Thái","Thảo","Thắng","Thịnh","Thông","Thơm","Thương","Trang","Trà","Tiệp","Trâm","Trung","Tuấn","Tú","Tùng","Tuyết","Tươi",
+    		"Tài","Tâm","Thái","Thảo","Thắm","Thắng","Thịnh","Thoa","Thông","Thơm","Thương","Trang","Trà","Tiệp","Trâm","Trung","Tuấn","Tú","Tùng","Tuyết","Tươi",
     		"Xiêm","Xuân",
     		"Út","Uyên", 
     		"Vân", "Việt","Vũ","Vương"
@@ -48,7 +55,11 @@ public class NameProcess {
         }
     }
 
-    // Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
+    /*
+     * Hàm này là thuật toán, ko nên lấy ra sử dụng ở các class khác
+     * Dữ liệu chính xác sẽ là String[3]
+     * Tạo mảng ONLY_FIRST_NAMES_EXIT không dấu để so sánh
+     * */
     static String[] extractFirstNameAndMidFirstName(String fullName, String nickname) {
     	String convertFullname = removeAccent(fullName).toLowerCase();
         String convertNickName = removeAccent(nickname).toLowerCase();
@@ -82,29 +93,12 @@ public class NameProcess {
         	
         // Mảng để lưu trữ kết quả: {firstName, midNameAndFirstName, originalFirstName}
         String[] names = {convertToLowerCaseAndCapitalizeFirstLetter(firstNameAtFullnameOrigin), "ko xác định", ">>> ERROR",""}; // Giá trị mặc định
-        	
-            //Bước 1: Tìm tên khớp trong static Array
-            for (int iarrstatic = 0; iarrstatic < ONLY_FIRST_NAMES_EXIT_NO_ACCENT.length; iarrstatic++) {
-                if (firstNameAtFullnameConvert.equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
-                	names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
-                	names[1] = midNameAtFullnameOrigin + " " + ONLY_FIRST_NAMES_EXIT[iarrstatic];
-                    names[2] = "Tên duy nhất trong tên Tiếng Việt";
-                    names[3] = names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; 
-                    
-                    if(lastNameIsEqualFirstName) {
-                    	names[2] = "Tên trùng định dạng với Họ - ";
-                    }
-                    
-                	return names;
-                }
-            }
-            
-            //Bước 2: Ko tìm thấy firstname từ static Array thì qua kiểm tra với nickname
 
             	// Duyệt qua các cụm từ trong mảng nickname đã convert
             	for (int i = 0; i < arrayConvertNickNameParts.length; i++) {
             		String nicknamePart = arrayConvertNickNameParts[i];
-
+            		
+            		//Bước 1:Kiểm tra và Lấy tên với nickname (zalo name)
             		//So sánh với firstName của convertFullname
             		if (nicknamePart.equals(firstNameAtFullnameConvert)) {
             			if(capitalizeFirstLetter(arrayNickNamePartsOrigin[i]).equals("Anh")) {
@@ -116,6 +110,7 @@ public class NameProcess {
             				names[0] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
                             names[1] = "Tên \"Anh\" đặc biệt, đã lấy tên lót";
                             names[3] = midNameAtFullnameOrigin + " " +capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
+                            return names;
                             
             			} else {
             				names[0] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
@@ -135,7 +130,7 @@ public class NameProcess {
                         		names[3] = capitalizeFirstLetter(arrayNickNamePartsOrigin[i]);
                         	} else {
                         		// Tên ko có dấu and warning
-                        		names[2] = ">>> Waring: Tên không có dấu từ nick name ! - Độ chính xác tương đối";
+                        		names[2] = ">>> Waring: Tên không có dấu từ nick name ! - Độ chính xác thấp";
                         		names[3] = "";
                         	}
                             
@@ -145,13 +140,65 @@ public class NameProcess {
                         if(lastNameIsEqualFirstName) {
                         	names[2] = "Tên trùng định dạng với Họ";
                         }
-                        return names;
+                        
+                        
+                        
+//                        return names;
             		}
-        }
+            		
+            		//Bước 2:  Ko tìm thấy firstname từ Nick Name thì qua tìm tên khớp trong static Array
+//                	System.out.println("Run getNameFromStaticArray: "+ names[3]);
+                	if(names[3] == "") {
+                		names[3] = getNameFromStaticArray(firstNameAtFullnameConvert,midNameAtFullnameOrigin,lastNameIsEqualFirstName)[3];
+                	}       
+            		
+            		
+            		
+            	}
+
+
+
+//                for (int iarrstatic = 0; iarrstatic < ONLY_FIRST_NAMES_EXIT_NO_ACCENT.length; iarrstatic++) {
+//                    if (firstNameAtFullnameConvert.equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
+//                    	names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
+//                    	names[1] = midNameAtFullnameOrigin + " " + ONLY_FIRST_NAMES_EXIT[iarrstatic];
+//                        names[2] = "Tên duy nhất trong tên Tiếng Việt";
+//                        names[3] = names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; 
+//                        
+//                        if(lastNameIsEqualFirstName) {
+//                        	names[2] = "Tên trùng định dạng với Họ - ";
+//                        }
+//                        
+//                    	return names;
+//                    }
+//                }	
 
         return names;
 
 }
+    
+//=========================================================HELPER======================================================================
+    
+    static String[] getNameFromStaticArray (String firstNameAtFullnameConvert, String midNameAtFullnameOrigin, boolean lastNameIsEqualFirstName) {
+    	String[] names = new String [4];
+    	for (int iarrstatic = 0; iarrstatic < ONLY_FIRST_NAMES_EXIT_NO_ACCENT.length; iarrstatic++) {
+            if (firstNameAtFullnameConvert.equals(ONLY_FIRST_NAMES_EXIT_NO_ACCENT[iarrstatic])) {
+            	names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; // Lấy tên có dấu tương ứng
+            	names[1] = midNameAtFullnameOrigin + " " + ONLY_FIRST_NAMES_EXIT[iarrstatic];
+                names[2] = "Tên duy nhất trong tên Tiếng Việt";
+                names[3] = names[0] = ONLY_FIRST_NAMES_EXIT[iarrstatic]; 
+                
+                if(lastNameIsEqualFirstName) {
+                	names[2] = "Tên trùng định dạng với Họ - ";
+                }
+                
+            	return names;
+            }
+        }
+		return names;	
+    	
+    }
+    
 
     /*
      * convert name to lower case and Capitalize first letter
