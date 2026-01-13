@@ -4,13 +4,25 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import FileUtil.StringProcess;
+import SpringbootProject.dto.dataProcess.DTP3SearchRequest;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
@@ -21,9 +33,172 @@ import SpringbootProject.service.IDTP3FilterDataEntity;
 @Service
 @Transactional
 public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
+	private static final Logger log = LoggerFactory.getLogger(DTP3FilterDataEntityService.class);
 	
 	@Autowired
 	DTP3FilterDataRepository dPT3FilterDataRepository; 
+	
+	
+//=========================================Filter and Show Function============================================
+	
+	//Trường hợp lấy tất cả danh sách sau khi lọc
+	public List<DTP3FilterData> getAllMatchesWithoutPagination(DTP3SearchRequest request) {
+	    log.info(">>> Bắt đầu lấy TOÀN BỘ dữ liệu khớp bộ lọc (Không phân trang)");
+
+	    Specification<DTP3FilterData> spec = (root, query, cb) -> {
+	        List<Predicate> predicates = new ArrayList<>();
+	     // Lọc khớp chính xác cho zaloName
+            if (request.getZaloName() != null && !request.getZaloName().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("zaloName"), request.getZaloName().trim()));
+            }
+            
+            // Lọc khớp chính xác cho phoneNumber1
+            if (request.getConsultDiary() != null && !request.getConsultDiary().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("consultDiary"), request.getConsultDiary().trim()));
+            }
+
+            // Lọc khớp chính xác cho phoneNumber1
+            if (request.getPhoneNumber1() != null && !request.getPhoneNumber1().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("phoneNumber1"), request.getPhoneNumber1().trim()));
+            }
+
+            // Lọc khớp chính xác cho resultFollow
+            if (request.getResultFollow() != null && !request.getResultFollow().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("resultFollow"), request.getResultFollow().trim()));
+            }
+
+            // Lọc khớp chính xác cho accountFollow
+            if (request.getAccountFollow() != null && !request.getAccountFollow().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("accountFollow"), request.getAccountFollow().trim()));
+            }
+
+            // Lọc khớp chính xác cho DataType (Enum)
+            if (request.getDataType() != null) {
+                predicates.add(cb.equal(root.get("dataType"), request.getDataType()));
+            }
+
+            // Lọc khớp chính xác cho Gender (Enum)
+            if (request.getGender() != null) {
+                predicates.add(cb.equal(root.get("gender"), request.getGender()));
+            }
+            
+         // LỌC KHOẢNG NGÀY (Date Range)
+            // 1. Nếu có fromDate: dateOfLead >= fromDate
+            if (request.getFromDate() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("nextFollowDate"), request.getFromDate()));
+                log.debug("Filter: nextFollowDate >= {}", request.getFromDate());
+            }
+
+            // 2. Nếu có toDate: dateOfLead <= toDate
+            if (request.getToDate() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("nextFollowDate"), request.getToDate()));
+                log.debug("Filter: nextFollowDate <= {}", request.getToDate());
+            }
+
+	        return cb.and(predicates.toArray(new Predicate[0]));
+	    };
+
+	    // Gọi findAll(spec) - KHÔNG truyền pageable
+	    List<DTP3FilterData> allResults = dPT3FilterDataRepository.findAll(spec);
+	    
+	    log.info("<<< Đã lấy toàn bộ List thành công. Số lượng: {}", allResults.size());
+	    return allResults;
+	}
+	
+	
+	
+	
+	//Trường hợp chỉ lấy List trong 1 trang phân trang hiển thị
+	public List<DTP3FilterData> getFilterListOnly(DTP3SearchRequest request, Pageable pageable) {
+		log.info(">>> SERVICE: Bắt đầu lấy List dữ liệu cho Request: {}", request);
+	    
+	    // Gọi lại hàm filterData đã viết trước đó (trả về Page)
+	    Page<DTP3FilterData> pageResult = this.filterData(request, pageable);
+	    
+	    if (pageResult != null && pageResult.hasContent()) {
+	        List<DTP3FilterData> content = pageResult.getContent();
+	        log.info("<<< SERVICE: Lấy List thành công. Số lượng bản ghi: {}", content.size());
+	        return content;
+	    }
+	    
+	    log.warn("<<< SERVICE: Không có dữ liệu, trả về List rỗng.");
+	    return new java.util.ArrayList<>();
+	}
+	
+
+	public Page<DTP3FilterData> filterData(DTP3SearchRequest request, Pageable pageable) {
+        log.info("Thực hiện lọc khớp chính xác. Tiêu chí: {}", request);
+
+        Specification<DTP3FilterData> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Lọc khớp chính xác cho zaloName
+            if (request.getZaloName() != null && !request.getZaloName().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("zaloName"), request.getZaloName().trim()));
+            }
+            
+            // Lọc khớp chính xác cho phoneNumber1
+            if (request.getConsultDiary() != null && !request.getConsultDiary().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("consultDiary"), request.getConsultDiary().trim()));
+            }
+
+            // Lọc khớp chính xác cho phoneNumber1
+            if (request.getPhoneNumber1() != null && !request.getPhoneNumber1().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("phoneNumber1"), request.getPhoneNumber1().trim()));
+            }
+            
+            // Lọc khớp chính xác cho resultFollow
+            if (request.getResultFollow() != null && !request.getResultFollow().trim().isEmpty()) {
+//            	System.out.println("Run: "+ request.getResultFollow());
+                predicates.add(cb.equal(root.get("resultFollow"), request.getResultFollow().trim()));
+            }
+
+            // Lọc khớp chính xác cho accountFollow
+            if (request.getAccountFollow() != null && !request.getAccountFollow().trim().isEmpty()) {
+//            	System.out.println("Run: "+ request.getResultFollow());
+                predicates.add(cb.equal(root.get("accountFollow"), request.getAccountFollow().trim()));
+            }
+
+            // Lọc khớp chính xác cho DataType (Enum)
+            if (request.getDataType() != null) {
+                predicates.add(cb.equal(root.get("dataType"), request.getDataType()));
+            }
+
+            // Lọc khớp chính xác cho Gender (Enum)
+            if (request.getGender() != null) {
+                predicates.add(cb.equal(root.get("gender"), request.getGender()));
+            }
+            
+            // LỌC KHOẢNG NGÀY (Date Range)
+            // 1. Nếu có fromDate: dateOfLead >= fromDate
+            if (request.getFromDate() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("nextFollowDate"), request.getFromDate()));
+                log.debug("Filter: nextFollowDate >= {}", request.getFromDate());
+            }
+
+            // 2. Nếu có toDate: dateOfLead <= toDate
+            if (request.getToDate() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("nextFollowDate"), request.getToDate()));
+                log.debug("Filter: nextFollowDate <= {}", request.getToDate());
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        try {
+            Page<DTP3FilterData> pageResult = dPT3FilterDataRepository.findAll(spec, pageable);
+            log.info("Lọc thành công. Tổng số bản ghi: {}, Trang hiện tại: {}", 
+                     pageResult.getTotalElements(), pageResult.getNumber());
+            return pageResult;
+        } catch (Exception e) {
+            log.error("Lỗi khi truy vấn dữ liệu: {}", e.getMessage());
+            throw e;
+        }
+    }
+	
+	
+	
+//===================================================================================================================================
 	
 	@Override
 	public List<DTP3FilterData> findAllDtp3FilterData() {
@@ -66,7 +241,6 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 	@Override
 	public String dataDTP3FilterUpdateOldDataByPhone(DTP3FilterData dtp3FilterNewData) {        	
 		
-		StringProcess stringProcess = new StringProcess();
 				
 		String phone1Input = "Phone ko tồn tại / Trống";
 		String phoneUpdate = "Chưa cập nhật";
@@ -97,7 +271,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//4 Check & Set DataSource
 					if(!dtp3FilterNewData.getDataSource().isEmpty()) {
 						if(!dtp3FilterOldData.getDataSource().isEmpty()) {
-							dtp3FilterOldData.setDataSource(stringProcess.mergeUnique(dtp3FilterOldData.getDataSource(), dtp3FilterNewData.getDataSource()));
+							dtp3FilterOldData.setDataSource(StringProcess.mergeUnique(dtp3FilterOldData.getDataSource(), dtp3FilterNewData.getDataSource()));
 						} else {
 							dtp3FilterOldData.setDataSource(dtp3FilterNewData.getDataSource());
 						}			
@@ -106,7 +280,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//5 Check & Set ConsultDiary
 					if(!dtp3FilterNewData.getConsultDiary().isEmpty()) {
 						if(!dtp3FilterOldData.getConsultDiary().isEmpty()) {
-							dtp3FilterOldData.setConsultDiary(stringProcess.mergeUnique(dtp3FilterOldData.getConsultDiary(), dtp3FilterNewData.getConsultDiary()));
+							dtp3FilterOldData.setConsultDiary(StringProcess.mergeUnique(dtp3FilterOldData.getConsultDiary(), dtp3FilterNewData.getConsultDiary()));
 						} else {
 							dtp3FilterOldData.setConsultDiary(dtp3FilterNewData.getConsultDiary());
 						}			
@@ -173,7 +347,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//16 Check & Set Gmail
 					if(!dtp3FilterNewData.getGmail().isEmpty()) {
 						if(!dtp3FilterOldData.getGmail().isEmpty()) {
-							dtp3FilterOldData.setGmail(stringProcess.mergeUnique(dtp3FilterOldData.getGmail(), dtp3FilterNewData.getGmail()));
+							dtp3FilterOldData.setGmail(StringProcess.mergeUnique(dtp3FilterOldData.getGmail(), dtp3FilterNewData.getGmail()));
 						} else {
 							dtp3FilterOldData.setGmail(dtp3FilterNewData.getGmail());
 						}	
@@ -192,7 +366,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//19 Check & Set setAddress
 					if(!dtp3FilterNewData.getAddress().isEmpty()) {
 						if(!dtp3FilterOldData.getAddress().isEmpty()) {
-							dtp3FilterOldData.setAddress(stringProcess.mergeUnique(dtp3FilterOldData.getAddress(), dtp3FilterNewData.getAddress()));
+							dtp3FilterOldData.setAddress(StringProcess.mergeUnique(dtp3FilterOldData.getAddress(), dtp3FilterNewData.getAddress()));
 						} else {
 							dtp3FilterOldData.setAddress(dtp3FilterNewData.getAddress());
 						}	
@@ -201,7 +375,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//20 Check & Set setAddress
 					if(!dtp3FilterNewData.getWorkingArea().isEmpty()) {
 						if(!dtp3FilterOldData.getWorkingArea().isEmpty()) {
-							dtp3FilterOldData.setWorkingArea(stringProcess.mergeUnique(dtp3FilterOldData.getWorkingArea(), dtp3FilterNewData.getWorkingArea()));
+							dtp3FilterOldData.setWorkingArea(StringProcess.mergeUnique(dtp3FilterOldData.getWorkingArea(), dtp3FilterNewData.getWorkingArea()));
 						} else {
 							dtp3FilterOldData.setWorkingArea(dtp3FilterNewData.getWorkingArea());
 						}	
@@ -210,7 +384,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//21 Check & setProductBought
 					if(!dtp3FilterNewData.getProductBought().isEmpty()) {
 						if(!dtp3FilterOldData.getProductBought().isEmpty()) {
-							dtp3FilterOldData.setProductBought(stringProcess.mergeUnique(dtp3FilterOldData.getProductBought(), dtp3FilterNewData.getProductBought()));
+							dtp3FilterOldData.setProductBought(StringProcess.mergeUnique(dtp3FilterOldData.getProductBought(), dtp3FilterNewData.getProductBought()));
 						} else {
 							dtp3FilterOldData.setProductBought(dtp3FilterNewData.getProductBought());
 						}	
@@ -219,7 +393,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//22 Check & setMixContacts
 					if(!dtp3FilterNewData.getMixContacts().isEmpty()) {
 						if(!dtp3FilterOldData.getMixContacts().isEmpty()) {
-							dtp3FilterOldData.setMixContacts(stringProcess.mergeUnique(dtp3FilterOldData.getMixContacts(), dtp3FilterNewData.getMixContacts()));
+							dtp3FilterOldData.setMixContacts(StringProcess.mergeUnique(dtp3FilterOldData.getMixContacts(), dtp3FilterNewData.getMixContacts()));
 						} else {
 							dtp3FilterOldData.setMixContacts(dtp3FilterNewData.getMixContacts());
 						}	
@@ -243,7 +417,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//26 Check & setAccountFollow
 					if(!dtp3FilterNewData.getAccountFollow().isEmpty()) {
 						if(!dtp3FilterOldData.getAccountFollow().isEmpty()) {
-							dtp3FilterOldData.setAccountFollow(stringProcess.mergeUnique(dtp3FilterOldData.getAccountFollow(), dtp3FilterNewData.getAccountFollow()));
+							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
 						} else {
 							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
 						}	

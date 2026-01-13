@@ -3,6 +3,7 @@ package SpringbootProject.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor; // 1. Thêm import này
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 
-public interface DTP3FilterDataRepository extends JpaRepository<DTP3FilterData, Long> {
+public interface DTP3FilterDataRepository extends JpaRepository<DTP3FilterData, Long>, JpaSpecificationExecutor<DTP3FilterData> {
 	DTP3FilterData findByphoneNumber1(String phoneNumber1);
 	List<DTP3FilterData> findByDataType(DataType dataType);
 //	void deleteByphoneNumber1 (String phoneNumber1);
@@ -34,6 +35,7 @@ public interface DTP3FilterDataRepository extends JpaRepository<DTP3FilterData, 
 			nativeQuery = true)
 	List<DTP3FilterData> getListByOnePhone1(@Param("phoneInput") String phoneInput);
 	
-
+//======================================================================================================================
+	
 	
 }

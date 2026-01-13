@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,19 +26,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import FileUtil.StringProcess;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.NameProcess;
+import SpringbootProject.dto.dataProcess.DTP3SearchRequest;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
+import SpringbootProject.entity.enums.NextAction;
+import SpringbootProject.entity.enums.Salutation;
 import SpringbootProject.service.IDTP3FilterDataEntity;
 
 @Controller
 public class DTP3FilterAndRawDataController {
 	
 	public static List<String> DTP3FilterControllerMessagesList = new ArrayList<>();
-
+    private static List<DTP3FilterData> dtp3FilterDataStaticList = null;
 	
     // Logger để ghi lại thông tin và lỗi
     private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
@@ -43,25 +51,99 @@ public class DTP3FilterAndRawDataController {
 	@Autowired
 	private IDTP3FilterDataEntity Dtp3FilterDataServices;
 	
-
+//==========================================THAO TÁC VỚI THYMLEAF
 	 /*
      * TRUY CẬP VÀO THYMLEAF
      * Sau này tạo thêm những phần hiển thị theo bộ lọc
      * */
+//    @GetMapping("/data-dtp3-filter-and-raw-pannel")
+//    public String index(Model model) {
+//        // Có thể thêm logic xóa file cũ hoặc reset trạng thái ở đây nếu cần
+//        // Ví dụ: excelFileResponse = null; excelFileError = null;
+//    	List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.findAllDtp3FilterData();
+//
+//    	
+////    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
+////    		System.out.println(">>> "+DTP3Filter.toString());
+////    	}
+//    	model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
+//    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
+//        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
+//    }
+    
     @GetMapping("/data-dtp3-filter-and-raw-pannel")
-    public String index(Model model) {
-        // Có thể thêm logic xóa file cũ hoặc reset trạng thái ở đây nếu cần
-        // Ví dụ: excelFileResponse = null; excelFileError = null;
-    	List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.findAllDtp3FilterData();
-
+    public String showFilterPage(
+            @ModelAttribute("searchRequest") DTP3SearchRequest request,
+            @PageableDefault(size = 10) Pageable pageable, // Mặc định 10 bản ghi/trang
+            Model model) {
     	
-//    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
-//    		System.out.println(">>> "+DTP3Filter.toString());
-//    	}
-    	model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
+    	logger.info(">>> CONTROLLER: Tiếp nhận yêu cầu lọc. Page: {}", pageable.getPageNumber());
+        Page<DTP3FilterData> page = Dtp3FilterDataServices.filterData(request, pageable);
+//        List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.getFilterListOnly(request, pageable);//lấy theo phân trang
+        List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.getAllMatchesWithoutPagination(request); // lấy full
+//        System.out.println("DTP3FilterDataList: "+DTP3FilterDataList.toString());
+
+        List<String> resultFollowList = new ArrayList<>();
+        List<String> accountFollowList = new ArrayList<>();
+        List<String> consultDiaryList = new ArrayList<>();
+        
+        for(DTP3FilterData dtpFilterData : DTP3FilterDataList) {
+        	resultFollowList.add(dtpFilterData.getResultFollow());
+        	accountFollowList.add(dtpFilterData.getAccountFollow());
+        	consultDiaryList.add(dtpFilterData.getConsultDiary());
+        }
+        
+        
+
+        dtp3FilterDataStaticList = DTP3FilterDataList;
+        
+        // Logic tính toán 5 trang hiển thị
+        int current = page.getNumber(); // Trang hiện tại (0-indexed)
+        int total = page.getTotalPages();
+        
+        int start = Math.max(0, current - 2); // Hiển thị 2 trang phía trước
+        int end = Math.min(start + 4, total - 1); // Đảm bảo tổng cộng khoảng 5 trang
+        
+        // Điều chỉnh lại nếu ở những trang cuối (để luôn đủ 5 nút nếu có thể)
+        if (end - start < 4) {
+            start = Math.max(0, end - 4);
+        }
+        
+
+        model.addAttribute("page", page);
+        model.addAttribute("startPage", start);
+        model.addAttribute("endPage", end);
+        model.addAttribute("allDataTypes", DataType.values());
+        model.addAttribute("allGenders", Gender.values());
+        model.addAttribute("allSalutations", Salutation.values());
+        model.addAttribute("allNextActions", NextAction.values());
+        model.addAttribute("allResultFollows", resultFollowList);
+        model.addAttribute("allAccountFollows", accountFollowList);
+        model.addAttribute("allConsultDiaries", consultDiaryList);
+        
+//        model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
+        model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
     	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
+        
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
     }
+    
+    @GetMapping("/list")
+    public String listData(
+            @ModelAttribute("searchRequest") DTP3SearchRequest searchRequest,
+            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            Model model) {
+        
+        Page<DTP3FilterData> pageResult = Dtp3FilterDataServices.filterData(searchRequest, pageable);
+        
+        model.addAttribute("page", pageResult);
+        model.addAttribute("dataTypes", DataType.values());
+        model.addAttribute("genders", Gender.values());
+        
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
+    }
+    
+    
 
  //=========================================THAO TÁC với I/O ===========================================================
 
@@ -99,6 +181,8 @@ public class DTP3FilterAndRawDataController {
             	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getLastName()));
             }
             
+          //Tạo mới Salutation nếu chưa có
+            excelObjectInputList.get(i).setSalutation(GenderProcess.detectSalutationFromGender(excelObjectInputList.get(i).getGender(),excelObjectInputList.get(i).getDateOfBirth()));
 
         }
         
@@ -170,6 +254,16 @@ public class DTP3FilterAndRawDataController {
             	}
             }
             
+            //Tạo mới Gender nếu chưa có
+            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && !excelObjectInputList.get(i).getFullName1().isEmpty()) {
+            	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getFullName1()));
+            }
+            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && excelObjectInputList.get(i).getLastName()!=null) {
+            	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getLastName()));
+            }
+            
+            //Tạo mới Salutation nếu chưa có
+            excelObjectInputList.get(i).setSalutation(GenderProcess.detectSalutationFromGender(excelObjectInputList.get(i).getGender(),excelObjectInputList.get(i).getDateOfBirth()));
 
         }
         
@@ -189,6 +283,9 @@ public class DTP3FilterAndRawDataController {
      * */
     @GetMapping("/getDtp3FilterDuplicatePhoneExcelFile")
     public ResponseEntity<ByteArrayResource> downloadExcelFileDTP3FilterDataDuplicatePhone() throws IOException {
+    	
+    	String nameFile = "Danh-sach-sdt-trung-lap.xlsx";
+    	
     	// --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
         
@@ -214,8 +311,9 @@ public class DTP3FilterAndRawDataController {
 
         ByteArrayResource resource = new ByteArrayResource(dtp3FilterDuplicatePhoneResponse.getBytes());
 
+        String headerValues = "attachment; filename=".concat(nameFile);        
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Danh sach du lieu trung so dien thoai.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .contentLength(dtp3FilterDuplicatePhoneResponse.getSize())
                 .body(resource);
@@ -228,6 +326,9 @@ public class DTP3FilterAndRawDataController {
      * */
     @GetMapping("/getDtp3FilterFormExcelFile")
     public ResponseEntity<ByteArrayResource> downloadExcelFileDTP3FilterDataForm() throws IOException {
+    	
+    	String nameFile = "Form-DTP3Filter-Data.xlsx";
+    	
     	// --- Đọc file và lấy thông tin ---
         IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
         DTP3FilterData dTP3FilterData = new DTP3FilterData(); //tạo enity để biết lấy form của DTP3FilterData
@@ -238,7 +339,6 @@ public class DTP3FilterAndRawDataController {
         // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
         try {
         	dtp3FilterFormExcelFileResponse = ioFunction.createlFromDtp3FilterExceForm(dTP3FilterData);
-        	System.out.println("3");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -253,8 +353,9 @@ public class DTP3FilterAndRawDataController {
 
         ByteArrayResource resource = new ByteArrayResource(dtp3FilterFormExcelFileResponse.getBytes());
 
+        String headerValues = "attachment; filename=".concat(nameFile);        
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dtp3-form.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .contentLength(dtp3FilterFormExcelFileResponse.getSize())
                 .body(resource);
@@ -268,6 +369,7 @@ public class DTP3FilterAndRawDataController {
      * */
     @GetMapping("/getDtp3FilterFullDataExcelFile")
     public ResponseEntity<ByteArrayResource> downloadExcelFileDTP3FilterFullData() throws IOException {
+    	String nameFile = "Full-data-DTP3.xlsx";
     	
     	List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findAllDtp3FilterData();
     	// --- Đọc file và lấy thông tin ---
@@ -279,7 +381,6 @@ public class DTP3FilterAndRawDataController {
         // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
         try {
         	dtp3FilterFulDataExcelFileResponse = ioFunction.createExcelFromDtp3FilterFullData(dtp3FilterDataResponse);
-        	System.out.println("3");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -293,15 +394,88 @@ public class DTP3FilterAndRawDataController {
         }
 
         ByteArrayResource resource = new ByteArrayResource(dtp3FilterFulDataExcelFileResponse.getBytes());
-
+       
+        String headerValues = "attachment; filename=".concat(nameFile);
+        System.out.println("headerValues: "+headerValues);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=dtp3-full-data.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .contentLength(dtp3FilterFulDataExcelFileResponse.getSize())
                 .body(resource);
     }
     
-    
+    /*
+     * DTP3FILTER EXCEL Filtered Data 	
+     * Phương thức tải xuống file Excel - Các entity đã Filter
+     * */
+    @GetMapping("/getFilteredDtp3DataExcelFile")
+    public ResponseEntity<ByteArrayResource> downloadExcelFileFilterdDTP3Data() throws IOException {
+    	String nameFile = "Filtered Data";
+//    	List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findAllDtp3FilterData();
+    	
+    	// --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+    	
+        if(dtp3FilterDataStaticList !=null) {
+        	MultipartFile FilteredDtp3DataExcelFileResponse = ioFunction.createExcelFromDtp3FilterFullData(dtp3FilterDataStaticList);;
+        	
+            
+            // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+            try {
+            	FilteredDtp3DataExcelFileResponse = ioFunction.createExcelFromDtp3FilterFullData(dtp3FilterDataStaticList);
+
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+            // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+            if (FilteredDtp3DataExcelFileResponse == null) {
+                 logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+                 // Có thể trả về lỗi 404 hoặc thông báo khác
+                 return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+            }
+
+            ByteArrayResource resource = new ByteArrayResource(FilteredDtp3DataExcelFileResponse.getBytes());
+            
+            String headerValues = "attachment; filename=".concat(nameFile);        
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .contentLength(FilteredDtp3DataExcelFileResponse.getSize())
+                    .body(resource);
+        } 
+        
+        List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findAllDtp3FilterData();
+    	// --- Đọc file và lấy thông tin ---
+    	
+    	MultipartFile dtp3FilterFulDataExcelFileResponse = ioFunction.createExcelFromDtp3FilterFullData(dtp3FilterDataResponse);;
+    	
+        
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	dtp3FilterFulDataExcelFileResponse = ioFunction.createExcelFromDtp3FilterFullData(dtp3FilterDataResponse);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (dtp3FilterFulDataExcelFileResponse == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(dtp3FilterFulDataExcelFileResponse.getBytes());
+       
+        String headerValues = "attachment; ".concat(nameFile);        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(dtp3FilterFulDataExcelFileResponse.getSize())
+                .body(resource);
+    	
+    }
     
     
     

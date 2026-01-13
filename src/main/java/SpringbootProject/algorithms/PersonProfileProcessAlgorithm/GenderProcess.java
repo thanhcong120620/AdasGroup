@@ -1,5 +1,6 @@
 package SpringbootProject.algorithms.PersonProfileProcessAlgorithm;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -8,8 +9,37 @@ import java.util.stream.Collectors;
 
 import FileUtil.VietnameseUtils;
 import SpringbootProject.entity.enums.Gender;
+import SpringbootProject.entity.enums.Salutation;
 
 public class GenderProcess {
+	
+
+	
+//==========================================Salutation---------------------------------------------		
+	
+	public static Salutation detectSalutationFromGender(Gender gender, LocalDate dayOfBirh) {
+		if(!gender.equals(Gender.UNDEFINED)&&dayOfBirh !=null) {
+//			System.out.println(">> detectSalutationFromGender");
+			if(dayOfBirh.getYear()<=1970) {
+				if(gender.equals(Gender.MALE)) { 
+					return Salutation.CHU;
+				} else if(gender.equals(Gender.FEMALE)) {
+					return Salutation.CO;
+				}
+			} else if ((dayOfBirh.getYear()>=1970) && (dayOfBirh.getYear()<=1999)) {
+				if(gender.equals(Gender.MALE)) { 
+					return Salutation.ANH;
+				} else if(gender.equals(Gender.FEMALE)) {
+					return Salutation.CHI;
+				}
+			} 
+		} 
+			return Salutation.UNDEFINED;
+		
+	}
+	
+	
+//==========================================Gender---------------------------------------------	
 	
 	/* =========================
     RAW DATA (CÓ DẤU)

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import FileUtil.EnumExtractorUtil;
+import FileUtil.StringProcess;
 import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
@@ -15,7 +16,8 @@ import SpringbootProject.entity.notSaving.ExcelObject;
 public class TestMain {
 
 	public static void main(String[] args) {
-		testGenderProcess();
+		testListStringDuplicate();
+//		testGenderProcess();
 //		testLabelEnum("Sắp chốt");
 //		testLabelEnum("SẮP CHỐT");
 //		testLabelEnum("SC");
@@ -40,6 +42,35 @@ public class TestMain {
 
 //=========================================================	
 	
+	//Test sự trùng lặp các giá trị String trong 1 List
+	static void testListStringDuplicate() {
+		List<String> list = List.of(
+		        "User_01",
+		        "admin",
+		        "User_01",          // trùng
+		        "ADMIN",            // khác hoa thường
+		        " guest ",
+		        "guest",            // khác khoảng trắng
+		        "user-02",
+		        "user-02",          // trùng
+		        "user_03",
+		        "user#03",          // khác ký tự đặc biệt
+		        "123",
+		        "123",              // trùng
+		        "order_2024_01",
+		        "order_2024_01",    // trùng
+		        "Hello World",
+		        "Hello  World",     // 2 khoảng trắng
+		        "hello world",      // khác hoa thường
+		        "こんにちは",        // Unicode (Japanese)
+		        "你好",              // Unicode (Chinese)
+		        "こんにちは"         // trùng Unicode
+		);
+		List<String> result = StringProcess.removeDuplicates(list);
+		for(String s : result) {
+        System.out.println(s); // [A, B, C, D]
+		}
+	};
 	
 	//Test sự hoạt động của GenderProcess
 	static void testGenderProcess() {

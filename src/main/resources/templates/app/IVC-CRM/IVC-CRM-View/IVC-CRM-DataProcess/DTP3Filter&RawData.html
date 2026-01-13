@@ -67,88 +67,136 @@
                  CỘT TRÁI (2/3): HIỂN THỊ DỮ LIỆU 
             ============================================== -->
             <div class="col-lg-8">
-				<div class="d-flex justify-content-between align-items-center mb-2">
-                    <form th:action="@{/getTypeData}" method="get" class="form-inline">
-                        <label class="mr-2 font-weight-bold">Loại dữ liệu:</label>
-                        <select name="dateType" class="form-control form-control-sm mr-2">
-                            <option value="RAW_DATA">Raw data</option>
-                            <option value="FILTERED_DATA">Filter data</option>
+				<!-- Form lọc -->
+        <div class="card mb-4">
+            <div class="card-header">Bộ lọc khớp chính xác</div>
+            <div class="card-body">
+                <form th:action="@{/data-dtp3-filter-and-raw-pannel}" th:object="${searchRequest}" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label>Tên Zalo (Chính xác)</label>
+                        <input type="text" th:field="*{zaloName}" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label>SĐT 1 (Chính xác)</label>
+                        <input type="text" th:field="*{phoneNumber1}" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label>DataType</label>
+                        <select th:field="*{dataType}" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <option th:each="t : ${allDataTypes}" th:value="${t}" th:text="${t}"></option>
                         </select>
-                        <button class="btn btn-sm btn-danger">Lấy dữ liệu</button>
-                    </form>
-                    <span class="badge badge-secondary" th:text="${'Tổng cộng: ' + DTP3FilterDataList.size()}"></span>
-                </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Giới tính</label>
+                        <select th:field="*{gender}" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <option th:each="g : ${allGenders}" th:value="${g}" th:text="${g}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Tình trạng dữ liệu</label>
+                        <select th:field="*{resultFollow}" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <option th:each="rl : ${allResultFollows}" th:value="${rl}" th:text="${rl}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>TK thực hiện</label>
+                        <select th:field="*{accountFollow}" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <option th:each="af : ${allAccountFollows}" th:value="${af}" th:text="${af}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>TK thực hiện</label>
+                        <select th:field="*{consultDiary}" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            <option th:each="cd : ${allConsultDiaries}" th:value="${cd}" th:text="${cd}"></option>
+                        </select>
+                    </div>
+                     <div class="col-md-3">
+        				<label>Từ ngày</label>
+        				<input type="date" th:field="*{fromDate}" class="form-control">
+    				</div>
+    
+    				<div class="col-md-3">
+        				<label>Đến ngày</label>
+        				<input type="date" th:field="*{toDate}" class="form-control">
+    				</div>
+    				
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Lọc ngay</button>
+                    </div>
+                </form>
+            </div>
+            
+            <span class="badge badge-secondary" th:text="${'Tổng cộng: ' + DTP3FilterDataList.size()}"></span>
+            
+        </div>
 
-    <!-- Div mới với khả năng cuộn dọc -->
-    <div class="table-responsive-container shadow-sm">
-        <table class="table table-hover table-bordered table-sm">
-            <thead class="thead-dark">
+        <!-- Bảng dữ liệu -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Loại dữ liệu</th>
-                    <th>Nguồn dữ liệu</th>
-                    <th>Ngày phát sinh</th>
-                    <th>Nhật ký tư vấn</th>
-                    <th>Họ và tên 1</th>
-                    <th>Họ và tên 2</th>
-                    <th>Tên</th>
-                    <th>Danh Xưng</th>
+                    <th>Zalo Name</th>
+                    <th>Phone</th>
+                    <th>Type</th>
                     <th>Gender</th>
-                    <th>Zalo</th>
-                    <th>Zalo UID</th>
-                    <th>Facebook Link</th>
-                    <th>Số điện thoại 1</th>
-                    <th>Số điện thoại 2</th>
-                    <th>Gmail</th>
-                    <th>Ngày/Tháng/Năm sinh</th>
-                    <th>Tiết kiệm/Vốn</th>
-                    <th>Địa chỉ</th>
-                    <th>Nơi làm việc</th>
-                    <th>Sản phẩm đã mua</th>
-                    <th>Contact tổng hợp</th>
-                    <th>Hành động tiếp</th>
-                    <th>Người thực hiện</th>
-                    <th>Follow Date</th>
-                    <th>Result</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${DTP3FilterDataList}">
+                <tr th:each="item : ${page.content}">
                     <td th:text="${item.id}"></td>
-                    <td><span class="badge badge-info" th:text="${item.dataType}"></span></td>
-                    <td th:text="${item.dataSource}"></td>
-                    <td th:text="${#temporals.format(item.dateOfLead, 'dd/MM/yyyy')}"></td>
-                    <td class="text-truncate" style="max-width: 120px;" th:title="${item.consultDiary}" th:text="${item.consultDiary}"></td>
-                    <td th:text="${item.fullName1}"></td>
-                    <td th:text="${item.fullName2}"></td>
-                    <td th:text="${item.lastName}"></td>
-                    <td th:text="${item.salutation}"></td>
-                    <td th:text="${item.gender}"></td>
                     <td th:text="${item.zaloName}"></td>
-                    <td th:text="${item.zaloUid}"></td>
-                    <td th:text="${item.facebookLink}"></td>
-                    <td class="font-weight-bold text-primary" th:text="${item.phoneNumber1}"></td>
-                    <td class="font-weight-bold text-primary" th:text="${item.phoneNumber2}"></td>
-                    <td th:text="${item.gmail}"></td>
-                    <td th:text="${#temporals.format(item.dateOfBirth, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.savingsAmount, 0, 'COMMA', 0, 'POINT')}"></td>
-                    <td th:text="${item.address}"></td>
-                    <td th:text="${item.workingArea}"></td>
-                    <td th:text="${item.productBought}"></td>
-                    <td th:text="${item.mixContacts}"></td>
-                    <td><span class="badge badge-warning" th:text="${item.nextAction}"></span></td>
-                    <td th:text="${item.accountFollow}"></td>
-                    <td th:text="${#temporals.format(item.nextFollowDate, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${item.resultFollow}"></td>
-                    <td class="text-center">
-                        <i class="fas fa-edit text-success mr-2" style="cursor:pointer" th:onclick="'editCustomer(' + ${item.id} + ')'"></i>
-                        <i class="fas fa-trash text-danger" style="cursor:pointer" th:onclick="'deleteCustomer(' + ${item.id} + ')'"></i>
-                    </td>
+                    <td th:text="${item.phoneNumber1}"></td>
+                    <td th:text="${item.dataType}"></td>
+                    <td th:text="${item.gender}"></td>
                 </tr>
             </tbody>
         </table>
-    </div>
+
+        <!-- Phân trang -->
+        <!-- Phân trang tối ưu -->
+	<nav th:if="${page.totalPages > 0}" aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        
+        <!-- Nút về Trang Đầu (First) -->
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=0, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">« Đầu</a>
+        </li>
+
+        <!-- Nút Trước (Previous) -->
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">‹</a>
+        </li>
+
+        <!-- Hiển thị các số trang trong khoảng startPage -> endPage -->
+        <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" 
+            th:classappend="${i == page.number} ? 'active'">
+            <a class="page-link" 
+               th:href="@{/data-dtp3-filter-and-raw-pannel(page=${i}, size=${page.size}, 
+               					zaloName=${searchRequest.zaloName}, 
+               					phoneNumber1=${searchRequest.phoneNumber1}, 
+               					dataType=${searchRequest.dataType}, 
+               					gender=${searchRequest.gender},
+               					fromDate=${searchRequest.fromDate}, 
+               					toDate=${searchRequest.toDate})}" 
+               th:text="${i + 1}"></a>
+        </li>
+
+        <!-- Nút Sau (Next) -->
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number + 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">›</a>
+        </li>
+
+        <!-- Nút về Trang Cuối (Last) -->
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.totalPages - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">Cuối »</a>
+        </li>
+    </ul>
+</nav>
 </div>
 
             <!-- =============================================
@@ -236,6 +284,12 @@
                                 <div class="col-6 p-1">
                                     <a href="/getDtp3FilterFullDataExcelFile" class="btn btn-outline-info btn-block btn-sm" >
                                         <i class="fas fa-file-export mr-1"></i>  Download tất cả dữ liệu xuống.xlx
+                                    </a>
+                                </div>
+                                
+                                <div class="col-6 p-1">
+                                    <a href="/getFilteredDtp3DataExcelFile" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i>  Download dữ liệu đã lọc.xlx
                                     </a>
                                 </div>
                                 
