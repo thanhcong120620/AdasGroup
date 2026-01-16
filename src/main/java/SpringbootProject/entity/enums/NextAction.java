@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum NextAction {
+	ADD_ZALO_FRIEND("Kết bạn Zalo"),
 	MESSAGE("Nhắn tin"),
     CALL("Gọi"),
     MEETING("Gặp"),

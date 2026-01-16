@@ -45,7 +45,9 @@ public class DTP3FilterAndRawDataController {
     private static List<DTP3FilterData> dtp3FilterDataStaticList = null;
 	
     // Logger để ghi lại thông tin và lỗi
-    private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
+//    private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DTP3FilterAndRawDataController.class);
+
     
 	
 	@Autowired
@@ -70,6 +72,8 @@ public class DTP3FilterAndRawDataController {
 //    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
 //        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
 //    }
+	
+	
     
     @GetMapping("/data-dtp3-filter-and-raw-pannel")
     public String showFilterPage(
@@ -125,7 +129,7 @@ public class DTP3FilterAndRawDataController {
         model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
     	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
         
-        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
     }
     
     @GetMapping("/list")
@@ -140,13 +144,210 @@ public class DTP3FilterAndRawDataController {
         model.addAttribute("dataTypes", DataType.values());
         model.addAttribute("genders", Gender.values());
         
-        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
+    }
+	
+    
+    
+    /*
+     * Lấy value và field cần update từ thymleaf
+     * Trả về DTP3SearchRequest
+     * */
+	@GetMapping("/update-dtp3-data-by-one-field")
+	public String updateDtp3DataByOneField(
+	        @RequestParam (value = "valueToUpdate", required = true) String valueToUpdate,
+	        @RequestParam(value = "fieldToUpdate", required = true) String fieldToUpdate,
+	        Model model) {
+
+		List<DTP3FilterData> DTP3FilterDataListRequest = dtp3FilterDataStaticList;
+		List<DTP3FilterData> DTP3FilterDataListRessponse = new ArrayList<DTP3FilterData>();
+		List<String> updatedPhoneList = new ArrayList<String>();
+		
+		for(DTP3FilterData dtp3FilterData : DTP3FilterDataListRequest) {
+			
+			switch (fieldToUpdate) {
+            case "resultFollow":
+            	dtp3FilterData.setResultFollow(StringProcess.mergeUnique(dtp3FilterData.getResultFollow(),valueToUpdate));
+            	Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+                break;
+            case "accountFollow":
+            	dtp3FilterData.setAccountFollow(valueToUpdate);
+    			Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            case "zaloName":
+            	dtp3FilterData.setZaloName(valueToUpdate);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            case "fullName1":
+            	dtp3FilterData.setFullName1(valueToUpdate);
+            	Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            case "consultDiary":
+            	dtp3FilterData.setConsultDiary(StringProcess.mergeUnique(dtp3FilterData.getConsultDiary(),valueToUpdate));
+            	Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            default:
+            	DTP3FilterControllerMessagesList.add("Cập nhật thất bại: "+fieldToUpdate+" và "+valueToUpdate);
+        }
+			
+			
+		}
+		
+		DTP3FilterControllerMessagesList.add("Danh sách các sđt được cập nhật: "); 
+		
+		for(String updatedPhone : updatedPhoneList) {
+			List<DTP3FilterData> updatedPhoneListFromDB = Dtp3FilterDataServices.findAllByPhoneNumber1(updatedPhone);
+			for(DTP3FilterData dtp3FilterData : updatedPhoneListFromDB) {
+				DTP3FilterDataListRessponse.add(dtp3FilterData);
+			}
+			DTP3FilterControllerMessagesList.add(updatedPhone);
+		}
+		
+		
+	   
+		//ko hiển thị ngược lại data đang lọc, mà hiển thị kết quả những phone sau khi đã đc lọc
+//		model.addAttribute("DTP3FilterDataList", DTP3FilterDataListRessponse);
+    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
+	    return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
+	}
+
+	
+//========================================= AKABIZ FUNCTION ===========================================================	
+	
+	/*
+	 * Chạy kết bạn
+     * Akabiz Campaign Data	
+     * Phương thức tải xuống file Excel 
+     * Phương thức nàyko lấy salutation để set dữ liệu
+     * */
+    @GetMapping("/getAkabizCampaignData-no-Salutation")
+    public ResponseEntity<ByteArrayResource> downloadExcelFileAkabizCampaignDataNoSalutation() throws IOException {
+    	
+    	String nameFile = "Akabiz-Campaign-Data-no-salutation.xlsx";
+    	
+    	
+    	// --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+//        List<DTP3FilterData> dTP3FilterData = Dtp3FilterDataServices.findAllDtp3FilterData();
+        List<DTP3FilterData> dTP3FilterData = dtp3FilterDataStaticList;
+        
+    	MultipartFile akabizCampaignDataFileResponse = ioFunction.createAkabizExcelFromDtp3FilterDataNoSalutation(dTP3FilterData);
+    	
+        
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	akabizCampaignDataFileResponse = ioFunction.createAkabizExcelFromDtp3FilterDataNoSalutation(dTP3FilterData);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (akabizCampaignDataFileResponse == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(akabizCampaignDataFileResponse.getBytes());
+
+        String headerValues = "attachment; filename=".concat(nameFile);        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(akabizCampaignDataFileResponse.getSize())
+                .body(resource);
+    }
+	
+	
+	
+	/*
+	 * Chạy tin nhắn
+     * Akabiz Campaign Data	
+     * Phương thức tải xuống file Excel 
+     * Phương thức này sẽ lấy cả salutation để set dữ liệu
+     * */
+    @GetMapping("/getAkabizCampaignData")
+    public ResponseEntity<ByteArrayResource> downloadExcelFileAkabizCampaignData() throws IOException {
+    	
+    	String nameFile = "Akabiz-Campaign-Data.xlsx";
+    	
+    	
+    	// --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+//        List<DTP3FilterData> dTP3FilterData = Dtp3FilterDataServices.findAllDtp3FilterData();
+        List<DTP3FilterData> dTP3FilterData = dtp3FilterDataStaticList;
+        
+    	MultipartFile akabizCampaignDataFileResponse = ioFunction.createAkabizExcelFromDtp3FilterDataHasSalutation(dTP3FilterData);
+    	
+        
+        // --- Ghi kết quả ra MultipartFile (lưu vào biến static - CẨN THẬN THREAD SAFETY) ---
+        try {
+        	akabizCampaignDataFileResponse = ioFunction.createAkabizExcelFromDtp3FilterDataHasSalutation(dTP3FilterData);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        // --- CẢNH BÁO: Phụ thuộc vào biến static excelFileResponse ---
+        if (akabizCampaignDataFileResponse == null) {
+             logger.warn("Yêu cầu tải file response nhưng excelFileResponse là null.");
+             // Có thể trả về lỗi 404 hoặc thông báo khác
+             return ResponseEntity.notFound().build(); // Hoặc trả về trang lỗi
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(akabizCampaignDataFileResponse.getBytes());
+
+        String headerValues = "attachment; filename=".concat(nameFile);        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(akabizCampaignDataFileResponse.getSize())
+                .body(resource);
     }
     
-    
+	/*
+	 * Akabiz Campaign Result	
+     * Lấy kết quả chiến dịch --> update vào data
+     * Phương thức upload file Excel 
+     * Phương thức này bao gồm lấy kết quả chạy tin nhắn và cả kết bạn, update thông tin khách hàng và result follow
+     * */
+    @PostMapping("/uploadAndUpdateAkabizResultToDTP3")
+    public String handleFileUploadAndUpdateAkabizResultToDTP3 (@RequestParam("excelFileUpdateAkabizResultToDTP3") MultipartFile file, // Tên khớp với input file
+            RedirectAttributes redirectAttributes, Model model) { // Bỏ throws nếu xử lý exception bên trong
+		
+        DTP3FilterControllerMessagesList.clear();
+        DTP3FilterControllerMessagesList.add("Các số điện thoại không tồn tại ở kho dữ liệu: \n");
+        
+        // --- Đọc file và lấy thông tin ---
+        IOFunction ioFunction = new IOFunction(); // Nên inject bằng @Autowired nếu IOFunction là Spring Bean
+        List<DTP3FilterData> excelObjectInputList = ioFunction.getDtp3FilterEntityListFromAkabizExcel(file);
 
+        
+        //Update data to database
+        for(DTP3FilterData dTP3FilterData : excelObjectInputList) {
+        	System.out.println(dTP3FilterData.toString());
+        	String phoneUpdate = Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dTP3FilterData);
+        	if (phoneUpdate == null) {
+        		DTP3FilterControllerMessagesList.add("Dữ liệu để cập nhật không tồn tại: "+dTP3FilterData.getPhoneNumber1());
+        	}
+        }
+        
+        return "redirect:/data-dtp3-filter-and-raw-pannel";
+    }    
  //=========================================THAO TÁC với I/O ===========================================================
-
     
     /*
      * POSTING ACTION - UPLOAD LẤY DỮ LIỆU CẦN UPDATE TỪ EXCEL.
@@ -494,15 +695,15 @@ public class DTP3FilterAndRawDataController {
     	DataType dateType = DataType.valueOf(dataTypeRequest);
 
         // Ví dụ: excelFileResponse = null; excelFileError = null;
-    	List<DTP3FilterData> DTP1CRMList = Dtp3FilterDataServices.findByDataType(dateType);
+    	 List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findByDataType(dateType);
     	
-    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
-
-    		System.out.println(">>> "+DTP3Filter.toString());
-    		
-    	}
-    	model.addAttribute("DTP1CRMListResponse", DTP1CRMList);
-        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
+//    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
+//
+//    		System.out.println(">>> "+DTP3Filter.toString());
+//    		
+//    	}
+    	model.addAttribute("DTP1CRMListResponse", dtp3FilterDataResponse);
+        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
     }
 	
 	/*

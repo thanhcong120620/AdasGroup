@@ -1,5 +1,7 @@
 package SpringbootProject.entity.notSaving;
 
+import SpringbootProject.entity.CRMEntity.DTP3FilterData;
+
 public class AkabizObject {
 	private String campaignName;
     private String campaignActionName;
@@ -313,6 +315,25 @@ public class AkabizObject {
 				+ ", isSendMessage=" + isSendMessage + ", errorImagePath=" + errorImagePath + ", akaBizTagIds="
 				+ akaBizTagIds + ", akaBizTagNames=" + akaBizTagNames + "]";
 	}
-    
+	
+//========================================Convert between Akabiz object and DTP3Filter Data Entity======================================
+	
+	public static DTP3FilterData convertAkabizToDtp3FilterData(AkabizObject akabizObject) {
+		DTP3FilterData dtp3FilterData = new  DTP3FilterData();
+		
+		dtp3FilterData.setZaloName(akabizObject.getName());
+		dtp3FilterData.setZaloUid(akabizObject.getUid());
+		dtp3FilterData.setConsultDiary(akabizObject.getShopName());
+		
+		if(akabizObject.getStatus()==null && akabizObject.getErrorMessage()!=null) {
+			dtp3FilterData.setResultFollow(akabizObject.getErrorMessage());
+		}
+		if(akabizObject.getStatus()!=null) {
+			dtp3FilterData.setResultFollow(akabizObject.getStatus());
+		}
+		
+		return dtp3FilterData;
+	}
+	
     
 }

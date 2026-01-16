@@ -8,8 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import FileUtil.DateAndTimeProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
+import SpringbootProject.controller.CRMControlers.DataProcess.DTP3FilterAndRawDataController;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
@@ -20,12 +25,208 @@ import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class MapperToExcelObject {
 	
+    private static final Logger log = LoggerFactory.getLogger(MapperToExcelObject.class);
+	
+//=================================================Akabiz Form==========================================================================
+	
+    public String[] akabizExcelHeader () {
+    	String[] akabizExcelHeader = {"Fullname", "Uid", "Mobile", "Email", "Info1", "Info2", "Info3", "Info4", "Info5"};
+    	return akabizExcelHeader;
+    }
+    
+    /*
+	 * DTP3FilterData Entity to Input Akabiz excel form
+	 * Has Salutation
+	 * chưa làm xong
+	 * */
+	public List<ExcelObject> convertDTP3FilterDataToAkabizExcelNoSalutation(List<DTP3FilterData> dtp3FilterDataListInput) {
+		
+		List<ExcelObject> excelObjectListOutput = new ArrayList<ExcelObject>();
+		
+		ExcelObject excelObjectSample = new ExcelObject();
+		excelObjectSample.setColumn1("Nguyễn Thành Công");
+		excelObjectSample.setColumn3("0368279613");
+		excelObjectSample.setColumn5("Công");
+		excelObjectSample.setColumn6("Anh");
+		excelObjectSample.setColumn7("anh");
+		excelObjectSample.setColumn8("Em");
+		excelObjectSample.setColumn9("em");
+		
+		excelObjectListOutput.add(excelObjectSample);
+		
+		if(dtp3FilterDataListInput ==null) {
+			log.info(">>> SERVICE: Check DTP3FilterData is null: {}", dtp3FilterDataListInput);
+			return null;
+		}
+		
+		for(DTP3FilterData dtp3FilterData : dtp3FilterDataListInput) {
+			//check obligatory condition
+			if(!PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1()) && !PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber2())) {
+				log.info(">>> SERVICE: Check dtp3FilterData.getPhoneNumber1() ko hợp lệ: {}", dtp3FilterData.getPhoneNumber1());
+				log.info(">>> SERVICE: Check dtp3FilterData.getPhoneNumber2() ko hợp lệ: {}", dtp3FilterData.getPhoneNumber2());
+				continue;
+			}  
+			if(!dtp3FilterData.getSalutation().equals(Salutation.UNDEFINED)) {	
+				log.info(">>> SERVICE: Salutiation is available");
+				continue;
+			}
+			if(dtp3FilterData.getLastName()==null || dtp3FilterData.getLastName().isEmpty()) {
+				log.info(">>> SERVICE: Last Name is not exist !");
+				continue;
+			}
+			
+			
+			//set data
+			else {
+				ExcelObject excelObject = new ExcelObject();
+				//set phone
+				if(PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1())) {
+					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber1()));
+				} else if(!PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1()) && PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber2())) {
+					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber2()));
+				}
+				
+				excelObject.setColumn5(safeToString(dtp3FilterData.getLastName()));
+				excelObject.setColumn1(safeToString(dtp3FilterData.getFullName1()));
+				excelObject.setColumn2(safeToString(dtp3FilterData.getZaloUid()));
+				excelObjectListOutput.add(excelObject);
+			}
+		}
+		
+		
+		
+		return excelObjectListOutput;
+	}
+    
+	/*
+	 * DTP3FilterData Entity to Input Akabiz excel form
+	 * Has Salutation
+	 * Chưa xử lý trường hợp check Salutation
+	 * */
+	public List<ExcelObject> convertDTP3FilterDataToAkabizExcelHasSalutation(List<DTP3FilterData> dtp3FilterDataListInput) {
+		
+		List<ExcelObject> excelObjectListOutput = new ArrayList<ExcelObject>();
+		
+		ExcelObject excelObjectSample = new ExcelObject();
+		excelObjectSample.setColumn1("Nguyễn Thành Công");
+		excelObjectSample.setColumn3("0368279613");
+		excelObjectSample.setColumn5("Công");
+		excelObjectSample.setColumn6("Anh");
+		excelObjectSample.setColumn7("anh");
+		excelObjectSample.setColumn8("Em");
+		excelObjectSample.setColumn9("em");
+		
+		excelObjectListOutput.add(excelObjectSample);
+		
+		if(dtp3FilterDataListInput ==null) {
+			log.info(">>> SERVICE: Check DTP3FilterData is null: {}", dtp3FilterDataListInput);
+			return null;
+		}
+		
+		for(DTP3FilterData dtp3FilterData : dtp3FilterDataListInput) {
+			//check obligatory condition
+			if(!PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1()) && !PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber2())) {
+				log.info(">>> SERVICE: Check dtp3FilterData.getPhoneNumber1() ko hợp lệ: {}", dtp3FilterData.getPhoneNumber1());
+				log.info(">>> SERVICE: Check dtp3FilterData.getPhoneNumber2() ko hợp lệ: {}", dtp3FilterData.getPhoneNumber2());
+				continue;
+			}  
+			if((dtp3FilterData.getSalutation()==null || dtp3FilterData.getSalutation().equals(Salutation.UNDEFINED)) && (dtp3FilterData.getDateOfBirth()==null || dtp3FilterData.getGender()==null || dtp3FilterData.getGender().equals(Gender.UNDEFINED))) {	
+				log.info(">>> SERVICE: Cann't create Salutiation");
+				continue;
+			}
+			if(dtp3FilterData.getLastName()==null || dtp3FilterData.getLastName().isEmpty()) {
+				log.info(">>> SERVICE: Last Name is not exist !");
+				continue;
+			}
+			
+			
+			//set data
+			else {
+				ExcelObject excelObject = new ExcelObject();
+				//set phone
+				if(PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1())) {
+					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber1()));
+				} else if(!PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1()) && PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber2())) {
+					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber2()));
+				}
+				
+				//set Salutation (Infor 2 - Infor 5 at Column 6,7,8,9
+				if(dtp3FilterData.getSalutation()!=null && !dtp3FilterData.getSalutation().equals(Salutation.UNDEFINED)) { // trường hợp entity có sẵn Salutation
+					excelObject.setColumn6(safeToString(dtp3FilterData.getSalutation().getLabel()));
+					excelObject.setColumn7(safeToString(dtp3FilterData.getSalutation().getLabel()).toLowerCase());
+					excelObject.setColumn8(safeToString(GenderProcess.getFirstObjectPronoun(dtp3FilterData.getSalutation())));
+					excelObject.setColumn9(safeToString(GenderProcess.getFirstObjectPronoun(dtp3FilterData.getSalutation())).toLowerCase());
+				
+					//Trường hợp Entity ko có Salutation thì set từ birthday & Gender
+				} else if(dtp3FilterData.getSalutation()==null &&dtp3FilterData.getSalutation().equals(Salutation.UNDEFINED) && dtp3FilterData.getGender()!=null && dtp3FilterData.getDateOfBirth()!=null) {
+					excelObject.setColumn6(safeToString(GenderProcess.detectSalutationFromGender(dtp3FilterData.getGender(), dtp3FilterData.getDateOfBirth()).getLabel()));
+					excelObject.setColumn7(safeToString(GenderProcess.detectSalutationFromGender(dtp3FilterData.getGender(), dtp3FilterData.getDateOfBirth()).getLabel()).toLowerCase());
+					excelObject.setColumn8(safeToString(GenderProcess.getFirstObjectPronoun(dtp3FilterData.getDateOfBirth())));
+					excelObject.setColumn9(safeToString(GenderProcess.getFirstObjectPronoun(dtp3FilterData.getDateOfBirth())).toLowerCase());
+				} 
+				
+				excelObject.setColumn5(safeToString(dtp3FilterData.getLastName()));
+				excelObject.setColumn1(safeToString(dtp3FilterData.getFullName1()));
+				excelObject.setColumn2(safeToString(dtp3FilterData.getZaloUid()));
+				excelObjectListOutput.add(excelObject);
+			}
+			
+			
+			
+		}
+		
+		
+		
+		return excelObjectListOutput;
+	}
 	
 	
 	
-	//==========================DTP3 Filter and Raw Data==========================================================================
+	
+	/*
+	 * Result Akabiz excel to DTP3FilterData Entity
+	 * */
+	public List<DTP3FilterData> convertAkabizExcelToDTP3FilterData(List<ExcelObject> excelObjectInput) {
+		List<DTP3FilterData> dtp3FilterDataListOutput = new ArrayList<DTP3FilterData>();
+		DateAndTimeProcess dateProcess = new DateAndTimeProcess();
+		PhoneProcess phoneProcess = new PhoneProcess();
+		
+		if(excelObjectInput ==null) {
+			log.info(">>> SERVICE: Check excelObjectInput is null: {}", excelObjectInput);
+			return null;
+		}
+		
+		for(ExcelObject excelObject : excelObjectInput) {
+			DTP3FilterData dtp3FilterData = new  DTP3FilterData();
+			dtp3FilterData.setZaloName(excelObject.getColumn5());
+			dtp3FilterData.setZaloUid(excelObject.getColumn6());
+			dtp3FilterData.setConsultDiary(excelObject.getColumn4());
+			dtp3FilterData.setDateOfLead(dateProcess.parseLocalDateFlexible(excelObject.getColumn28()));
+			dtp3FilterData.setPhoneNumber1(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn7()));
+			
+			if(excelObject.getColumn18()!=null && !excelObject.getColumn18().isEmpty()) {
+				dtp3FilterData.setResultFollow(excelObject.getColumn18());
+			} else if(excelObject.getColumn17()!=null && !excelObject.getColumn17().isEmpty()) {
+				dtp3FilterData.setResultFollow(excelObject.getColumn17());
+			} else {
+				dtp3FilterData.setResultFollow("Chiến dịch thất bại !");
+			}
+			
+			dtp3FilterDataListOutput.add(dtp3FilterData);
+		}
+		
+		
+		return dtp3FilterDataListOutput;
+	}
+	
+	
+	
+	
+	
+//======================================DTP3 Filter and Raw Data==========================================================================
+	
 	public List<ExcelObject> DPT3FilterDataToExcelObject (List<DTP3FilterData> dtp3FilterDataList) {
-		List<ExcelObject> excelObjectList = new ArrayList<ExcelObject>();;
+		List<ExcelObject> excelObjectList = new ArrayList<ExcelObject>();
 		
 		for(DTP3FilterData dtp3FilterData:dtp3FilterDataList) {
 			ExcelObject excelObject = new ExcelObject();

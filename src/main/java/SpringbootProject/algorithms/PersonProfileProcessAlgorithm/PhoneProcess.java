@@ -352,5 +352,28 @@ public class PhoneProcess {
         // 4. Trả về kết quả
         return new PhoneProcessingResult(currentFilteredList, removedItems, statusMessages);
     }
+    
+    
+//==============================================Helper==========================================
+    
+    /*
+     * Check 1 String đầu vào có phải là số điện thoại
+     * */
+    public static boolean isVietnamPhoneNumber(String input) {
+        if (input == null) {
+            return false;
+        }
+
+        input = input.trim();
+
+        // Chỉ chấp nhận:
+        // 0 + 9 số  (10 chữ số)
+        // +84 + 9 số
+        String regex = "^(0\\d{9}|\\+84\\d{9})$";
+
+        return input.matches(regex);
+    }
+    
+    
 
 }

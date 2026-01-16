@@ -21,7 +21,66 @@ public class IOFunction {
 	
 	
 
-//----------------------------------------EXCEL WITH ENTITY -FUNCTION----------------------------------------------------------		
+//----------------------------------------EXCEL WITH ENTITY -FUNCTION----------------------------------------------------------
+	
+	/*
+	 * Get TP3 FILTER ENTITY from Akabiz Result.xlx
+	 * Akabiz EXCEL --> DTP3 FILTER ENTITY
+	 * READ
+	 * */
+	public List<DTP3FilterData> getDtp3FilterEntityListFromAkabizExcel (MultipartFile file){
+		List<DTP3FilterData> dtp3FilterDataList = new ArrayList<>();
+		AlgorithmExcelReaderUtil excelReaderUtil = new AlgorithmExcelReaderUtil();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+		List<ExcelObject> akabizResultList = excelReaderUtil.readExcelFile(file);
+		dtp3FilterDataList = mapperToExcelObject.convertAkabizExcelToDTP3FilterData(akabizResultList);
+		
+		return dtp3FilterDataList;
+	}
+	
+	/*
+	 * Create AkabizCampaign.xlx from DTP3 FILTER ENTITY Data - With Salutation
+	 * DTP3 FILTER ENTITY --> Akabiz EXCEL
+	 * WRITE
+	 * */
+	public MultipartFile createAkabizExcelFromDtp3FilterDataHasSalutation (List<DTP3FilterData> dtp3FilterDataList) throws IOException{
+		List<ExcelObject> akabizCampaignExcelList= new ArrayList<>();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+		akabizCampaignExcelList = mapperToExcelObject.convertDTP3FilterDataToAkabizExcelHasSalutation(dtp3FilterDataList);
+		
+//		for(ExcelObject ExcelObject : akabizCampaignExcelList) {
+//			System.out.println(">> "+ ExcelObject.toString());
+//		}
+		
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHead(akabizCampaignExcelList, mapperToExcelObject.akabizExcelHeader());
+		
+		return multipartFile;
+	}
+	
+	
+	/*
+	 * Create AkabizCampaign.xlx from DTP3 FILTER ENTITY Data - No Salutation
+	 * DTP3 FILTER ENTITY --> Akabiz EXCEL
+	 * WRITE
+	 * */
+	public MultipartFile createAkabizExcelFromDtp3FilterDataNoSalutation (List<DTP3FilterData> dtp3FilterDataList) throws IOException{
+		List<ExcelObject> akabizCampaignExcelList= new ArrayList<>();
+		MapperToExcelObject mapperToExcelObject = new MapperToExcelObject();
+		
+		akabizCampaignExcelList = mapperToExcelObject.convertDTP3FilterDataToAkabizExcelNoSalutation(dtp3FilterDataList);
+		
+//		for(ExcelObject ExcelObject : akabizCampaignExcelList) {
+//			System.out.println(">> "+ ExcelObject.toString());
+//		}
+		
+		MultipartFile multipartFile = AlgorithmWritterExcel.writeToExcelHasHead(akabizCampaignExcelList, mapperToExcelObject.akabizExcelHeader());
+		
+		return multipartFile;
+	}
+	
+	
 	/*
 	 * Get TP3 FILTER ENTITY from DTP3FilterData.xlx
 	 * EXCEL OBJECT --> DTP3 FILTER ENTITY

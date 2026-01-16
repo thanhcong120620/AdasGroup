@@ -7,8 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -269,7 +269,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}
 					
 					//4 Check & Set DataSource
-					if(!dtp3FilterNewData.getDataSource().isEmpty()) {
+					if(dtp3FilterNewData.getDataSource() != null) {
 						if(!dtp3FilterOldData.getDataSource().isEmpty()) {
 							dtp3FilterOldData.setDataSource(StringProcess.mergeUnique(dtp3FilterOldData.getDataSource(), dtp3FilterNewData.getDataSource()));
 						} else {
@@ -278,7 +278,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					} 
 					
 					//5 Check & Set ConsultDiary
-					if(!dtp3FilterNewData.getConsultDiary().isEmpty()) {
+					if(dtp3FilterNewData.getConsultDiary() != null) {
 						if(!dtp3FilterOldData.getConsultDiary().isEmpty()) {
 							dtp3FilterOldData.setConsultDiary(StringProcess.mergeUnique(dtp3FilterOldData.getConsultDiary(), dtp3FilterNewData.getConsultDiary()));
 						} else {
@@ -287,12 +287,12 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					} 
 					
 					//6 Check & Set FullName1 xóa dữ liệu cũ, set dữ liệu mới từ new data.
-					if(!dtp3FilterNewData.getFullName1().isEmpty()) {
+					if(dtp3FilterNewData.getFullName1() != null) {
 						dtp3FilterOldData.setFullName1(dtp3FilterNewData.getFullName1());
 					}
 					
 					//7 Check & Set FullName2
-					if(!dtp3FilterNewData.getFullName2().isEmpty()) {
+					if(dtp3FilterNewData.getFullName2() != null) {
 						dtp3FilterOldData.setFullName2(dtp3FilterNewData.getFullName2());
 					}  
 				
@@ -320,7 +320,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					//11 Check & Set ZaloName
 //					System.out.println("!dtp3FilterNewData.getZaloName().isEmpty(): "+!dtp3FilterNewData.getZaloName().isEmpty());
 //					System.out.println("dtp3FilterNewData.getZaloName(): "+dtp3FilterNewData.getZaloName());
-					if(!dtp3FilterNewData.getZaloName().isEmpty()) {
+					if(dtp3FilterNewData.getZaloName() != null) {
 						dtp3FilterOldData.setZaloName(dtp3FilterNewData.getZaloName());
 					}  
 				
@@ -330,7 +330,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}    
 				
 					//13 Check & Set FacebookLink
-					if(!dtp3FilterNewData.getFacebookLink().isEmpty()) {
+					if(dtp3FilterNewData.getFacebookLink() != null) {
 						dtp3FilterOldData.setFacebookLink(dtp3FilterNewData.getFacebookLink());
 					}   
 				
@@ -345,8 +345,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}   
 				
 					//16 Check & Set Gmail
-					if(!dtp3FilterNewData.getGmail().isEmpty()) {
-						if(!dtp3FilterOldData.getGmail().isEmpty()) {
+					if(dtp3FilterNewData.getGmail() != null) {
+						if(dtp3FilterOldData.getGmail() != null) {
 							dtp3FilterOldData.setGmail(StringProcess.mergeUnique(dtp3FilterOldData.getGmail(), dtp3FilterNewData.getGmail()));
 						} else {
 							dtp3FilterOldData.setGmail(dtp3FilterNewData.getGmail());
@@ -364,8 +364,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}   
 				
 					//19 Check & Set setAddress
-					if(!dtp3FilterNewData.getAddress().isEmpty()) {
-						if(!dtp3FilterOldData.getAddress().isEmpty()) {
+					if(dtp3FilterNewData.getAddress() != null) {
+						if(dtp3FilterOldData.getAddress() != null) {
 							dtp3FilterOldData.setAddress(StringProcess.mergeUnique(dtp3FilterOldData.getAddress(), dtp3FilterNewData.getAddress()));
 						} else {
 							dtp3FilterOldData.setAddress(dtp3FilterNewData.getAddress());
@@ -373,8 +373,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}    
 				
 					//20 Check & Set setAddress
-					if(!dtp3FilterNewData.getWorkingArea().isEmpty()) {
-						if(!dtp3FilterOldData.getWorkingArea().isEmpty()) {
+					if(dtp3FilterNewData.getWorkingArea() != null) {
+						if(dtp3FilterOldData.getWorkingArea() != null) {
 							dtp3FilterOldData.setWorkingArea(StringProcess.mergeUnique(dtp3FilterOldData.getWorkingArea(), dtp3FilterNewData.getWorkingArea()));
 						} else {
 							dtp3FilterOldData.setWorkingArea(dtp3FilterNewData.getWorkingArea());
@@ -382,8 +382,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}    
 				
 					//21 Check & setProductBought
-					if(!dtp3FilterNewData.getProductBought().isEmpty()) {
-						if(!dtp3FilterOldData.getProductBought().isEmpty()) {
+					if(dtp3FilterNewData.getProductBought() != null) {
+						if(dtp3FilterOldData.getProductBought() != null) {
 							dtp3FilterOldData.setProductBought(StringProcess.mergeUnique(dtp3FilterOldData.getProductBought(), dtp3FilterNewData.getProductBought()));
 						} else {
 							dtp3FilterOldData.setProductBought(dtp3FilterNewData.getProductBought());
@@ -391,8 +391,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}     
 				
 					//22 Check & setMixContacts
-					if(!dtp3FilterNewData.getMixContacts().isEmpty()) {
-						if(!dtp3FilterOldData.getMixContacts().isEmpty()) {
+					if(dtp3FilterNewData.getMixContacts() != null) {
+						if(dtp3FilterOldData.getMixContacts() != null) {
 							dtp3FilterOldData.setMixContacts(StringProcess.mergeUnique(dtp3FilterOldData.getMixContacts(), dtp3FilterNewData.getMixContacts()));
 						} else {
 							dtp3FilterOldData.setMixContacts(dtp3FilterNewData.getMixContacts());
@@ -410,13 +410,14 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 					}       
 					
 					//25 Check & setResultFollow
-					if(!dtp3FilterNewData.getResultFollow().isEmpty()) {
+					if(dtp3FilterNewData.getResultFollow() != null) {
+//						System.out.println(dtp3FilterOldData.getResultFollow());
 						dtp3FilterOldData.setResultFollow(dtp3FilterNewData.getResultFollow());
 					}       
 					
 					//26 Check & setAccountFollow
-					if(!dtp3FilterNewData.getAccountFollow().isEmpty()) {
-						if(!dtp3FilterOldData.getAccountFollow().isEmpty()) {
+					if(dtp3FilterNewData.getAccountFollow() != null) {
+						if(dtp3FilterOldData.getAccountFollow() != null) {
 							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
 						} else {
 							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());

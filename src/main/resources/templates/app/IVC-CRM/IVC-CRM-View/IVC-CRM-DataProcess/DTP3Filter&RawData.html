@@ -129,6 +129,27 @@
                         <button type="submit" class="btn btn-primary w-100">Lọc ngay</button>
                     </div>
                 </form>
+                
+                
+                <!--Form update data-->
+                <form th:action="@{/update-dtp3-data-by-one-field}" method="get">
+    				<input type="text"
+           					name="valueToUpdate"
+           					placeholder="Nhập giá trị cần lọc"
+           					required />
+
+    				<select name="fieldToUpdate">
+        				<option value="resultFollow">Kết quả Follow</option>
+        				<option value="accountFollow">Tài khoản Follow</option>
+        				<option value="zaloName">Tên Zalo</option>
+        				<option value="fullName1">Họ và Tên</option>
+        				<option value="consultDiary">Tài khoản đang tương tác</option>
+    				</select>
+
+    				<button type="submit">Cập nhật</button>
+				</form>
+                
+                
             </div>
             
             <span class="badge badge-secondary" th:text="${'Tổng cộng: ' + DTP3FilterDataList.size()}"></span>
@@ -141,18 +162,26 @@
                 <tr>
                     <th>ID</th>
                     <th>Zalo Name</th>
+                    <th>Full Name</th>
                     <th>Phone</th>
                     <th>Type</th>
                     <th>Gender</th>
+                    <th>Account Follow</th>
+                    <th>Result Follow</th>
+                    <th>Consult Diary</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="item : ${page.content}">
                     <td th:text="${item.id}"></td>
                     <td th:text="${item.zaloName}"></td>
+                    <td th:text="${item.fullName1}"></td>
                     <td th:text="${item.phoneNumber1}"></td>
                     <td th:text="${item.dataType}"></td>
                     <td th:text="${item.gender}"></td>
+                    <td th:text="${item.accountFollow}"></td>
+                    <td th:text="${item.resultFollow}"></td>
+                    <td th:text="${item.consultDiary}"></td>
                 </tr>
             </tbody>
         </table>
@@ -164,12 +193,12 @@
         
         <!-- Nút về Trang Đầu (First) -->
         <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=0, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">« Đầu</a>
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=0, size=${page.size}, zaloName=${searchRequest.zaloName}, fullName1=${searchRequest.fullName1}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender}, accountFollow=${searchRequest.accountFollow}, resultFollow=${searchRequest.resultFollow}, consultDiary=${searchRequest.consultDiary})}">« Đầu</a>
         </li>
 
         <!-- Nút Trước (Previous) -->
         <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">‹</a>
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, fullName1=${searchRequest.fullName1}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender}, accountFollow=${searchRequest.accountFollow}, resultFollow=${searchRequest.resultFollow}, consultDiary=${searchRequest.consultDiary})}">‹</a>
         </li>
 
         <!-- Hiển thị các số trang trong khoảng startPage -> endPage -->
@@ -177,10 +206,14 @@
             th:classappend="${i == page.number} ? 'active'">
             <a class="page-link" 
                th:href="@{/data-dtp3-filter-and-raw-pannel(page=${i}, size=${page.size}, 
-               					zaloName=${searchRequest.zaloName}, 
+               					zaloName=${searchRequest.zaloName},
+               					fullName1=${searchRequest.fullName1}, 
                					phoneNumber1=${searchRequest.phoneNumber1}, 
                					dataType=${searchRequest.dataType}, 
                					gender=${searchRequest.gender},
+               					accountFollow=${searchRequest.accountFollow},
+               					resultFollow=${searchRequest.resultFollow},
+               					consultDiary=${searchRequest.consultDiary},
                					fromDate=${searchRequest.fromDate}, 
                					toDate=${searchRequest.toDate})}" 
                th:text="${i + 1}"></a>
@@ -188,12 +221,12 @@
 
         <!-- Nút Sau (Next) -->
         <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number + 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">›</a>
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.number + 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, fullName1=${searchRequest.fullName1}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender}, accountFollow=${searchRequest.accountFollow}, resultFollow=${searchRequest.resultFollow}, consultDiary=${searchRequest.consultDiary})}">›</a>
         </li>
 
         <!-- Nút về Trang Cuối (Last) -->
         <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.totalPages - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender})}">Cuối »</a>
+            <a class="page-link" th:href="@{/data-dtp3-filter-and-raw-pannel(page=${page.totalPages - 1}, size=${page.size}, zaloName=${searchRequest.zaloName}, fullName1=${searchRequest.fullName1}, phoneNumber1=${searchRequest.phoneNumber1}, dataType=${searchRequest.dataType}, gender=${searchRequest.gender}, accountFollow=${searchRequest.accountFollow}, resultFollow=${searchRequest.resultFollow}, consultDiary=${searchRequest.consultDiary})}">Cuối »</a>
         </li>
     </ul>
 </nav>
@@ -298,6 +331,19 @@
                                         <i class="fas fa-file-export mr-1"></i> Download các dữ liệu trùng số điện thoại.xlx
                                     </a>
                                 </div>
+                                
+                                <div class="col-6 p-1">
+                                    <a href="/getAkabizCampaignData" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i> Download Akabiz Campaign Data - Message.xlx
+                                    </a>
+                                </div>
+                                
+                                <div class="col-6 p-1">
+                                    <a href="/getAkabizCampaignData-no-Salutation" class="btn btn-outline-info btn-block btn-sm" >
+                                        <i class="fas fa-file-export mr-1"></i> Download Akabiz Campaign Data - Add Friend.xlx
+                                    </a>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -386,7 +432,28 @@
 								            </div>
 								        </div>
 								    </form>
-								</div>							
+								</div>		
+                                
+								<div class="col-12 p-1">
+								    <form th:action="@{/uploadAndUpdateAkabizResultToDTP3}" method="post" enctype="multipart/form-data">
+								        <div class="form-group">
+								            <label for="excelFileUpdateAkabizResultToDTP3" class="font-weight-bold"> Upload kết quả Akabiz </label>
+								            <div class="input-group input-group-sm">
+								                <input type="file" id="excelFileUpdateAkabizResultToDTP3"
+								                       name="excelFileUpdateAkabizResultToDTP3"
+								                       accept=".xlsx,.xls"
+								                       class="form-control"
+								                       required
+								                 >
+								                <div class="input-group-append">
+								                    <button type="submit" class="btn btn-primary">
+								                        <i class="fas fa-trash-alt mr-1"></i> Cập nhật
+								                    </button>
+								                </div>
+								            </div>
+								        </div>
+								    </form>
+								</div>								
                                 
                             </div>
                         </div>

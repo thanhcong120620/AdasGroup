@@ -2,7 +2,7 @@ package SpringbootProject.dto.dataProcess;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,6 +17,7 @@ public class DTP3SearchRequest {
 	    private String accountFollow;
 	    private String resultFollow;
 	    private String consultDiary;
+	    private String fullName1;
 	    
 	    // Sử dụng @DateTimeFormat để Spring Boot có thể parse String từ Form sang LocalDate
 	    @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -24,6 +25,7 @@ public class DTP3SearchRequest {
 	    
 	    @DateTimeFormat(pattern = "yyyy-MM-dd")
 	    private LocalDate toDate;
+	    
 
 	    public DTP3SearchRequest() {}
 
@@ -69,6 +71,16 @@ public class DTP3SearchRequest {
 		public void setConsultDiary(String consultDiary) {
 			this.consultDiary = consultDiary;
 		}
+		
+		public String getFullName1() {
+			return fullName1;
+		}
+
+		public void setFullName1(String fullName1) {
+			this.fullName1 = fullName1;
+		}
+		
+
 
 		@Override
 		public String toString() {

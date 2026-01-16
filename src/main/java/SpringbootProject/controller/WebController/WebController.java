@@ -14,8 +14,10 @@ public class WebController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-System.out.println("web controller");
-		return "redirect:/crm-emailMKT-pannel-thymleaf";
+		System.out.println("web controller");
+//		return "redirect:/crm-emailMKT-pannel-thymleaf";
+		 return "redirect:/data-dtp3-filter-and-raw-pannel";
+//		 return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
 	}
 	
 	@GetMapping("/index")

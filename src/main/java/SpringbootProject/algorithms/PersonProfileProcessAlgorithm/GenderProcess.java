@@ -13,6 +13,28 @@ import SpringbootProject.entity.enums.Salutation;
 
 public class GenderProcess {
 	
+	
+	/*
+	 * Lấy đại từ danh xưng ngôi số 1 theo giới tính
+	 * Input is dayOfBirh
+	 * */
+	public static String getFirstObjectPronoun(LocalDate dayOfBirh) {
+		String fop = "Em";
+		
+		if(dayOfBirh != null &&dayOfBirh.getYear()<1970 ) {
+			return "Cháu";
+		}
+		return fop;
+	}
+	
+	public static String getFirstObjectPronoun(Salutation salutation) {
+		String fop = "Em";
+		
+		if(salutation.equals(Salutation.CHU) || salutation.equals(Salutation.CO) ) {
+			return "Cháu";
+		}
+		return fop;
+	}
 
 	
 //==========================================Salutation---------------------------------------------		
@@ -40,6 +62,7 @@ public class GenderProcess {
 	
 	
 //==========================================Gender---------------------------------------------	
+	
 	
 	/* =========================
     RAW DATA (CÓ DẤU)
