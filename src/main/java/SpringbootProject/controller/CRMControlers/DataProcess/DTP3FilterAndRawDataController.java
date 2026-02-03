@@ -1,8 +1,12 @@
 package SpringbootProject.controller.CRMControlers.DataProcess;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import FileUtil.ContactUtils;
+import FileUtil.ContactUtils.ContactResult;
 import FileUtil.StringProcess;
 import SpringbootProject.algorithms.IOAlgorithm.IOFunction;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
@@ -41,64 +47,59 @@ import SpringbootProject.service.IDTP3FilterDataEntity;
 @Controller
 public class DTP3FilterAndRawDataController {
 	
+//========================================== STATIC DECLARE =====================================	
+	public static List<String> DTP3FilterControllerErrorList = new ArrayList<>();
 	public static List<String> DTP3FilterControllerMessagesList = new ArrayList<>();
     private static List<DTP3FilterData> dtp3FilterDataStaticList = null;
 	
     // Logger để ghi lại thông tin và lỗi
-//    private static final Logger logger = LoggerFactory.getLogger(DataExcelProcessController.class);
     private static final Logger logger = LoggerFactory.getLogger(DTP3FilterAndRawDataController.class);
 
+  
+//========================================== CONTROLLER INIT =====================================
     
-	
 	@Autowired
 	private IDTP3FilterDataEntity Dtp3FilterDataServices;
 	
-//==========================================THAO TÁC VỚI THYMLEAF
+
 	 /*
      * TRUY CẬP VÀO THYMLEAF
      * Sau này tạo thêm những phần hiển thị theo bộ lọc
      * */
-//    @GetMapping("/data-dtp3-filter-and-raw-pannel")
-//    public String index(Model model) {
-//        // Có thể thêm logic xóa file cũ hoặc reset trạng thái ở đây nếu cần
-//        // Ví dụ: excelFileResponse = null; excelFileError = null;
-//    	List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.findAllDtp3FilterData();
-//
-//    	
-////    	for (DTP3FilterData DTP3Filter : DTP1CRMList) {
-////    		System.out.println(">>> "+DTP3Filter.toString());
-////    	}
-//    	model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
-//    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
-//        return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3Filter&RawData";
-//    }
+    @GetMapping("/dtp3-filter-data-view")
+    public String index(Model model) {
+       
+        return "redirect:/data-dtp3-filter-and-raw-pannel";
+    }
 	
-	
+
+ //========================================== FUNCTION ON UI =====================================
     
     @GetMapping("/data-dtp3-filter-and-raw-pannel")
     public String showFilterPage(
             @ModelAttribute("searchRequest") DTP3SearchRequest request,
-            @PageableDefault(size = 10) Pageable pageable, // Mặc định 10 bản ghi/trang
+            @PageableDefault(size = 20) Pageable pageable, // Mặc định 10 bản ghi/trang
             Model model) {
-    	
+		
     	logger.info(">>> CONTROLLER: Tiếp nhận yêu cầu lọc. Page: {}", pageable.getPageNumber());
-        Page<DTP3FilterData> page = Dtp3FilterDataServices.filterData(request, pageable);
+        Page<DTP3FilterData> page = Dtp3FilterDataServices.filterData(request, pageable); 
 //        List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.getFilterListOnly(request, pageable);//lấy theo phân trang
         List<DTP3FilterData> DTP3FilterDataList = Dtp3FilterDataServices.getAllMatchesWithoutPagination(request); // lấy full
-//        System.out.println("DTP3FilterDataList: "+DTP3FilterDataList.toString());
+
 
         List<String> resultFollowList = new ArrayList<>();
         List<String> accountFollowList = new ArrayList<>();
         List<String> consultDiaryList = new ArrayList<>();
-        
         for(DTP3FilterData dtpFilterData : DTP3FilterDataList) {
         	resultFollowList.add(dtpFilterData.getResultFollow());
         	accountFollowList.add(dtpFilterData.getAccountFollow());
         	consultDiaryList.add(dtpFilterData.getConsultDiary());
         }
+        resultFollowList = StringProcess.removeDuplicates(resultFollowList);
+        accountFollowList = StringProcess.removeDuplicates(accountFollowList);
+        consultDiaryList = StringProcess.removeDuplicates(consultDiaryList);
         
         
-
         dtp3FilterDataStaticList = DTP3FilterDataList;
         
         // Logic tính toán 5 trang hiển thị
@@ -112,15 +113,33 @@ public class DTP3FilterAndRawDataController {
         if (end - start < 4) {
             start = Math.max(0, end - 4);
         }
-        
+		
+        Map<String, List<String>> messageAndError = countValueOfFieldDtp3Filter();
+        List<String> dataReportMessage = messageAndError.get("messageCountValueOfFieldDtp3");
+        if(dataReportMessage!=null) {
+        	DTP3FilterControllerMessagesList.add("");
+        	DTP3FilterControllerMessagesList.add("\n\n--------------------Time at: "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))+" --------------------"); 
+        }
+        for(String countData : dataReportMessage) {
+        	DTP3FilterControllerMessagesList.add(countData);
+        }
 
+        List<String> dataReportError = messageAndError.get("errorCountValueOfFieldDtp3");
+        if(dataReportError!=null) {
+        	DTP3FilterControllerErrorList.add("\n\n--------------------Time at: "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))+" --------------------");
+        }
+        for(String countData : dataReportError) {
+        	DTP3FilterControllerErrorList.add(countData);
+        }
+        
         model.addAttribute("page", page);
         model.addAttribute("startPage", start);
         model.addAttribute("endPage", end);
-        model.addAttribute("allDataTypes", DataType.values());
-        model.addAttribute("allGenders", Gender.values());
-        model.addAttribute("allSalutations", Salutation.values());
-        model.addAttribute("allNextActions", NextAction.values());
+
+        model.addAttribute("allDataTypes", DataType.getAllLabels());
+        model.addAttribute("allGenders", Gender.getAllLabels());
+        model.addAttribute("allSalutations", Salutation.getAllLabels());
+        model.addAttribute("allNextActions", NextAction.getAllLabels());
         model.addAttribute("allResultFollows", resultFollowList);
         model.addAttribute("allAccountFollows", accountFollowList);
         model.addAttribute("allConsultDiaries", consultDiaryList);
@@ -128,30 +147,100 @@ public class DTP3FilterAndRawDataController {
 //        model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
         model.addAttribute("DTP3FilterDataList", DTP3FilterDataList);
     	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
-        
+    	model.addAttribute("DTP3FilterControllerErrorList", DTP3FilterControllerErrorList);
+    	
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
     }
     
     @GetMapping("/list")
     public String listData(
             @ModelAttribute("searchRequest") DTP3SearchRequest searchRequest,
-            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @PageableDefault(size = 20, sort = "id") Pageable pageable,
             Model model) {
         
         Page<DTP3FilterData> pageResult = Dtp3FilterDataServices.filterData(searchRequest, pageable);
         
         model.addAttribute("page", pageResult);
-        model.addAttribute("dataTypes", DataType.values());
-        model.addAttribute("genders", Gender.values());
+        model.addAttribute("dataTypes", DataType.getAllLabels());
+        model.addAttribute("genders", Gender.getAllLabels());
+        model.addAttribute("nextActions", NextAction.getAllLabels());
         
         return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
     }
 	
+    /*
+     * Cập nhật các giá trị ko phải là enum
+     * Các field: data-type, next-action.
+     * Client trả về dạng giá trị chuỗi, chuyển qua value của enum và lưu
+     * Lấy value và field cần update từ thymleaf
+     * Trả về DTP3SearchRequest
+     * 
+     * */
+	@GetMapping("/update-dtp3-data-by-one-enum-field")
+	public String updateDtp3DataByOneEnumField(
+			@ModelAttribute("searchRequest") DTP3SearchRequest request,
+	        @RequestParam (value = "enumField", required = true) String enumField,
+//	        @RequestParam(value = "enumValue", required = true) String enumValue,
+	        Model model) {
+		
+		List<DTP3FilterData> DTP3FilterDataListRequest = dtp3FilterDataStaticList;
+		List<DTP3FilterData> DTP3FilterDataListRessponse = new ArrayList<DTP3FilterData>();
+		List<String> updatedPhoneList = new ArrayList<String>();
+		
+		for(DTP3FilterData dtp3FilterData : DTP3FilterDataListRequest) {
+			
+			switch (enumField) {
+            case "data-type":
+            	dtp3FilterData.setDataType(DataType.fromLabel(request.getDataType()));
+            	Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+                break;
+            case "next-action":
+            	dtp3FilterData.setNextAction(NextAction.fromLabel(request.getNextAction()));
+    			Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            case "date-follow":
+//            	System.out.println("Run data-type: "+dtp3FilterData.getPhoneNumber1() + enumField);
+//            	System.out.println("Set: "+request.getDateFollow());
+            	dtp3FilterData.setNextFollowDate(request.getDateFollow());
+    			Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData);
+            	updatedPhoneList.add(dtp3FilterData.getPhoneNumber1());
+//    			DTP3FilterControllerMessagesList.add("Đã cập nhật: "+fieldToUpdate+" với "+valueToUpdate);
+//    			DTP3FilterControllerMessagesList.add(Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dtp3FilterData));
+                break;
+            default:
+            	DTP3FilterControllerErrorList.add("Cập nhật thất bại: "+enumField);
+        }
+			
+			
+		}
+		
+		
+		for(String updatedPhone : updatedPhoneList) {
+			List<DTP3FilterData> updatedPhoneListFromDB = Dtp3FilterDataServices.findAllByPhoneNumber1(updatedPhone);
+			for(DTP3FilterData dtp3FilterData : updatedPhoneListFromDB) {
+				DTP3FilterDataListRessponse.add(dtp3FilterData);
+			}
+			DTP3FilterControllerMessagesList.add(updatedPhone);
+		}
+		
+		//ko hiển thị ngược lại data đang lọc, mà hiển thị kết quả những phone sau khi đã đc lọc
+		model.addAttribute("DTP3FilterDataList", DTP3FilterDataListRessponse);
+    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
+    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerErrorList);
+    	return "redirect:/data-dtp3-filter-and-raw-pannel";
+	}
     
     
     /*
+     * Cập nhật các giá trị ko phải là enum
+     * Các field: resultFollow, accountFollow, zaloName, fullName1, consultDiary
      * Lấy value và field cần update từ thymleaf
      * Trả về DTP3SearchRequest
+     * 
      * */
 	@GetMapping("/update-dtp3-data-by-one-field")
 	public String updateDtp3DataByOneField(
@@ -220,7 +309,8 @@ public class DTP3FilterAndRawDataController {
 		//ko hiển thị ngược lại data đang lọc, mà hiển thị kết quả những phone sau khi đã đc lọc
 //		model.addAttribute("DTP3FilterDataList", DTP3FilterDataListRessponse);
     	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerMessagesList);
-	    return "app/IVC-CRM/IVC-CRM-View/IVC-CRM-DataProcess/DTP3FilterData";
+    	model.addAttribute("DTP3FilterControllerMessagesList", DTP3FilterControllerErrorList);
+    	return "redirect:/data-dtp3-filter-and-raw-pannel";
 	}
 
 	
@@ -338,7 +428,7 @@ public class DTP3FilterAndRawDataController {
         
         //Update data to database
         for(DTP3FilterData dTP3FilterData : excelObjectInputList) {
-        	System.out.println(dTP3FilterData.toString());
+//        	System.out.println(dTP3FilterData.toString());
         	String phoneUpdate = Dtp3FilterDataServices.dataDTP3FilterUpdateOldDataByPhone(dTP3FilterData);
         	if (phoneUpdate == null) {
         		DTP3FilterControllerMessagesList.add("Dữ liệu để cập nhật không tồn tại: "+dTP3FilterData.getPhoneNumber1());
@@ -385,6 +475,26 @@ public class DTP3FilterAndRawDataController {
           //Tạo mới Salutation nếu chưa có
             excelObjectInputList.get(i).setSalutation(GenderProcess.detectSalutationFromGender(excelObjectInputList.get(i).getGender(),excelObjectInputList.get(i).getDateOfBirth()));
 
+            //Tạo mới Phone 1, gmail, address nếu chưa có.
+//            if(excelObjectInputList.get(i).getMixContacts()!=null) {
+//            	ContactResult result = ContactUtils.parseSingleMixContact(excelObjectInputList.get(i).getMixContacts());
+//            	if(result.phones() !=null && excelObjectInputList.get(i).getPhoneNumber1()==null ) {
+//            		excelObjectInputList.get(i).setPhoneNumber1(result.phones().get(0));
+//            	}
+//            	if(result.phones().get(1) !=null && excelObjectInputList.get(i).getPhoneNumber2()==null ) {
+//            		excelObjectInputList.get(i).setPhoneNumber2(result.phones().get(1));
+//            	}
+//            	if(result.emails() !=null && excelObjectInputList.get(i).getGmail()==null) {
+//            		excelObjectInputList.get(i).setGmail(result.emails().get(0));
+//            	}
+//            	if(result.addresses() !=null && excelObjectInputList.get(i).getAddress()==null) {
+//            		excelObjectInputList.get(i).setAddress(result.addresses().get(0));
+//            	}
+//            	
+//            	excelObjectInputList.get(i).setMixContacts("gotten - "+excelObjectInputList.get(i).getMixContacts());
+//            }
+            
+            
         }
         
         //Update data to database
@@ -449,14 +559,16 @@ public class DTP3FilterAndRawDataController {
         NameProcess nameProcess = new NameProcess();
         for(int i =0; i<excelObjectInputList.size(); i++) {
             //Tạo mới Last Name nếu chưa có
-            if(!excelObjectInputList.get(i).getFullName1().isEmpty() && !excelObjectInputList.get(i).getZaloName().isEmpty()) {
+            if((excelObjectInputList.get(i).getFullName1()!=null && excelObjectInputList.get(i).getZaloName()!=null)) {
+//          if((!excelObjectInputList.get(i).getFullName1().isEmpty() && !excelObjectInputList.get(i).getZaloName().isEmpty()) {
             	if(excelObjectInputList.get(i).getLastName()==null||excelObjectInputList.get(i).getLastName().isEmpty() || excelObjectInputList.get(i).getLastName().isBlank()) {
             		excelObjectInputList.get(i).setLastName(nameProcess.getLastName(excelObjectInputList.get(i).getFullName1(), excelObjectInputList.get(i).getZaloName()));
             	}
             }
             
             //Tạo mới Gender nếu chưa có
-            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && !excelObjectInputList.get(i).getFullName1().isEmpty()) {
+            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && excelObjectInputList.get(i).getFullName1()!=null) {
+//            if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && !excelObjectInputList.get(i).getFullName1().isEmpty()) {	
             	excelObjectInputList.get(i).setGender(GenderProcess.detectGenderFromFullName(excelObjectInputList.get(i).getFullName1()));
             }
             if(excelObjectInputList.get(i).getGender().equals(Gender.UNDEFINED) && excelObjectInputList.get(i).getLastName()!=null) {
@@ -466,6 +578,28 @@ public class DTP3FilterAndRawDataController {
             //Tạo mới Salutation nếu chưa có
             excelObjectInputList.get(i).setSalutation(GenderProcess.detectSalutationFromGender(excelObjectInputList.get(i).getGender(),excelObjectInputList.get(i).getDateOfBirth()));
 
+            
+            //Tạo mới Phone 1, gmail, address nếu chưa có.
+            if(excelObjectInputList.get(i).getMixContacts()!=null) {
+            	System.out.println("excelObjectInputList.get(i).getMixContacts(): "+ excelObjectInputList.get(i).getMixContacts());
+            	ContactResult result = ContactUtils.parseSingleMixContact(excelObjectInputList.get(i).getMixContacts());
+            	if(result.phones().size()>0 && excelObjectInputList.get(i).getPhoneNumber1()==null ) {
+            		excelObjectInputList.get(i).setPhoneNumber1(result.phones().get(0));
+            	}
+            	if(result.phones().size() >=2 && excelObjectInputList.get(i).getPhoneNumber2()==null ) {
+            		excelObjectInputList.get(i).setPhoneNumber2(result.phones().get(1));
+            	}
+            	if(result.emails().size()>0 && excelObjectInputList.get(i).getGmail()==null) {
+            		excelObjectInputList.get(i).setGmail(result.emails().get(0));
+            	}
+            	if(result.addresses().size()>0 && excelObjectInputList.get(i).getAddress()==null) {
+            		excelObjectInputList.get(i).setAddress(result.addresses().get(0));
+            	}
+            	
+            	excelObjectInputList.get(i).setMixContacts("gotten - "+excelObjectInputList.get(i).getMixContacts());
+            }
+            
+            
         }
         
         //Save new data to database
@@ -554,7 +688,8 @@ public class DTP3FilterAndRawDataController {
 
         ByteArrayResource resource = new ByteArrayResource(dtp3FilterFormExcelFileResponse.getBytes());
 
-        String headerValues = "attachment; filename=".concat(nameFile);        
+        String headerValues = "attachment; filename=\"" + nameFile + "\"";
+//        String headerValues = "attachment; filename=".concat(nameFile);        
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -596,8 +731,7 @@ public class DTP3FilterAndRawDataController {
 
         ByteArrayResource resource = new ByteArrayResource(dtp3FilterFulDataExcelFileResponse.getBytes());
        
-        String headerValues = "attachment; filename=".concat(nameFile);
-        System.out.println("headerValues: "+headerValues);
+        String headerValues = "attachment; filename=\"" + nameFile + "\"";
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValues)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -611,7 +745,7 @@ public class DTP3FilterAndRawDataController {
      * */
     @GetMapping("/getFilteredDtp3DataExcelFile")
     public ResponseEntity<ByteArrayResource> downloadExcelFileFilterdDTP3Data() throws IOException {
-    	String nameFile = "Filtered Data";
+    	String nameFile = "Filtered Data.xlsx";
 //    	List<DTP3FilterData> dtp3FilterDataResponse = Dtp3FilterDataServices.findAllDtp3FilterData();
     	
     	// --- Đọc file và lấy thông tin ---
@@ -821,5 +955,116 @@ public class DTP3FilterAndRawDataController {
 //----------------------------------------------------------------------------------------------------------------
 
 
-  //===================================================================================================================
+  //==============================================Helper=====================================================================
+	
+	private Map<String,List<String>> countValueOfFieldDtp3Filter (){
+		Map<String,List<String>> countValueOfFieldDtp3FilterMap = new HashMap<>();
+	List<String> messageCountValueOfFieldDtp3 = new ArrayList<>();
+	List<String> errorCountValueOfFieldDtp3 = new ArrayList<>();
+	
+//	Count data Type: Raw, Filtered, CRM
+	Map<String, Object> filterDataTypeRaw = new HashMap<>();
+	filterDataTypeRaw.put("dataType", DataType.RAW_DATA);
+	messageCountValueOfFieldDtp3.add("Tổng SL data raw: "+Dtp3FilterDataServices.countFlexible(filterDataTypeRaw));
+	Map<String, Object> filterDataTypeFiltered = new HashMap<>();
+	filterDataTypeFiltered.put("dataType", DataType.FILTERED_DATA);
+	messageCountValueOfFieldDtp3.add("Tổng SL data Filtered: "+Dtp3FilterDataServices.countFlexible(filterDataTypeFiltered));
+
+	
+//	Count Phone: Phone duplicate, Phone null.
+	if(Dtp3FilterDataServices.findAllByPhoneDuplicate().size()>0) {
+		errorCountValueOfFieldDtp3.add("Tổng SL data có sđt trùng lặp: "+Dtp3FilterDataServices.findAllByPhoneDuplicate().size());
+	}
+	Map<String, Object> filterPhoneNull = new HashMap<>();
+	filterPhoneNull.put("phoneNumber1", null);
+//	filterPhoneNull.put("phoneNumber1", "Chưa có sđt !");//xóa sau
+	long countPhoneNull = Dtp3FilterDataServices.countFlexible(filterPhoneNull);
+	if(!(countPhoneNull==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL data ko có sđt: "+countPhoneNull);
+	}
+	
+//	Count raw LastName: Null.
+	Map<String, Object> filterRawDataAndLastNameNull = new HashMap<>();
+	filterRawDataAndLastNameNull.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndLastNameNull.put("lastName", null); //Sửa thành null
+	long countRawDataAndLastNameNull = Dtp3FilterDataServices.countFlexible(filterRawDataAndLastNameNull);
+	if(!(countRawDataAndLastNameNull==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data ko có tên: "+countRawDataAndLastNameNull);
+	}
+	
+//	Count raw Salutation undefined.
+	Map<String, Object> filterRawDataAndSalutationUndefined = new HashMap<>();
+	filterRawDataAndSalutationUndefined.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndSalutationUndefined.put("salutation", Salutation.UNDEFINED);
+	long countRawDataAndSalutationUndefined = Dtp3FilterDataServices.countFlexible(filterRawDataAndSalutationUndefined);
+	if(!(countRawDataAndSalutationUndefined==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data giới tính ko xác định : "+countRawDataAndSalutationUndefined);
+	}
+	
+//	Count raw result Follow null.
+	Map<String, Object> filterRawDataAndResultFollowNull = new HashMap<>();
+	filterRawDataAndResultFollowNull.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndResultFollowNull.put("resultFollow", null); //Sửa thành null
+	long countRawDataAndResultFollowNull = Dtp3FilterDataServices.countFlexible(filterRawDataAndResultFollowNull);
+	if(!(countRawDataAndResultFollowNull==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data chưa từng tương tác : "+countRawDataAndResultFollowNull);
+	}
+	
+	
+//	Count raw Filtered has resultFollow as: kết bạn, thành công, ko tồn tại, thất bại.
+	Map<String, Object> filterRawDataAndResultFollowKB = new HashMap<>();
+	filterRawDataAndResultFollowKB.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndResultFollowKB.put("resultFollow", "Kết bạn");
+	long countRawDataAndResultFollowKB = Dtp3FilterDataServices.countFlexible(filterRawDataAndResultFollowKB);
+	if(!(countRawDataAndResultFollowKB==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data đã kết bạn : "+countRawDataAndResultFollowKB);
+	}
+	
+	Map<String, Object> filterRawDataAndResultFollowTC = new HashMap<>();
+	filterRawDataAndResultFollowTC.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndResultFollowTC.put("resultFollow", "Chặn tin nhắn");
+	long countRawDataAndResultFollowTC = Dtp3FilterDataServices.countFlexible(filterRawDataAndResultFollowTC);
+	if(!(countRawDataAndResultFollowTC==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data chặn tin nhắn : "+countRawDataAndResultFollowTC);
+	}
+	
+	Map<String, Object> filterRawDataAndResultFollowTB = new HashMap<>();
+	filterRawDataAndResultFollowTB.put("dataType", DataType.RAW_DATA);
+	filterRawDataAndResultFollowTB.put("resultFollow", "Thất bại");
+	long countRawDataAndResultFollowTB = Dtp3FilterDataServices.countFlexible(filterRawDataAndResultFollowTB);
+	if(!(countRawDataAndResultFollowTB==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL raw data thất bại : "+countRawDataAndResultFollowTB);
+	}
+	
+	Map<String, Object> filterFilteredDataAndNoZalo = new HashMap<>();
+	filterFilteredDataAndNoZalo.put("dataType", DataType.FILTERED_DATA);
+	filterFilteredDataAndNoZalo.put("zaloName", null);
+	long countFilteredDataAndNoZalo = Dtp3FilterDataServices.countFlexible(filterFilteredDataAndNoZalo);
+	if(!(countFilteredDataAndNoZalo==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng dữ liệu ko có Zalo : "+countFilteredDataAndNoZalo);
+	}
+	
+//	Count CRM chặn tin nhắn
+	Map<String, Object> filterCrmDataAndResultFollowZaloBlock = new HashMap<>();
+	filterCrmDataAndResultFollowZaloBlock.put("dataType", DataType.CRM_DATA);
+	filterCrmDataAndResultFollowZaloBlock.put("resultFollow", "kết bạn");
+	long countCrmDataAndResultFollowZaloBlock = Dtp3FilterDataServices.countFlexible(filterCrmDataAndResultFollowZaloBlock);
+	if(!(countCrmDataAndResultFollowZaloBlock==0)) {
+		errorCountValueOfFieldDtp3.add("Tổng SL CRM data chặn tin nhắn: "+countCrmDataAndResultFollowZaloBlock);
+	}
+	
+	
+	countValueOfFieldDtp3FilterMap.put("messageCountValueOfFieldDtp3", messageCountValueOfFieldDtp3);
+	countValueOfFieldDtp3FilterMap.put("errorCountValueOfFieldDtp3", errorCountValueOfFieldDtp3);
+	return countValueOfFieldDtp3FilterMap;
+}	
+	
+	/*
+	 * HELPER
+	 * Set Map<String, Object> to count at database
+	 * Input: String <entity field>; String <value>
+	 * Return long
+	 * */
+
+	
 }

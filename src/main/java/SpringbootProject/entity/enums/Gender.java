@@ -1,5 +1,7 @@
 package SpringbootProject.entity.enums;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,6 +20,13 @@ public enum Gender {
     }
 
 
+    
+    public static List<String> getAllLabels() {
+        return Arrays.stream(values())
+                .map(Gender::getLabel)
+                .toList();
+    }
+    
     @JsonValue
     public String getLabel() {
         return label;
@@ -32,8 +41,8 @@ public enum Gender {
         }
     }
 
-
-    public static Gender fromLabel(String label) {
+	public static Gender fromLabel(String label) {
+        
         if (label == null) {
             return UNDEFINED;
         }

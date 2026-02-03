@@ -4,40 +4,57 @@ import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import FileUtil.ContactUtils;
+import FileUtil.ContactUtils.ContactResult;
 import FileUtil.EnumExtractorUtil;
 import FileUtil.StringProcess;
 import SpringbootProject.algorithms.IOAlgorithm.SimpleExcelReader;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PersonProfileProcessFunction;
 import SpringbootProject.entity.enums.Gender;
+import SpringbootProject.entity.enums.Salutation;
 import SpringbootProject.entity.enums.Status;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class TestMain {
 
-	public static void main(String[] args) {
-		testListStringDuplicate();
-//		testGenderProcess();
-//		testLabelEnum("Sắp chốt");
-//		testLabelEnum("SẮP CHỐT");
-//		testLabelEnum("SC");
-//		testLabelEnum("Đang giữ tương tác");
-//		testLabelEnum("dang giu tuong tac");
-//		testLabelEnum("danggiutuongtac");
+	public static void main(String[] args) throws JsonMappingException, JsonProcessingException {
+		List<String> testData = List.of(
+	            "Nguyen Van A; 0987654321; hanoi@gmail.com",                                      // 1. Đầy đủ, ngăn cách bởi ";"
+	            "0912345678, hcm city, user@yahoo.com",                                            // 2. Ngăn cách bởi ","
+	            "Da Nang city - 0905123456 - mientrung@hotmail.com",                               // 3. Ngăn cách bởi "-"
+	            "0333444555 0333666777 vung tau city",                                             // 4. Hai số điện thoại, không email
+	            "contact@company.com; support@company.com; 123 Street, District 1",                // 5. Hai email, không số điện thoại
+	            "0988111222; hcm; 0977222333; test@gmail.com; hn; admin@work.com",                 // 6. Hỗn hợp nhiều loại xen kẽ
+	            "No info here",                                                                    // 7. Chỉ có địa chỉ (hoặc rác)
+	            "0944555666",                                                                      // 8. Chỉ có số điện thoại
+	            "only-email@web.vn",                                                               // 9. Chỉ có email
+	            "   ",                                                                             // 10. Chuỗi trống
+	            "Số 10, đường 12, Q3...0966777888...email.gan.nhau@gmail.com",                      // 11. Địa chỉ có số và dấu chấm
+	            "0243.123.456; 0912-345-678; 10 Hoang Dieu",                                       // 12. Số điện thoại định dạng lạ (sẽ bắt theo regex)
+	            "sales@store.com|0888999000|Can Tho city|19001000",                                // 13. Ngăn cách bởi dấu gạch đứng "|"
+	            "Dung.Nguyen@kmail.com.vn, 0909090909, 456 Le Loi Str.",                           // 14. Email có đuôi phức tạp .com.vn
+	            "0911222333 0911222444 0911222555",                                                // 15. Ba số điện thoại
+	            "email1@a.com;email2@b.com;email3@c.com",                                          // 16. Ba email
+	            "123/45 Q.Tân Bình, TP.HCM; 0707123123",                                           // 17. Địa chỉ có xẹt "/"
+	            "++++0982123123++++address_here++++",                                              // 18. Ký tự lạ bao quanh
+	            "0901234567; hanoi; 0901234567; hanoi",                                            // 19. Dữ liệu lặp lại
+	            "Email: me@work.com, Phone: 0988777666, Addr: 789 Long An"
+				);
 		
-		
-//		DTP1CRMEntity entity = new DTP1CRMEntity();
-//		testEnumExtractorUtil(entity);
-//		testGetName();
-		
-//		List<ExcelObject> excelObjectList =  getDataFromExcelSimple("D:\\Desktop\\Diary\\ExcelObjectWitter.xlsx");
-//		for(ExcelObject excelObject : excelObjectList) {
-//			String value2 =  excelObject.getColumnByIndex(2);
-//			System.out.println(">>>value2: "+value2);
-//			
-//		}
-		
-}
+		// Gọi hàm xử lý
+//		ContactResult result = ContactUtils.parseMixContacts(testData);
+//
+//        // In kết quả
+//        System.out.println("=== KẾT QUẢ TRÍCH XUẤT ===");
+//        System.out.println("PHONES (" + result.phones().size() + "): " + result.phones());
+//        System.out.println("EMAILS (" + result.emails().size() + "): " + result.emails());
+//        System.out.println("ADDRESSES (" + result.addresses().size() + "): " + result.addresses());
+		}
 		
 
 //=========================================================	

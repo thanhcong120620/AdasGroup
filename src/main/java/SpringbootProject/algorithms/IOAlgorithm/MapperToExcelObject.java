@@ -3,10 +3,8 @@ package SpringbootProject.algorithms.IOAlgorithm;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +12,11 @@ import org.slf4j.LoggerFactory;
 import FileUtil.DateAndTimeProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.GenderProcess;
 import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
-import SpringbootProject.controller.CRMControlers.DataProcess.DTP3FilterAndRawDataController;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
 import SpringbootProject.entity.enums.NextAction;
 import SpringbootProject.entity.enums.Salutation;
-import SpringbootProject.entity.enums.Status;
 import SpringbootProject.entity.notSaving.ExcelObject;
 
 public class MapperToExcelObject {
@@ -42,17 +38,6 @@ public class MapperToExcelObject {
 	public List<ExcelObject> convertDTP3FilterDataToAkabizExcelNoSalutation(List<DTP3FilterData> dtp3FilterDataListInput) {
 		
 		List<ExcelObject> excelObjectListOutput = new ArrayList<ExcelObject>();
-		
-		ExcelObject excelObjectSample = new ExcelObject();
-		excelObjectSample.setColumn1("Nguyễn Thành Công");
-		excelObjectSample.setColumn3("0368279613");
-		excelObjectSample.setColumn5("Công");
-		excelObjectSample.setColumn6("Anh");
-		excelObjectSample.setColumn7("anh");
-		excelObjectSample.setColumn8("Em");
-		excelObjectSample.setColumn9("em");
-		
-		excelObjectListOutput.add(excelObjectSample);
 		
 		if(dtp3FilterDataListInput ==null) {
 			log.info(">>> SERVICE: Check DTP3FilterData is null: {}", dtp3FilterDataListInput);
@@ -80,7 +65,8 @@ public class MapperToExcelObject {
 			else {
 				ExcelObject excelObject = new ExcelObject();
 				//set phone
-				if(PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1())) {
+				String cleanedPhone = PhoneProcess.cleanAndNormalizeSinglePhone(dtp3FilterData.getPhoneNumber1());
+				if(PhoneProcess.isVietnamPhoneNumber(cleanedPhone)) {
 					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber1()));
 				} else if(!PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber1()) && PhoneProcess.isVietnamPhoneNumber(dtp3FilterData.getPhoneNumber2())) {
 					excelObject.setColumn3(safeToString(dtp3FilterData.getPhoneNumber2()));
@@ -107,16 +93,6 @@ public class MapperToExcelObject {
 		
 		List<ExcelObject> excelObjectListOutput = new ArrayList<ExcelObject>();
 		
-		ExcelObject excelObjectSample = new ExcelObject();
-		excelObjectSample.setColumn1("Nguyễn Thành Công");
-		excelObjectSample.setColumn3("0368279613");
-		excelObjectSample.setColumn5("Công");
-		excelObjectSample.setColumn6("Anh");
-		excelObjectSample.setColumn7("anh");
-		excelObjectSample.setColumn8("Em");
-		excelObjectSample.setColumn9("em");
-		
-		excelObjectListOutput.add(excelObjectSample);
 		
 		if(dtp3FilterDataListInput ==null) {
 			log.info(">>> SERVICE: Check DTP3FilterData is null: {}", dtp3FilterDataListInput);
@@ -189,7 +165,7 @@ public class MapperToExcelObject {
 	public List<DTP3FilterData> convertAkabizExcelToDTP3FilterData(List<ExcelObject> excelObjectInput) {
 		List<DTP3FilterData> dtp3FilterDataListOutput = new ArrayList<DTP3FilterData>();
 		DateAndTimeProcess dateProcess = new DateAndTimeProcess();
-		PhoneProcess phoneProcess = new PhoneProcess();
+//		PhoneProcess phoneProcess = new PhoneProcess();
 		
 		if(excelObjectInput ==null) {
 			log.info(">>> SERVICE: Check excelObjectInput is null: {}", excelObjectInput);
@@ -198,11 +174,11 @@ public class MapperToExcelObject {
 		
 		for(ExcelObject excelObject : excelObjectInput) {
 			DTP3FilterData dtp3FilterData = new  DTP3FilterData();
-			dtp3FilterData.setZaloName(excelObject.getColumn5());
-			dtp3FilterData.setZaloUid(excelObject.getColumn6());
-			dtp3FilterData.setConsultDiary(excelObject.getColumn4());
+			dtp3FilterData.setZaloName(cleanString(excelObject.getColumn5()));//
+			dtp3FilterData.setZaloUid(cleanString(excelObject.getColumn6()));//
+			dtp3FilterData.setConsultDiary(cleanString(excelObject.getColumn4()));
 			dtp3FilterData.setDateOfLead(dateProcess.parseLocalDateFlexible(excelObject.getColumn28()));
-			dtp3FilterData.setPhoneNumber1(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn7()));
+			dtp3FilterData.setPhoneNumber1(PhoneProcess.cleanAndNormalizeSinglePhone(excelObject.getColumn7()));
 			
 			if(excelObject.getColumn18()!=null && !excelObject.getColumn18().isEmpty()) {
 				dtp3FilterData.setResultFollow(excelObject.getColumn18());
@@ -326,7 +302,7 @@ public class MapperToExcelObject {
 		
 		for(ExcelObject excelObject : excelObjectList) {
 			DTP3FilterData dtp3FilterData = new DTP3FilterData();
-			PhoneProcess phoneProcess = new PhoneProcess();
+//			PhoneProcess phoneProcess = new PhoneProcess();
 			
 
 			//Process input data and add data if null
@@ -348,30 +324,30 @@ public class MapperToExcelObject {
 			
 //			dtp3FilterData.setId(id);
 			dtp3FilterData.setDataType(dataType);
-			dtp3FilterData.setDataSource(excelObject.getColumn3());
+			dtp3FilterData.setDataSource(cleanString(excelObject.getColumn3()));//
 			dtp3FilterData.setDateOfLead(dateOfLead);
-			dtp3FilterData.setConsultDiary(excelObject.getColumn5());
-			dtp3FilterData.setFullName1(excelObject.getColumn6());
-			dtp3FilterData.setFullName2(excelObject.getColumn7());
-			dtp3FilterData.setLastName(excelObject.getColumn8());
+			dtp3FilterData.setConsultDiary(cleanString(excelObject.getColumn5()));//
+			dtp3FilterData.setFullName1(cleanString(excelObject.getColumn6()));//
+			dtp3FilterData.setFullName2(cleanString(excelObject.getColumn7()));//
+			dtp3FilterData.setLastName(cleanString(excelObject.getColumn8()));//
 			dtp3FilterData.setSalutation(salutation);
 			dtp3FilterData.setGender(gender);
-			dtp3FilterData.setZaloName(excelObject.getColumn11());
-			dtp3FilterData.setZaloUid(excelObject.getColumn12());
-			dtp3FilterData.setFacebookLink(excelObject.getColumn13());
-			dtp3FilterData.setPhoneNumber1(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn14()));
-			dtp3FilterData.setPhoneNumber2(phoneProcess.normalizeAndValidateVietnameseNumber(excelObject.getColumn15()));
-			dtp3FilterData.setGmail(excelObject.getColumn16());
+			dtp3FilterData.setZaloName(cleanString(excelObject.getColumn11()));//
+			dtp3FilterData.setZaloUid(cleanString(excelObject.getColumn12()));//
+			dtp3FilterData.setFacebookLink(cleanString(excelObject.getColumn13()));//
+			dtp3FilterData.setPhoneNumber1(PhoneProcess.cleanAndNormalizeSinglePhone(excelObject.getColumn14()));
+			dtp3FilterData.setPhoneNumber2(PhoneProcess.cleanAndNormalizeSinglePhone(excelObject.getColumn15()));
+			dtp3FilterData.setGmail(cleanString(excelObject.getColumn16()));//
 			dtp3FilterData.setDateOfBirth(dateOfBirth);
 			dtp3FilterData.setSavingsAmount(SavingsAmount);
-			dtp3FilterData.setAddress(excelObject.getColumn19());
-			dtp3FilterData.setWorkingArea(excelObject.getColumn20());
-			dtp3FilterData.setProductBought(excelObject.getColumn21());
-			dtp3FilterData.setMixContacts(excelObject.getColumn22());
+			dtp3FilterData.setAddress(cleanString(excelObject.getColumn19()));//
+			dtp3FilterData.setWorkingArea(cleanString(excelObject.getColumn20()));//
+			dtp3FilterData.setProductBought(cleanString(excelObject.getColumn21()));//
+			dtp3FilterData.setMixContacts(cleanString(excelObject.getColumn22()));//
 			dtp3FilterData.setNextAction(nextAction);
 			dtp3FilterData.setNextFollowDate(nextFollowDate);
-			dtp3FilterData.setResultFollow(excelObject.getColumn25());
-			dtp3FilterData.setAccountFollow(excelObject.getColumn26());
+			dtp3FilterData.setResultFollow(cleanString(excelObject.getColumn25()));//
+			dtp3FilterData.setAccountFollow(cleanString(excelObject.getColumn26()));//
 			dtp3FilterData.setCreatedAt(createdAt);
 			dtp3FilterData.setUpdatedAt(updatedAt);
 			
@@ -390,5 +366,9 @@ public class MapperToExcelObject {
 	//==========================================Helper==========================================================	
 	private static String safeToString(Object value) {
 	    return value == null ? "" : value.toString();
+	}
+	
+	private String cleanString(String value) {
+	    return (value == null || value.trim().isEmpty()) ? null : value.trim();
 	}
 }

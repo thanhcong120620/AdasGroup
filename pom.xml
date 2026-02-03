@@ -129,17 +129,11 @@
 </dependency>
 
 <!-- Map Struct -->
-    <dependency>
-        <groupId>org.mapstruct</groupId>
-        <artifactId>mapstruct</artifactId>
-        <version>1.5.2.Final</version> <!-- Hoặc phiên bản mới nhất -->
-    </dependency>
-    <dependency>
-        <groupId>org.mapstruct</groupId>
-        <artifactId>mapstruct-processor</artifactId>
-        <version>1.5.2.Final</version> <!-- Phiên bản tương ứng -->
-        <scope>provided</scope>
-    </dependency>
+<dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct</artifactId>
+    <version>1.5.5.Final</version>
+</dependency>
 
 
 

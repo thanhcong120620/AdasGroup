@@ -31,14 +31,32 @@ public class PhoneProcess {
             "070", "076", "077", "078", "079",
             "052", "056", "058", "059"
     );
-    private static final Pattern VN_LANDLINE_PREFIX_PATTERN = Pattern.compile("^02[0-9]$");
+//    private static final Pattern VN_LANDLINE_PREFIX_PATTERN = Pattern.compile("^02[0-9]$");
 
-    // --- Các phương thức Helper (Giữ nguyên) ---
+    /**
+     * Nhận vào một chuỗi chứa SĐT có ký tự đặc biệt, làm sạch và chuẩn hóa về dạng 10 số.
+     * Ví dụ: "+84 901-234.567" -> "0901234567"
+     * "090.123.4567 ; 091.222" -> Trả về số đầu tiên hợp lệ: "0901234567"
+     * * @param input Chuỗi SĐT thô
+     * @return Chuỗi 10 số đã chuẩn hóa hoặc null nếu không hợp lệ.
+     */
+    public static String cleanAndNormalizeSinglePhone(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return null;
+        }
+
+        // 1. Loại bỏ các ký tự đặc biệt phổ biến và khoảng trắng, nhưng giữ lại số và dấu '+' ở đầu nếu có
+        // Sau đó gọi hàm cleanPotentialPhone bạn đã có để lấy chỉ số
+        String digitsOnly = cleanPotentialPhone(input);
+
+        // 2. Tận dụng hàm logic chuẩn hóa bạn đã viết cực kỳ chi tiết ở trên
+        return normalizeAndValidateVietnameseNumber(digitsOnly);
+    }
 
     /**
      * Làm sạch một chuỗi tiềm năng chứa số điện thoại.
      */
-    private String cleanPotentialPhone(String potentialPhone) {
+    private static String cleanPotentialPhone(String potentialPhone) {
         if (potentialPhone == null) {
             return "";
         }
@@ -49,7 +67,7 @@ public class PhoneProcess {
      * Chuẩn hóa và xác thực một số điện thoại *đã được làm sạch*.
      * Ưu tiên chuẩn hóa thành số di động VN (10 số, bắt đầu bằng 0).
      */
-    public String normalizeAndValidateVietnameseNumber(String cleanedPhone) {
+    public static String normalizeAndValidateVietnameseNumber(String cleanedPhone) {
         // (Giữ nguyên logic của hàm này)
         if (cleanedPhone == null || cleanedPhone.isEmpty()) {
             return null;

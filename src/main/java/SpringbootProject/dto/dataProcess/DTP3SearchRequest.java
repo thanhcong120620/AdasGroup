@@ -2,22 +2,24 @@ package SpringbootProject.dto.dataProcess;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
+import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
 import SpringbootProject.entity.enums.Gender;
+import SpringbootProject.entity.enums.NextAction;
 
 public class DTP3SearchRequest {
-	 private String zaloName;
+	 	private String zaloName;
 	    private String phoneNumber1;
-	    private DataType dataType;
-	    private Gender gender;
+	    private String dataType;
+	    private String gender;
+	    private String nextAction;
 	    private String accountFollow;
 	    private String resultFollow;
 	    private String consultDiary;
 	    private String fullName1;
+	    private LocalDate dateFollow;
 	    
 	    // Sử dụng @DateTimeFormat để Spring Boot có thể parse String từ Form sang LocalDate
 	    @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -36,11 +38,11 @@ public class DTP3SearchRequest {
 	    public String getPhoneNumber1() { return phoneNumber1; }
 	    public void setPhoneNumber1(String phoneNumber1) { this.phoneNumber1 = phoneNumber1; }
 
-	    public DataType getDataType() { return dataType; }
-	    public void setDataType(DataType dataType) { this.dataType = dataType; }
+	    public String getDataType() { return dataType; }
+	    public void setDataType(String dataType) { this.dataType = dataType; }
 
-	    public Gender getGender() { return gender; }
-	    public void setGender(Gender gender) { this.gender = gender; }
+	    public String getGender() { return gender; }
+	    public void setGender(String gender) { this.gender = gender; }
 	    
 	    public String getAccountFollow() {
 			return accountFollow;
@@ -89,8 +91,41 @@ public class DTP3SearchRequest {
 					+ resultFollow + "]";
 		}
 
+		public String getNextAction() {
+			return nextAction;
+		}
 
-		
-		
+		public void setNextAction(String nextAction) {
+			this.nextAction = nextAction;
+		}
+
+		public LocalDate getDateFollow() {
+			return dateFollow;
+		}
+
+		public void setDateFollow(LocalDate dateFollow) {
+			this.dateFollow = dateFollow;
+		}
+
+		/**
+		 * Mapper DTO to Entity
+		 * */
+		public DTP3FilterData convertDTP3SearchRequestToEntity(DTP3SearchRequest dtp3SearchRequest) {
+			DTP3FilterData dtp3FilterData = new DTP3FilterData();
+			dtp3FilterData.setPhoneNumber1(dtp3SearchRequest.getPhoneNumber1());
+			dtp3FilterData.setDataType(DataType.fromLabel(dtp3SearchRequest.getDataType()));
+			dtp3FilterData.setGender(Gender.fromLabel(dtp3SearchRequest.getGender()));
+			dtp3FilterData.setNextAction(NextAction.fromLabel(dtp3SearchRequest.getNextAction()));
+			dtp3FilterData.setPhoneNumber1(dtp3SearchRequest.getPhoneNumber1());
+			dtp3FilterData.setZaloName(dtp3SearchRequest.getZaloName());
+			dtp3FilterData.setAccountFollow(dtp3SearchRequest.getAccountFollow());
+			dtp3FilterData.setResultFollow(dtp3SearchRequest.getResultFollow());
+			dtp3FilterData.setConsultDiary(dtp3SearchRequest.getConsultDiary());
+			dtp3FilterData.setFullName1(dtp3SearchRequest.getFullName1());
+			dtp3FilterData.setNextFollowDate(dtp3SearchRequest.getDateFollow());
+			
+			return dtp3FilterData;
+		}
+
 	
 }

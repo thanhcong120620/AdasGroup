@@ -1,8 +1,11 @@
 package SpringbootProject.entity.enums;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Salutation {
@@ -24,6 +27,18 @@ public enum Salutation {
     public String getLabel() {
         return label;
     }
+    
+    public static List<String> getAllLabels() {
+        return Arrays.stream(values())
+                .map(Salutation::getLabel)
+                .toList();
+    }
+    
+    @JsonCreator
+    public static Salutation fromJson(String value) {
+        return fromLabel(value);
+    }
+
     
     private static final Map<String, Salutation> LABEL_MAP = new HashMap<>();
 

@@ -1,6 +1,7 @@
 package SpringbootProject.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,5 +26,10 @@ public interface IDTP3FilterDataEntity {
 	public Page<DTP3FilterData> filterData(DTP3SearchRequest request, Pageable pageable);
 	public List<DTP3FilterData> getFilterListOnly(DTP3SearchRequest request, Pageable pageable);
 	public List<DTP3FilterData> getAllMatchesWithoutPagination(DTP3SearchRequest request);
+
+	//Cụm chức năng count
+	public long countHasData(Map<String, Object> filters);
+	public long countNullOrEmpty(List<String> fieldNames);
+	public long countFlexible(Map<String, Object> filters);
 	
 }

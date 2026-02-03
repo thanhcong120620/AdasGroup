@@ -2,26 +2,22 @@ package SpringbootProject.service.implement;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.Predicate;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import FileUtil.StringProcess;
+import SpringbootProject.algorithms.PersonProfileProcessAlgorithm.PhoneProcess;
 import SpringbootProject.dto.dataProcess.DTP3SearchRequest;
 import SpringbootProject.entity.CRMEntity.DTP3FilterData;
 import SpringbootProject.entity.enums.DataType;
@@ -29,11 +25,14 @@ import SpringbootProject.entity.enums.Gender;
 import SpringbootProject.entity.enums.Salutation;
 import SpringbootProject.repository.DTP3FilterDataRepository;
 import SpringbootProject.service.IDTP3FilterDataEntity;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 @Transactional
 public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 	private static final Logger log = LoggerFactory.getLogger(DTP3FilterDataEntityService.class);
+	@Value("${app.blacklist.phones:}")
+    private List<String> blacklistPhones;
 	
 	@Autowired
 	DTP3FilterDataRepository dPT3FilterDataRepository; 
@@ -44,7 +43,7 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 	//Trường hợp lấy tất cả danh sách sau khi lọc
 	public List<DTP3FilterData> getAllMatchesWithoutPagination(DTP3SearchRequest request) {
 	    log.info(">>> Bắt đầu lấy TOÀN BỘ dữ liệu khớp bộ lọc (Không phân trang)");
-
+	    
 	    Specification<DTP3FilterData> spec = (root, query, cb) -> {
 	        List<Predicate> predicates = new ArrayList<>();
 	     // Lọc khớp chính xác cho zaloName
@@ -72,14 +71,28 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
                 predicates.add(cb.equal(root.get("accountFollow"), request.getAccountFollow().trim()));
             }
 
-            // Lọc khớp chính xác cho DataType (Enum)
-            if (request.getDataType() != null) {
-                predicates.add(cb.equal(root.get("dataType"), request.getDataType()));
+         // Lọc Enum DataType - Chỉ xử lý khi request thực sự có giá trị
+            if (request.getDataType() != null && !request.getDataType().toString().isEmpty()) {
+                try {
+                    DataType dt = DataType.fromLabel(request.getDataType().toString());
+                    if (dt != null) {
+                        predicates.add(cb.equal(root.get("dataType"), dt));
+                    }
+                } catch (Exception e) {
+                    log.warn("Không thể parse DataType từ label: {}", request.getDataType());
+                }
             }
 
-            // Lọc khớp chính xác cho Gender (Enum)
-            if (request.getGender() != null) {
-                predicates.add(cb.equal(root.get("gender"), request.getGender()));
+         // Lọc Enum Gender - Tương tự DataType
+            if (request.getGender() != null && !request.getGender().toString().isEmpty()) {
+                try {
+                    Gender g = Gender.fromLabel(request.getGender().toString());
+                    if (g != null) {
+                        predicates.add(cb.equal(root.get("gender"), g));
+                    }
+                } catch (Exception e) {
+                    log.warn("Không thể parse Gender từ label: {}", request.getGender());
+                }
             }
             
          // LỌC KHOẢNG NGÀY (Date Range)
@@ -100,7 +113,6 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 
 	    // Gọi findAll(spec) - KHÔNG truyền pageable
 	    List<DTP3FilterData> allResults = dPT3FilterDataRepository.findAll(spec);
-	    
 	    log.info("<<< Đã lấy toàn bộ List thành công. Số lượng: {}", allResults.size());
 	    return allResults;
 	}
@@ -126,8 +138,8 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 	}
 	
 
-	public Page<DTP3FilterData> filterData(DTP3SearchRequest request, Pageable pageable) {
-        log.info("Thực hiện lọc khớp chính xác. Tiêu chí: {}", request);
+	public Page<DTP3FilterData> filterData(DTP3SearchRequest request, Pageable pageable) {//lỗi
+        log.info("Thực hiện lọc khớp chính xác. Tiêu chí: {}", request);;
 
         Specification<DTP3FilterData> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -159,14 +171,28 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
                 predicates.add(cb.equal(root.get("accountFollow"), request.getAccountFollow().trim()));
             }
 
-            // Lọc khớp chính xác cho DataType (Enum)
-            if (request.getDataType() != null) {
-                predicates.add(cb.equal(root.get("dataType"), request.getDataType()));
+         // Lọc Enum DataType - Chỉ xử lý khi request thực sự có giá trị
+            if (request.getDataType() != null && !request.getDataType().toString().isEmpty()) {
+                try {
+                    DataType dt = DataType.fromLabel(request.getDataType().toString());
+                    if (dt != null) {
+                        predicates.add(cb.equal(root.get("dataType"), dt));
+                    }
+                } catch (Exception e) {
+                    log.warn("Không thể parse DataType từ label: {}", request.getDataType());
+                }
             }
 
-            // Lọc khớp chính xác cho Gender (Enum)
-            if (request.getGender() != null) {
-                predicates.add(cb.equal(root.get("gender"), request.getGender()));
+         // Lọc Enum Gender - Tương tự DataType
+            if (request.getGender() != null && !request.getGender().toString().isEmpty()) {
+                try {
+                    Gender g = Gender.fromLabel(request.getGender().toString());
+                    if (g != null) {
+                        predicates.add(cb.equal(root.get("gender"), g));
+                    }
+                } catch (Exception e) {
+                    log.warn("Không thể parse Gender từ label: {}", request.getGender());
+                }
             }
             
             // LỌC KHOẢNG NGÀY (Date Range)
@@ -196,6 +222,83 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
         }
     }
 	
+//====================================================Filter and Count Function===============================================================================	
+	
+	/*
+	 * Specification dùng chung để count
+	 * */
+	private Specification<DTP3FilterData> createBaseSpec(Map<String, Object> filters, String type) {
+	    return (root, query, cb) -> {
+	        List<Predicate> predicates = new ArrayList<>();
+	        if (filters == null || filters.isEmpty()) return cb.and();
+
+	        filters.forEach((field, value) -> {
+	            switch (type) {
+	                case "HAS_DATA":
+	                    // Count khi field có giá trị cụ thể
+	                    if (value != null) {
+	                        predicates.add(cb.equal(root.get(field), value));
+	                    }
+	                    break;
+
+	                case "IS_NULL_OR_EMPTY":
+	                    // Count khi field là NULL hoặc chuỗi rỗng "" hoặc "  "
+	                    // Chỉ áp dụng logic rỗng cho kiểu String
+	                    Predicate isNull = cb.isNull(root.get(field));
+	                    if (root.get(field).getJavaType().equals(String.class)) {
+	                        Predicate isEmpty = cb.equal(root.get(field), "");
+	                        predicates.add(cb.or(isNull, isEmpty));
+	                    } else {
+	                        predicates.add(isNull);
+	                    }
+	                    break;
+	            }
+	        });
+	        return cb.and(predicates.toArray(new Predicate[0]));
+	    };
+	}
+	
+	/**
+	 * Count theo giá trị cụ thể
+	 * Đếm các bản ghi khớp chính xác với giá trị bạn truyền vào (ví dụ: gender = GENDER.MALE)
+	 * */
+	public long countHasData(Map<String, Object> filters) {
+	    log.info("Counting records with specific data: {}", filters);
+	    return dPT3FilterDataRepository.count(createBaseSpec(filters, "HAS_DATA"));
+	}
+	
+	/**
+	 * Count các giá trị null
+	 * Chỉ truyền tên field vào Map, giá trị value có thể để null.
+	 * */
+	public long countNullOrEmpty(List<String> fieldNames) {
+	    log.info("Counting records where fields are null or empty: {}", fieldNames);
+	    
+	    // Chuyển List thành Map để dùng chung helper
+	    Map<String, Object> filters = new HashMap<>();
+	    fieldNames.forEach(f -> filters.put(f, null));
+	    
+	    return dPT3FilterDataRepository.count(createBaseSpec(filters, "IS_NULL_OR_EMPTY"));
+	}
+	
+	/**
+	 * Countv tổng hợp (Tùy biến)
+	 * Truyền vào một Map, nếu value là null thì nó tự hiểu là count null, nếu có value thì count theo data đó
+	 * */
+	public long countFlexible(Map<String, Object> filters) {
+	    Specification<DTP3FilterData> spec = (root, query, cb) -> {
+	        List<Predicate> predicates = new ArrayList<>();
+	        filters.forEach((field, value) -> {
+	            if (value == null) {
+	                predicates.add(cb.isNull(root.get(field)));
+	            } else {
+	                predicates.add(cb.equal(root.get(field), value));
+	            }
+	        });
+	        return cb.and(predicates.toArray(new Predicate[0]));
+	    };
+	    return dPT3FilterDataRepository.count(spec);
+	}
 	
 	
 //===================================================================================================================================
@@ -239,222 +342,236 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 	}
 
 	@Override
-	public String dataDTP3FilterUpdateOldDataByPhone(DTP3FilterData dtp3FilterNewData) {        	
-		
-				
+	public String dataDTP3FilterUpdateOldDataByPhone(DTP3FilterData dtp3FilterNewData) {  
+		String phone = PhoneProcess.cleanAndNormalizeSinglePhone(dtp3FilterNewData.getPhoneNumber1());
 		String phone1Input = "Phone ko tồn tại / Trống";
-		String phoneUpdate = "Chưa cập nhật";
+		String phoneUpdate = "Chưa cập nhật";      	
 		
-		// Get Old data from database
-//		DTP3FilterData dtp3FilterOldData = dPT3FilterDataRepository.findByphoneNumber1(dtp3FilterNewData.getPhoneNumber1());//phải trả về 1 list oldEntity vì có nhiều dữ liệu bị trùng Phone1
-		if(dtp3FilterNewData.getPhoneNumber1()!=null) {
-			List<DTP3FilterData> dtp3FilterDataList = dPT3FilterDataRepository.getListByOnePhone1(dtp3FilterNewData.getPhoneNumber1());
-			for(DTP3FilterData dtp3FilterOldData : dtp3FilterDataList) {
-				if (dtp3FilterOldData != null) {
-//					System.out.println("run here !!!");
-					//2 Check & Set Data type
-					if( dtp3FilterNewData.getDataType() != null) {
-						dtp3FilterOldData.setDataType(dtp3FilterNewData.getDataType());
-					} 
-					if(dtp3FilterOldData.getDataType() ==null) {
-						 dtp3FilterOldData.setDataType(DataType.RAW_DATA);
-					}
-					
-					//3 Check & Set dateOfLead
-					if(dtp3FilterNewData.getDateOfLead() != null) {
-						dtp3FilterOldData.setDateOfLead(dtp3FilterNewData.getDateOfLead());
-					} 
-					if(dtp3FilterOldData.getDateOfLead() ==null) {
-						 dtp3FilterOldData.setDateOfLead(LocalDate.now());
-					}
-					
-					//4 Check & Set DataSource
-					if(dtp3FilterNewData.getDataSource() != null) {
-						if(!dtp3FilterOldData.getDataSource().isEmpty()) {
-							dtp3FilterOldData.setDataSource(StringProcess.mergeUnique(dtp3FilterOldData.getDataSource(), dtp3FilterNewData.getDataSource()));
-						} else {
-							dtp3FilterOldData.setDataSource(dtp3FilterNewData.getDataSource());
-						}			
-					} 
-					
-					//5 Check & Set ConsultDiary
-					if(dtp3FilterNewData.getConsultDiary() != null) {
-						if(!dtp3FilterOldData.getConsultDiary().isEmpty()) {
-							dtp3FilterOldData.setConsultDiary(StringProcess.mergeUnique(dtp3FilterOldData.getConsultDiary(), dtp3FilterNewData.getConsultDiary()));
-						} else {
-							dtp3FilterOldData.setConsultDiary(dtp3FilterNewData.getConsultDiary());
-						}			
-					} 
-					
-					//6 Check & Set FullName1 xóa dữ liệu cũ, set dữ liệu mới từ new data.
-					if(dtp3FilterNewData.getFullName1() != null) {
-						dtp3FilterOldData.setFullName1(dtp3FilterNewData.getFullName1());
-					}
-					
-					//7 Check & Set FullName2
-					if(dtp3FilterNewData.getFullName2() != null) {
-						dtp3FilterOldData.setFullName2(dtp3FilterNewData.getFullName2());
-					}  
-				
-					//8 Check & Set LastName
-					if(dtp3FilterNewData.getLastName()==null) {
-						dtp3FilterOldData.setLastName(dtp3FilterNewData.getLastName());
-					}  
-					
-					//9 Check & Set Salutation
-					if( dtp3FilterNewData.getSalutation() != null) {
-						dtp3FilterOldData.setSalutation(dtp3FilterNewData.getSalutation());
-					} 
-					if(dtp3FilterOldData.getSalutation() ==null) {
-						 dtp3FilterOldData.setSalutation(Salutation.UNDEFINED);
-					}  
-					
-					//10 Check & Set Gender
-					if( dtp3FilterNewData.getGender() != null) {
-						dtp3FilterOldData.setGender(dtp3FilterNewData.getGender());
-					} 
-					if(dtp3FilterOldData.getGender() ==null) {
-						 dtp3FilterOldData.setGender(Gender.UNDEFINED);
-					}
-				
-					//11 Check & Set ZaloName
-//					System.out.println("!dtp3FilterNewData.getZaloName().isEmpty(): "+!dtp3FilterNewData.getZaloName().isEmpty());
-//					System.out.println("dtp3FilterNewData.getZaloName(): "+dtp3FilterNewData.getZaloName());
-					if(dtp3FilterNewData.getZaloName() != null) {
-						dtp3FilterOldData.setZaloName(dtp3FilterNewData.getZaloName());
-					}  
-				
-					//12 Check & Set ZaloUid
-					if(!dtp3FilterNewData.getZaloUid().isEmpty()) {
-						dtp3FilterOldData.setZaloUid(dtp3FilterNewData.getZaloUid());
-					}    
-				
-					//13 Check & Set FacebookLink
-					if(dtp3FilterNewData.getFacebookLink() != null) {
-						dtp3FilterOldData.setFacebookLink(dtp3FilterNewData.getFacebookLink());
-					}   
-				
-					//14 Check & Set PhoneNumber1
-					if(dtp3FilterNewData.getPhoneNumber1() != null) {
-						dtp3FilterOldData.setPhoneNumber1(dtp3FilterNewData.getPhoneNumber1());
-					}   
-				
-					//15 Check & Set PhoneNumber2
-					if(dtp3FilterNewData.getPhoneNumber2() != null) {
-						dtp3FilterOldData.setPhoneNumber2(dtp3FilterNewData.getPhoneNumber2());
-					}   
-				
-					//16 Check & Set Gmail
-					if(dtp3FilterNewData.getGmail() != null) {
-						if(dtp3FilterOldData.getGmail() != null) {
-							dtp3FilterOldData.setGmail(StringProcess.mergeUnique(dtp3FilterOldData.getGmail(), dtp3FilterNewData.getGmail()));
-						} else {
-							dtp3FilterOldData.setGmail(dtp3FilterNewData.getGmail());
-						}	
-					}   
-				
-					//17 Check & Set DateOfBirth
-					if(dtp3FilterNewData.getDateOfBirth() != null) {
-						dtp3FilterOldData.setDateOfBirth(dtp3FilterNewData.getDateOfBirth());
-					}   
-				
-					//18 Check & Set SavingsAmount
-					if(dtp3FilterNewData.getSavingsAmount() != null) {
-						dtp3FilterOldData.setSavingsAmount(dtp3FilterNewData.getSavingsAmount());
-					}   
-				
-					//19 Check & Set setAddress
-					if(dtp3FilterNewData.getAddress() != null) {
-						if(dtp3FilterOldData.getAddress() != null) {
-							dtp3FilterOldData.setAddress(StringProcess.mergeUnique(dtp3FilterOldData.getAddress(), dtp3FilterNewData.getAddress()));
-						} else {
-							dtp3FilterOldData.setAddress(dtp3FilterNewData.getAddress());
-						}	
-					}    
-				
-					//20 Check & Set setAddress
-					if(dtp3FilterNewData.getWorkingArea() != null) {
-						if(dtp3FilterOldData.getWorkingArea() != null) {
-							dtp3FilterOldData.setWorkingArea(StringProcess.mergeUnique(dtp3FilterOldData.getWorkingArea(), dtp3FilterNewData.getWorkingArea()));
-						} else {
-							dtp3FilterOldData.setWorkingArea(dtp3FilterNewData.getWorkingArea());
-						}	
-					}    
-				
-					//21 Check & setProductBought
-					if(dtp3FilterNewData.getProductBought() != null) {
-						if(dtp3FilterOldData.getProductBought() != null) {
-							dtp3FilterOldData.setProductBought(StringProcess.mergeUnique(dtp3FilterOldData.getProductBought(), dtp3FilterNewData.getProductBought()));
-						} else {
-							dtp3FilterOldData.setProductBought(dtp3FilterNewData.getProductBought());
-						}	
-					}     
-				
-					//22 Check & setMixContacts
-					if(dtp3FilterNewData.getMixContacts() != null) {
-						if(dtp3FilterOldData.getMixContacts() != null) {
-							dtp3FilterOldData.setMixContacts(StringProcess.mergeUnique(dtp3FilterOldData.getMixContacts(), dtp3FilterNewData.getMixContacts()));
-						} else {
-							dtp3FilterOldData.setMixContacts(dtp3FilterNewData.getMixContacts());
-						}	
-					} 
-					
-					//23 Check & setNextAction
-					if(dtp3FilterNewData.getNextAction() != null) {
-						dtp3FilterOldData.setNextAction(dtp3FilterNewData.getNextAction());
-					}  
-					
-					//24 Check & setNextFollowDate
-					if(dtp3FilterNewData.getNextFollowDate() != null) {
-						dtp3FilterOldData.setNextFollowDate(dtp3FilterNewData.getNextFollowDate());
-					}       
-					
-					//25 Check & setResultFollow
-					if(dtp3FilterNewData.getResultFollow() != null) {
-//						System.out.println(dtp3FilterOldData.getResultFollow());
-						dtp3FilterOldData.setResultFollow(dtp3FilterNewData.getResultFollow());
-					}       
-					
-					//26 Check & setAccountFollow
-					if(dtp3FilterNewData.getAccountFollow() != null) {
-						if(dtp3FilterOldData.getAccountFollow() != null) {
-							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
-						} else {
-							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
-						}	
-					}      
-					dPT3FilterDataRepository.save(dtp3FilterOldData);
-					phoneUpdate = "dtp3FilterNewData.getPhoneNumber1()";
-				} else {
-					
-					return phone1Input;
-				}
-			}
-		}
+		if (isBlacklisted(phone)) {
+//            throw new RuntimeException("Số điện thoại " + dtp3FilterNewData.getPhoneNumber1() + " nằm trong danh sách đen của hệ thống!");
+			phoneUpdate = "Số điện thoại trong danh sách cấm: "+phone;
+        } else {
+        	// Get Old data from database
+//    		DTP3FilterData dtp3FilterOldData = dPT3FilterDataRepository.findByphoneNumber1(dtp3FilterNewData.getPhoneNumber1());//phải trả về 1 list oldEntity vì có nhiều dữ liệu bị trùng Phone1
+    		if(dtp3FilterNewData.getPhoneNumber1()!=null) {
+    			List<DTP3FilterData> dtp3FilterDataList = dPT3FilterDataRepository.getListByOnePhone1(dtp3FilterNewData.getPhoneNumber1());
+    			for(DTP3FilterData dtp3FilterOldData : dtp3FilterDataList) {
+    				if (dtp3FilterOldData != null) {
+//    					System.out.println("run here !!!");
+    					//2 Check & Set Data type
+    					if( dtp3FilterNewData.getDataType() != null) {
+    						dtp3FilterOldData.setDataType(dtp3FilterNewData.getDataType());
+    					} 
+    					if(dtp3FilterOldData.getDataType() ==null) {
+    						 dtp3FilterOldData.setDataType(DataType.RAW_DATA);
+    					}
+    					
+    					//3 Check & Set dateOfLead
+    					if(dtp3FilterNewData.getDateOfLead() != null) {
+    						dtp3FilterOldData.setDateOfLead(dtp3FilterNewData.getDateOfLead());
+    					} 
+    					if(dtp3FilterOldData.getDateOfLead() ==null) {
+    						 dtp3FilterOldData.setDateOfLead(LocalDate.now());
+    					}
+    					
+    					//4 Check & Set DataSource
+    					if(dtp3FilterNewData.getDataSource() != null) {
+    						if(!dtp3FilterOldData.getDataSource().isEmpty()) {
+    							dtp3FilterOldData.setDataSource(StringProcess.mergeUnique(dtp3FilterOldData.getDataSource(), dtp3FilterNewData.getDataSource()));
+    						} else {
+    							dtp3FilterOldData.setDataSource(dtp3FilterNewData.getDataSource());
+    						}			
+    					} 
+    					
+    					//5 Check & Set ConsultDiary
+    					if(dtp3FilterNewData.getConsultDiary() != null) {
+    						if(!dtp3FilterOldData.getConsultDiary().isEmpty()) {
+    							dtp3FilterOldData.setConsultDiary(StringProcess.mergeUnique(dtp3FilterOldData.getConsultDiary(), dtp3FilterNewData.getConsultDiary()));
+    						} else {
+    							dtp3FilterOldData.setConsultDiary(dtp3FilterNewData.getConsultDiary());
+    						}			
+    					} 
+    					
+    					//6 Check & Set FullName1 xóa dữ liệu cũ, set dữ liệu mới từ new data.
+    					if(dtp3FilterNewData.getFullName1() != null) {
+    						dtp3FilterOldData.setFullName1(dtp3FilterNewData.getFullName1());
+    					}
+    					
+    					//7 Check & Set FullName2
+    					if(dtp3FilterNewData.getFullName2() != null) {
+    						dtp3FilterOldData.setFullName2(dtp3FilterNewData.getFullName2());
+    					}  
+    				
+    					//8 Check & Set LastName
+    					if(dtp3FilterNewData.getLastName()==null) {
+    						dtp3FilterOldData.setLastName(dtp3FilterNewData.getLastName());
+    					}  
+    					
+    					//9 Check & Set Salutation
+    					if( dtp3FilterNewData.getSalutation() != null) {
+    						dtp3FilterOldData.setSalutation(dtp3FilterNewData.getSalutation());
+    					} 
+    					if(dtp3FilterOldData.getSalutation() ==null) {
+    						 dtp3FilterOldData.setSalutation(Salutation.UNDEFINED);
+    					}  
+    					
+    					//10 Check & Set Gender
+    					if( dtp3FilterNewData.getGender() != null) {
+    						dtp3FilterOldData.setGender(dtp3FilterNewData.getGender());
+    					} 
+    					if(dtp3FilterOldData.getGender() ==null) {
+    						 dtp3FilterOldData.setGender(Gender.UNDEFINED);
+    					}
+    				
+    					//11 Check & Set ZaloName
+//    					System.out.println("!dtp3FilterNewData.getZaloName().isEmpty(): "+!dtp3FilterNewData.getZaloName().isEmpty());
+//    					System.out.println("dtp3FilterNewData.getZaloName(): "+dtp3FilterNewData.getZaloName());
+    					if(dtp3FilterNewData.getZaloName() != null) {
+    						dtp3FilterOldData.setZaloName(dtp3FilterNewData.getZaloName());
+    					}  
+    				
+    					//12 Check & Set ZaloUid --- WARNING. This enable null or Empty
+    					if(dtp3FilterNewData.getZaloUid()==null) {
+    						dtp3FilterOldData.setZaloUid(dtp3FilterNewData.getZaloUid());
+    					}    
+    				
+    					//13 Check & Set FacebookLink
+    					if(dtp3FilterNewData.getFacebookLink() != null) {
+    						dtp3FilterOldData.setFacebookLink(dtp3FilterNewData.getFacebookLink());
+    					}   
+    				
+    					//14 Check & Set PhoneNumber1
+    					if(dtp3FilterNewData.getPhoneNumber1() != null) {
+    						dtp3FilterOldData.setPhoneNumber1(dtp3FilterNewData.getPhoneNumber1());
+    					}   
+    				
+    					//15 Check & Set PhoneNumber2
+    					if(dtp3FilterNewData.getPhoneNumber2() != null) {
+    						dtp3FilterOldData.setPhoneNumber2(dtp3FilterNewData.getPhoneNumber2());
+    					}   
+    				
+    					//16 Check & Set Gmail
+    					if(dtp3FilterNewData.getGmail() != null) {
+    						if(dtp3FilterOldData.getGmail() != null) {
+    							dtp3FilterOldData.setGmail(StringProcess.mergeUnique(dtp3FilterOldData.getGmail(), dtp3FilterNewData.getGmail()));
+    						} else {
+    							dtp3FilterOldData.setGmail(dtp3FilterNewData.getGmail());
+    						}	
+    					}   
+    				
+    					//17 Check & Set DateOfBirth
+    					if(dtp3FilterNewData.getDateOfBirth() != null) {
+    						dtp3FilterOldData.setDateOfBirth(dtp3FilterNewData.getDateOfBirth());
+    					}   
+    				
+    					//18 Check & Set SavingsAmount
+    					if(dtp3FilterNewData.getSavingsAmount() != null) {
+    						dtp3FilterOldData.setSavingsAmount(dtp3FilterNewData.getSavingsAmount());
+    					}   
+    				
+    					//19 Check & Set setAddress
+    					if(dtp3FilterNewData.getAddress() != null) {
+    						if(dtp3FilterOldData.getAddress() != null) {
+    							dtp3FilterOldData.setAddress(StringProcess.mergeUnique(dtp3FilterOldData.getAddress(), dtp3FilterNewData.getAddress()));
+    						} else {
+    							dtp3FilterOldData.setAddress(dtp3FilterNewData.getAddress());
+    						}	
+    					}    
+    				
+    					//20 Check & Set setAddress
+    					if(dtp3FilterNewData.getWorkingArea() != null) {
+    						if(dtp3FilterOldData.getWorkingArea() != null) {
+    							dtp3FilterOldData.setWorkingArea(StringProcess.mergeUnique(dtp3FilterOldData.getWorkingArea(), dtp3FilterNewData.getWorkingArea()));
+    						} else {
+    							dtp3FilterOldData.setWorkingArea(dtp3FilterNewData.getWorkingArea());
+    						}	
+    					}    
+    				
+    					//21 Check & setProductBought
+    					if(dtp3FilterNewData.getProductBought() != null) {
+    						if(dtp3FilterOldData.getProductBought() != null) {
+    							dtp3FilterOldData.setProductBought(StringProcess.mergeUnique(dtp3FilterOldData.getProductBought(), dtp3FilterNewData.getProductBought()));
+    						} else {
+    							dtp3FilterOldData.setProductBought(dtp3FilterNewData.getProductBought());
+    						}	
+    					}     
+    				
+    					//22 Check & setMixContacts
+    					if(dtp3FilterNewData.getMixContacts() != null) {
+    						if(dtp3FilterOldData.getMixContacts() != null) {
+    							dtp3FilterOldData.setMixContacts(StringProcess.mergeUnique(dtp3FilterOldData.getMixContacts(), dtp3FilterNewData.getMixContacts()));
+    						} else {
+    							dtp3FilterOldData.setMixContacts(dtp3FilterNewData.getMixContacts());
+    						}	
+    					} 
+    					
+    					//23 Check & setNextAction
+    					if(dtp3FilterNewData.getNextAction() != null) {
+    						dtp3FilterOldData.setNextAction(dtp3FilterNewData.getNextAction());
+    					}  
+    					
+    					//24 Check & setNextFollowDate
+    					if(dtp3FilterNewData.getNextFollowDate() != null) {
+    						dtp3FilterOldData.setNextFollowDate(dtp3FilterNewData.getNextFollowDate());
+    					}       
+    					
+    					//25 Check & setResultFollow
+    					if(dtp3FilterNewData.getResultFollow() != null) {
+//    						System.out.println(dtp3FilterOldData.getResultFollow());
+    						dtp3FilterOldData.setResultFollow(dtp3FilterNewData.getResultFollow());
+    					}       
+    					
+    					//26 Check & setAccountFollow
+    					if(dtp3FilterNewData.getAccountFollow() != null) {
+    						if(dtp3FilterOldData.getAccountFollow() != null) {
+    							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
+    						} else {
+    							dtp3FilterOldData.setAccountFollow(dtp3FilterNewData.getAccountFollow());
+    						}	
+    					}      
+    					dPT3FilterDataRepository.save(dtp3FilterOldData);
+    					phoneUpdate = "dtp3FilterNewData.getPhoneNumber1()";
+    				} else {
+    					
+    					return phone1Input;
+    				}
+    			}
+    		}
+        }
+		
+		
 		
 		return phoneUpdate;
 		
 	}
 	
-	
 	@Override
 	public DTP3FilterData dataDTP3FilterCreaterAndUpdate(DTP3FilterData dtp3FilterDataEntity) {
-		if(dtp3FilterDataEntity.getId() == null) {
-			if(dtp3FilterDataEntity.getPhoneNumber1()==null ||dtp3FilterDataEntity.getPhoneNumber1().isBlank() ||dtp3FilterDataEntity.getPhoneNumber1().isEmpty()) {
-				dtp3FilterDataEntity.setPhoneNumber1("Chưa có sđt !");
-			}
-			//Create new user
-			dPT3FilterDataRepository.save(dtp3FilterDataEntity);
-			DTP3FilterData checkDTP3FilterData = dPT3FilterDataRepository.findById(dtp3FilterDataEntity.getId()).get();
-//			System.out.println("Đã tạo mới DTP3FilterData (checkDTP3FilterData: " + checkDTP3FilterData.toString());
-			return checkDTP3FilterData;
+		String phone = PhoneProcess.cleanAndNormalizeSinglePhone(dtp3FilterDataEntity.getPhoneNumber1());
+		if (isBlacklisted(phone)) {
+//            throw new RuntimeException("Số điện thoại " + dtp3FilterDataEntity.getPhoneNumber1() + " nằm trong danh sách đen của hệ thống!");
+			System.out.println("Run dataDTP3FilterCreaterAndUpdate: Số điện thoại "+dtp3FilterDataEntity.getPhoneNumber1()+" nằm trong danh sách cấm !");
+			return null;
 		} else {
-			//Update user
-			DTP3FilterData newEntity = dPT3FilterDataRepository.findById(dtp3FilterDataEntity.getId()).get();
-			newEntity = dPT3FilterDataRepository.save(dtp3FilterDataEntity);
-			DTP3FilterData checkDTP3FilterData = dPT3FilterDataRepository.findById(newEntity.getId()).get();
-			return checkDTP3FilterData;
+			if(dtp3FilterDataEntity.getId() == null) {
+				if(dtp3FilterDataEntity.getPhoneNumber1()==null ||dtp3FilterDataEntity.getPhoneNumber1().isBlank() ||dtp3FilterDataEntity.getPhoneNumber1().isEmpty()) {
+					dtp3FilterDataEntity.setPhoneNumber1(null);
+				}
+				//Create new user
+				dPT3FilterDataRepository.save(dtp3FilterDataEntity);
+				DTP3FilterData checkDTP3FilterData = dPT3FilterDataRepository.findById(dtp3FilterDataEntity.getId()).get();
+//				System.out.println("Đã tạo mới DTP3FilterData (checkDTP3FilterData: " + checkDTP3FilterData.toString());
+				return checkDTP3FilterData;
+			} else {
+				//Update user
+				DTP3FilterData newEntity = dPT3FilterDataRepository.findById(dtp3FilterDataEntity.getId()).get();
+				newEntity = dPT3FilterDataRepository.save(dtp3FilterDataEntity);
+				DTP3FilterData checkDTP3FilterData = dPT3FilterDataRepository.findById(newEntity.getId()).get();
+				return checkDTP3FilterData;
+			}
 		}
+		
+		
 	}
 
 	@Override
@@ -469,9 +586,12 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 		 return dPT3FilterDataRepository.deleteByphoneNumber1(phoneNumber1);
 	}
 
+	/*
+	 *
+	 * */
 	@Override
 	public List<DTP3FilterData> findAllByPhoneDuplicate() {
-		System.out.println("Run service !!");
+//		System.out.println("Run service !!");
 //		List<DTP3FilterData> list = dPT3FilterDataRepository.findAllByPhoneNumber1();
 //		for(DTP3FilterData dtp3FilterData : list) {
 //			System.out.println(dtp3FilterData.toString());
@@ -487,4 +607,31 @@ public class DTP3FilterDataEntityService implements IDTP3FilterDataEntity {
 		return dtp3FilterDataList;
 	}
 
+	
+	
+	
+	//================================================= Các chức năng khác ================================================	
+	
+	/**
+     * Hàm kiểm tra số điện thoại có bị cấm hay không
+     */
+    public boolean isBlacklisted(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false;
+        }
+        
+        String cleanPhone = phone.trim();
+        // Kiểm tra xem số điện thoại có tồn tại trong danh sách không
+        boolean match = blacklistPhones.contains(cleanPhone);
+        
+        if (match) {
+            log.warn("[SECURITY] Phát hiện nỗ lực lưu SĐT bị cấm: {}", cleanPhone);
+        }
+        return match;
+    }
+    
+    
+    
+	
+	
 }

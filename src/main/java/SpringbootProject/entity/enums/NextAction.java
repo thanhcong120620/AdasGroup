@@ -1,6 +1,8 @@
 package SpringbootProject.entity.enums;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -22,6 +24,12 @@ public enum NextAction {
 
     NextAction(String label) {
         this.label = label;
+    }
+    
+    public static List<String> getAllLabels() {
+        return Arrays.stream(values())
+                .map(NextAction::getLabel)
+                .toList();
     }
 
     @JsonValue
